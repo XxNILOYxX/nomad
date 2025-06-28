@@ -1,0 +1,421 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genetic Algorithm Fitness Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #000;
+            color: #9370DB; /* Purple text */
+        }
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .card {
+            margin-bottom: 20px;
+            border: 1px solid #444;
+            background-color: #1a1a1a;
+            border-radius: 15px;
+        }
+        .metric-card {
+            text-align: center;
+            padding: 10px;
+        }
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00FF00; /* Green for metric values */
+        }
+        #fitnessChart {
+            max-height: 250px;
+            background-color: #1a1a1a;
+        }
+        .text-purple {
+            color: #9370DB;
+        }
+        .btn-primary {
+            background-color: #9370DB;
+            border-color: #9370DB;
+        }
+        .btn-primary:hover {
+            background-color: #7B68EE;
+            border-color: #7B68EE;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-connecting {
+            background-color: #FFA500;
+            animation: pulse 2s infinite;
+        }
+        .status-connected {
+            background-color: #00FF00;
+        }
+        .status-error {
+            background-color: #FF0000;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .last-update {
+            font-size: 0.8rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1 class="text-center mb-4 text-purple">Genetic Algorithm Fitness Dashboard</h1>
+        
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <p id="connectionStatus" class="text-muted">
+                    <span id="statusIndicator" class="status-indicator status-connecting"></span>
+                    Attempting to connect...
+                </p>
+                <p id="lastUpdate" class="last-update">Last update: Never</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <button id="loadTestData" class="btn btn-primary me-2">Load Test Data</button>
+                <button id="togglePolling" class="btn btn-outline-primary">Pause Auto-Update</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card metric-card">
+                            <div class="card-body">
+                                <h5 class="card-title text-purple">Best Fitness</h5>
+                                <p id="bestFitness" class="metric-value">N/A</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card metric-card">
+                            <div class="card-body">
+                                <h5 class="card-title text-purple">Actual Fitness</h5>
+                                <p id="actualFitness" class="metric-value">N/A</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card metric-card">
+                            <div class="card-body">
+                                <h5 class="card-title text-purple">PPF</h5>
+                                <p id="ppf" class="metric-value">N/A</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card metric-card">
+                            <div class="card-body">
+                                <h5 class="card-title text-purple">K-eff</h5>
+                                <p id="keff" class="metric-value">N/A</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card metric-card">
+                            <div class="card-body">
+                                <h5 class="card-title text-purple">K-eff Error (%)</h5>
+                                <p id="keffErrorPercent" class="metric-value">N/A</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card metric-card">
+                            <div class="card-body">
+                                <h5 class="card-title text-purple">PPF Error (%)</h5>
+                                <p id="ppfErrorPercent" class="metric-value">N/A</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card metric-card">
+                            <div class="card-body">
+                                <h5 class="card-title text-purple">Current Cycle</h5>
+                                <p id="currentCycle" class="metric-value">N/A</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card metric-card">
+                            <div class="card-body">
+                                <h5 class="card-title text-purple">Time Remaining</h5>
+                                <p id="timeRemaining" class="metric-value">Calculating...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title text-purple">Fitness Progress Over Cycles</h5>
+                        <canvas id="fitnessChart"></canvas>
+                        <p id="chartError" class="text-danger" style="display: none;">
+                            Error loading chart data. Check console for details.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let fitnessChart;
+        let pollingInterval;
+        let isPolling = true;
+
+        // Initialize Chart.js
+        const ctx = document.getElementById('fitnessChart').getContext('2d');
+        fitnessChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Best Fitness per Cycle',
+                    data: [],
+                    borderColor: '#9370DB',
+                    backgroundColor: 'rgba(147, 112, 219, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 3,
+                    pointHoverRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { 
+                        title: { display: true, text: 'Cycle', color: '#9370DB' }, 
+                        ticks: { color: '#9370DB' },
+                        grid: { color: '#444' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Fitness', color: '#9370DB' },
+                        ticks: { color: '#9370DB' },
+                        grid: { color: '#444' }
+                    }
+                },
+                plugins: {
+                    legend: { 
+                        labels: { color: '#9370DB' }
+                    }
+                }
+            }
+        });
+
+        // Function to update status indicator
+        function updateStatusIndicator(status) {
+            const indicator = document.getElementById('statusIndicator');
+            indicator.className = 'status-indicator status-' + status;
+        }
+
+        // Function to update last update time
+        function updateLastUpdateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('lastUpdate').textContent = `Last update: ${timeString}`;
+        }
+
+        // Function to fetch checkpoint data
+        async function fetchCheckpointData() {
+            console.log('Fetching checkpoint data...');
+            try {
+                updateStatusIndicator('connecting');
+                
+                const timestamp = new Date().getTime();
+
+                // --- MODIFICATION: Added 'data/' to the path ---
+                const response = await fetch(`data/ga_checkpoint.json?t=${timestamp}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('Checkpoint data received:', data);
+                
+                document.getElementById('connectionStatus').innerHTML = 
+                    '<span id="statusIndicator" class="status-indicator status-connected"></span>Connected - Live Data';
+                updateStatusIndicator('connected');
+                updateLastUpdateTime();
+
+                updateMetrics(data);
+                updateChart(data);
+                
+            } catch (error) {
+                console.error('Error fetching checkpoint data:', error);
+                document.getElementById('connectionStatus').innerHTML = 
+                    '<span id="statusIndicator" class="status-indicator status-error"></span>Connection failed - ' + error.message;
+                updateStatusIndicator('error');
+            }
+        }
+
+        // Function to update metrics
+        function updateMetrics(data) {
+            console.log('Updating metrics with data:', data);
+            
+            document.getElementById('bestFitness').textContent = 
+                data.best_overall_fitness !== null && data.best_overall_fitness !== undefined ? 
+                data.best_overall_fitness.toFixed(6) : 'N/A';
+            
+            document.getElementById('actualFitness').textContent =
+                data.best_true_fitness !== null && data.best_true_fitness !== undefined && data.best_true_fitness > -1 ?
+                data.best_true_fitness.toFixed(6) : 'N/A';
+
+            const lastCycle = data.history && data.history.length > 0 ? data.history[data.history.length - 1] : null;
+
+            document.getElementById('ppf').textContent = 
+                lastCycle && lastCycle.ppf !== undefined ? lastCycle.ppf.toFixed(4) : 'N/A';
+            
+            document.getElementById('keff').textContent = 
+                lastCycle && lastCycle.keff !== undefined ? lastCycle.keff.toFixed(5) : 'N/A';
+            
+            document.getElementById('keffErrorPercent').textContent = 
+                lastCycle && lastCycle.keff_error_percent !== undefined ? lastCycle.keff_error_percent.toFixed(2) + '%' : 'N/A';
+            
+            document.getElementById('ppfErrorPercent').textContent = 
+                lastCycle && lastCycle.ppf_error_percent !== undefined ? lastCycle.ppf_error_percent.toFixed(2) + '%' : 'N/A';
+            
+            document.getElementById('timeRemaining').textContent = 
+                data.estimated_remaining_time || 'Calculating...';
+            
+            document.getElementById('currentCycle').textContent = 
+                data.cycle_number !== null && data.cycle_number !== undefined ? 
+                data.cycle_number + 1 : 'N/A';
+        }
+
+        // Function to update chart
+        function updateChart(data) {
+            const fitnessHistory = data.history ? data.history.map(item => item.fitness) : [];
+            console.log('Updating chart with fitness history:', fitnessHistory);
+            
+            if (fitnessHistory && fitnessHistory.length > 0) {
+                fitnessChart.data.labels = Array.from({length: fitnessHistory.length}, (_, i) => i + 1);
+                fitnessChart.data.datasets[0].data = fitnessHistory;
+                fitnessChart.update('none');
+                document.getElementById('chartError').style.display = 'none';
+            } else {
+                document.getElementById('chartError').style.display = 'block';
+                document.getElementById('chartError').textContent = 'No fitness history data available';
+            }
+        }
+
+        // Function to load test data
+        function loadTestData() {
+            console.log('Loading test data...');
+            const testData = {
+                best_overall_fitness: 0.835580,
+                best_true_fitness: 0.831122,
+                history: [
+                    { cycle: 1, keff: 1.12437, ppf: 2.1234, fitness: 0.8101, keff_error_percent: 0.09, ppf_error_percent: 0.47 },
+                    { cycle: 2, keff: 1.11234, ppf: 2.0987, fitness: 0.8234, keff_error_percent: 0.12, ppf_error_percent: 0.52 },
+                    { cycle: 3, keff: 1.12890, ppf: 2.1156, fitness: 0.8155, keff_error_percent: 0.08, ppf_error_percent: 0.43 },
+                    { cycle: 4, keff: 1.11567, ppf: 1.9876, fitness: 0.8311, keff_error_percent: 0.11, ppf_error_percent: 0.49 }
+                ],
+                estimated_remaining_time: '2 days, 15:30:45',
+                cycle_number: 4,
+            };
+            
+            document.getElementById('connectionStatus').innerHTML = 
+                '<span id="statusIndicator" class="status-indicator status-connected"></span>Test Data Loaded';
+            updateStatusIndicator('connected');
+            updateLastUpdateTime();
+            
+            updateMetrics(testData);
+            updateChart(testData);
+        }
+
+        // Function to start polling
+        function startPolling() {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+            }
+            
+            console.log('Starting auto-update polling every 5 seconds...');
+            pollingInterval = setInterval(() => {
+                if (isPolling) {
+                    console.log('Polling interval triggered');
+                    fetchCheckpointData();
+                }
+            }, 5000);
+        }
+
+        // Function to stop polling
+        function stopPolling() {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+            console.log('Polling stopped');
+        }
+
+        // Function to toggle polling
+        function togglePolling() {
+            const button = document.getElementById('togglePolling');
+            
+            if (isPolling) {
+                isPolling = false;
+                button.textContent = 'Resume Auto-Update';
+                button.className = 'btn btn-success';
+                console.log('Auto-update paused');
+            } else {
+                isPolling = true;
+                button.textContent = 'Pause Auto-Update';
+                button.className = 'btn btn-outline-primary';
+                console.log('Auto-update resumed');
+                fetchCheckpointData();
+            }
+        }
+
+        // Event listeners
+        document.getElementById('loadTestData').addEventListener('click', loadTestData);
+        document.getElementById('togglePolling').addEventListener('click', togglePolling);
+
+        // Initialize the dashboard
+        console.log('Initializing dashboard...');
+        fetchCheckpointData();
+        startPolling();
+
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                console.log('Page hidden, polling continues in background');
+            } else {
+                console.log('Page visible, ensuring polling is active');
+                if (isPolling && !pollingInterval) {
+                    startPolling();
+                }
+                fetchCheckpointData();
+            }
+        });
+
+        // Handle page unload
+        window.addEventListener('beforeunload', () => {
+            stopPolling();
+        });
+
+        console.log('Dashboard initialized. Auto-update will occur every 5 seconds.');
+        console.log('Check the browser console for update logs.');
+    </script>
+</body>
+</html>
