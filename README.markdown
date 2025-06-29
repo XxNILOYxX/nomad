@@ -326,43 +326,73 @@ tallies.export_to_xml()
 
 By setting it up this way, the resulting `statepoint.h5` file will contain the exact data NOMAD needs to calculate the PPF and guide the optimization.
 
-### Step 3: Identify Central vs. Outer Assemblies
-Run a baseline OpenMC simulation with uniform enrichment, then analyze the power distribution to determine `num_central_assemblies`.
+## Step 3: Identify Central vs. Outer Assemblies
 
-**Python script for PPF calculation**:
+After running a baseline OpenMC simulation with a uniform enrichment profile, the next crucial step is to analyze the resulting power distribution. This analysis allows for the differentiation between central and outer fuel assemblies based on their power output, a key factor in enrichment zoning. The `num_central_assemblies` parameter, which defines the boundary between these two zones, is determined from this analysis.
+
+### Power Peaking Factor (PPF) Calculation
+
+A Python script is utilized to process the simulation output and calculate the Power Peaking Factor (PPF), which is the ratio of the maximum power produced in a single fuel cell to the average power across all fuel cells. This script also exports the normalized power for each fuel cell, which is essential for identifying high-power regions.
+
+#### Python Script for PPF Calculation
+
 ```python
 import openmc
 import numpy as np
 import pandas as pd
 import glob
 
-# Load the latest statepoint file
+# Load the latest statepoint file to access simulation results
 statepoint_file = sorted(glob.glob("statepoint.*.h5"))[-1]
 sp = openmc.StatePoint(statepoint_file)
 
-# Get the fission tally
+# Retrieve the fission tally, which contains power data
 tally = sp.get_tally(name="fission_in_fuel_cells")
 df = tally.get_pandas_dataframe()
 
-# Extract fission rates and cell IDs
+# Extract fission rates and corresponding cell IDs
 fission_rates = df['mean'].values
 cell_ids = df['cell'].values
 
-# Calculate PPF
+# Calculate the Power Peaking Factor (PPF)
 avg_power = np.mean(fission_rates)
 max_power = np.max(fission_rates)
 ppf = max_power / avg_power
 print(f"Power Peaking Factor (PPF): {ppf:.4f}")
 
-# Export results
+# Compile and export the results to a CSV file for analysis
 results_df = pd.DataFrame({
     'Fuel Cell ID': cell_ids,
     'Fission Rate': fission_rates,
     'Normalized Power': fission_rates / avg_power
 }).sort_values(by='Fuel Cell ID', ascending=True)
+
 results_df.to_csv("fission_rates_and_ppf.csv", index=False)
+print("Fission rate data exported to fission_rates_and_ppf.csv")
 ```
-- Open `fission_rates_and_ppf.csv`, identify high-power assemblies (e.g., the inner 54 assemblies), and set `num_central_assemblies = 54` in `config.ini`.
+
+Upon executing the script, open the generated `fission_rates_and_ppf.csv` file. By examining the `Normalized Power` column, you can identify the fuel assemblies operating at the highest power levels. These are typically located in the central region of the reactor core. For instance, after analysis, you might determine that the inner 54 assemblies exhibit the highest power output. This number would then be used to set `num_central_assemblies = 54` in the `config.ini` file.
+
+### Configuring Enrichment Ranges and Initial Sampling
+
+To optimize the enrichment zoning, it is necessary to define the search space for the plutonium content in both the central and outer regions of the core within the `config.ini` file.
+
+#### Determining `central_range` and `outer_range`
+
+The selection of `central_range` and `outer_range` is highly dependent on the specific reactor design and the goals of the optimization (e.g., power flattening, maximizing fuel cycle length). These ranges define the lower bound, upper bound, and step size for the enrichment percentages to be evaluated by the optimization algorithm.
+
+For example, consider a Sodium-Cooled Fast Reactor (SFR) with a core-wide average plutonium content of 15.99%. To flatten the power profile, one might explore lower enrichments in the high-power central region and higher enrichments in the lower-power outer region. A potential configuration could be:
+
+```ini
+central_range = 14.0, 15.5, 0.1
+outer_range = 14.5, 18.0, 0.1
+```
+
+It is critical to understand that these are starting points. Fine-tuning these ranges through iterative analysis is essential to discover the optimal enrichment distribution for your specific reactor design.
+
+#### Setting the `initial_samples`
+
+The `initial_samples` parameter in `config.ini` specifies the number of initial configurations to be simulated. It is recommended to use a value of at least 100. A sufficiently large and well-distributed set of initial samples ensures that the optimization algorithm thoroughly explores the defined search space. You can manually provide these initial configurations to guarantee comprehensive coverage of the possible enrichment combinations within your defined `central_range` and `outer_range`.
 
 ### Step 4: Configure `config.ini`
 Edit `config.ini` to match your reactor model. Key parameters include:
