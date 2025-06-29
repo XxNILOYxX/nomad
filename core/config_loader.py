@@ -65,9 +65,15 @@ class ConfigLoader:
         # Load [enrichment] section
         central_range = list(map(float, self.config.get('enrichment', 'central_range').split(',')))
         outer_range = list(map(float, self.config.get('enrichment', 'outer_range').split(',')))
+        
+        # Calculate the number of steps for central values
+        num_central_steps = int(round((central_range[1] - central_range[0]) / central_range[2])) + 1
+        # Calculate the number of steps for outer values
+        num_outer_steps = int(round((outer_range[1] - outer_range[0]) / outer_range[2])) + 1
+
         self.params['enrichment'] = {
-            'central_values': np.arange(central_range[0], central_range[1] + central_range[2], central_range[2]).tolist(),
-            'outer_values': np.arange(outer_range[0], outer_range[1] + outer_range[2], outer_range[2]).tolist(),
+            'central_values': [round(x, 2) for x in np.linspace(central_range[0], central_range[1], num_central_steps)],
+            'outer_values': [round(x, 2) for x in np.linspace(outer_range[0], outer_range[1], num_outer_steps)],
             'initial_samples': self.config.getint('enrichment', 'initial_samples'),
         }
         
@@ -116,6 +122,12 @@ class ConfigLoader:
             'n_neighbors': self.config.getint('interpolator', 'n_neighbors'),
         }
 
+        # Load PPF and Keff weights
+        self.params['true_fitness'] = {
+            'ppf_weight': self.config.getfloat('true_fitness', 'ppf_weight'),
+            'keff_weight': self.config.getfloat('true_fitness', 'keff_weight'),
+        }
+
         # Load fuel setup
         self.params['fuel'] = {
             'slack_isotope': self.fuel_setup.get('general', 'slack_isotope'),
@@ -154,6 +166,10 @@ class ConfigLoader:
         hw_p = self.params['hardware']
         if hw_p['cpu'] == 0 and hw_p['gpu'] == 0:
             raise ValueError("Configuration error: At least one of CPU or GPU must be enabled in [hardware].")
+        
+        tf_p = self.params['true_fitness']
+        if not np.isclose(tf_p['ppf_weight'] + tf_p['keff_weight'], 1.0):
+            raise ValueError("Weights in [true_fitness] section must sum to 1.0.")
 
         logging.info("Configuration validated successfully.")
 

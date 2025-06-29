@@ -10,7 +10,7 @@
     <style>
         body {
             background-color: #000;
-            color: #9370DB; /* Purple text */
+            color: #9370DB; 
         }
         .dashboard-container {
             max-width: 1200px;
@@ -30,7 +30,7 @@
         .metric-value {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #00FF00; /* Green for metric values */
+            color: #00FF00; 
         }
         #fitnessChart {
             max-height: 250px;
@@ -244,7 +244,6 @@
                 
                 const timestamp = new Date().getTime();
 
-                // --- MODIFICATION: Added 'data/' to the path ---
                 const response = await fetch(`data/ga_checkpoint.json?t=${timestamp}`);
                 
                 if (!response.ok) {

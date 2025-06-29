@@ -90,32 +90,31 @@ Ensure the following OpenMC input files are in the same directory as `RunOptimiz
 
 ---
 
-## Step 1: Define Fuel Materials and Assemblies
+### Step 1: Define Fuel Materials and Assemblies
 
-This is the most critical step in setting up your model for NOMAD. The optimizer works by individually adjusting the enrichment of **every single fuel assembly**. For this to work, your OpenMC model must be built with a specific structure:
+This is the most critical step in setting up your model for NOMAD. The optimizer works by individually adjusting the enrichment of *every single fuel assembly*. For this to work, your OpenMC model must be built with a specific structure:
 
 **Each fuel assembly in your core must be represented by its own unique `material` and its own unique `cell` (or `universe`).**
 
 Think of it like giving each assembly a unique ID that the program can find and modify. If you define one material and use it for multiple assemblies, the optimizer will not be able to assign different enrichment values to them.
 
-### How to Structure Your Model
+**How to Structure Your Model:**
 
-1. **Unique Materials**: If your core has 150 fuel assemblies, you must create 150 distinct `<material>` blocks in your `materials.xml` file. It's essential that their `id` attributes are sequential (e.g., 3, 4, 5, ..., 152).
+1.  **Unique Materials:** If your core has 150 fuel assemblies, you must create 150 distinct `<material>` blocks in your `materials.xml` file. It's essential that their `id` attributes are sequential (e.g., 3, 4, 5, ..., 152).
+2.  **Unique Cells/Universes:** Similarly, in your `geometry.xml`, each of these unique materials must fill a unique cell that represents the fuel region of an assembly.
 
-2. **Unique Cells/Universes**: Similarly, in your `geometry.xml`, each of these unique materials must fill a unique cell that represents the fuel region of an assembly.
-
-### Example Scenario (150 Assemblies)
+**Example Scenario (150 Assemblies):**
 
 Imagine your model's material IDs start at 3. Your `materials.xml` must be structured as follows:
 
 ```xml
 <material depletable="true" id="3" name="Fuel for Assembly 1">
-</material>
+  </material>
 <material depletable="true" id="4" name="Fuel for Assembly 2">
-</material>
-...
+  </material>
+
 <material depletable="true" id="152" name="Fuel for Assembly 150">
-</material>
+  </material>
 ```
 
 In your `config.ini`, you would then set:
@@ -127,165 +126,7 @@ start_id = 3
 
 **Pro-Tip**: When generating your model files programmatically (e.g., in a Jupyter Notebook), always use the "Restart Kernel and Clear All Outputs" command before running your script. This prevents old data from being cached and ensures your material and cell IDs are created fresh and correctly, avoiding hard-to-debug errors.
 
-### Example Code for Creating Individual Fissile Materials
 
-Here's an example of how to create individual fissile materials and their corresponding fuel assemblies. Use the following code as inspiration and modify it with your own reactor core parameters.
-
-```python
-all_materials_list = []
-# You can adjust this number as needed
-num_assemblies = 150
-
-# This loop creates variables fuel_1, fuel_2, ... fuel_150
-for i in range(1, num_assemblies + 1):
-    # Define the material object
-    fuel_material = openmc.Material(name=f'Fissile fuel Assembly {i}')
-    fuel_material.add_nuclide('U235', use your weight fraction, 'wo')
-    fuel_material.add_nuclide('U238', use your weight fraction, 'wo')
-    fuel_material.add_nuclide('Pu238', use your weight fraction, 'wo')
-    fuel_material.add_nuclide('Pu239', use your weight fraction, 'wo')
-    fuel_material.add_nuclide('Pu240', use your weight fraction, 'wo')
-    fuel_material.add_nuclide('Pu241', use your weight fraction, 'wo')
-    fuel_material.add_nuclide('Pu242', use your weight fraction, 'wo')
-    fuel_material.add_element('Zr', use your weight fraction, 'wo')
-    fuel_material.set_density('g/cm3', use your density)
-    fuel_material.depletable = True
-    fuel_material.temperature = fuel_temperature
-    # This line dynamically creates a variable named fuel_1, fuel_2, etc.
-    globals()[f'fuel_{i}'] = fuel_material
-    
-    # Add the new material to our list by accessing the dynamically created global variable
-    all_materials_list.append(globals()[f'fuel_{i}'])
-
-# Export all materials to a single XML file
-materials = openmc.Materials(all_materials_list)
-materials.export_to_xml()
-```
-
-### Example Code for Creating Individual Fissile Assemblies
-Similarly, you create a unique universe for each fuel assembly, filling it with its corresponding unique fuel material
-```python
-# This loop creates universes fa_inner_univ_1, fa_inner_univ_2, ...
-for i in range(1, num_assemblies + 1):
-    
-    # 1. Retrieve the unique fuel material for this specific assembly iteration
-    current_inner_fuel = globals()[f'fuel_{i}']
-
-    # 2. Define all cells for this assembly using local variables for simplicity
-    clad_cell = openmc.Cell(name=f'clad_cell_{i}', fill=cladding, region=clad_region)
-    sodium_cell = openmc.Cell(name=f'sodium_cell_{i}', fill=coolant, region=moderator_region)
-    fuel_cell = openmc.Cell(name=f'fuel_cell_{i}', fill=current_inner_fuel, region=fuel_region)
-    ht_cell = openmc.Cell(name=f'ht_cell_{i}', fill=cladding, region=ht_region)
-    Na_cell = openmc.Cell(name=f'Na_cell_{i}', fill=coolant, region=Na_region)
-    He_cell = openmc.Cell(name=f'He_cell_{i}', fill=helium, region=He_region)
-    stru_cell = openmc.Cell(name=f'stru_cell_{i}', fill=cladding, region=stru_region)
-
-    # 3. Define the pin universes using the cells created above
-    inner_core_fuel = openmc.Universe(name=f'inner_core_fuel_{i}', cells=[stru_cell, Na_cell, He_cell, fuel_region])
-    inner_fuel_cell = openmc.Cell(name=f'inner_fuel_cell_{i}', fill=inner_core_fuel, region=fuel_region)
-    inner_u = openmc.Universe(name=f'inner_pin_universe_{i}', cells=(inner_fuel_cell, clad_cell, sodium_cell, ht_cell))
-
-    # 4. Create the hexagonal lattice for this assembly
-    in_lat = openmc.HexLattice(name=f'inner_assembly_{i}')
-    in_lat.center = (0., 0.)
-    in_lat.pitch = (pin_to_pin_dist,)
-    in_lat.orientation = 'y'
-    in_lat.outer = sodium_mod_u
-
-    # Fill the lattice rings with this assembly's specific pin universe ('inner_u')
-    in_lat.universes = [
-        [inner_u] * 54, [inner_u] * 48, [inner_u] * 42, [inner_u] * 36, [inner_u] * 30,
-        [inner_u] * 24, [inner_u] * 18, [inner_u] * 12, [inner_u] * 6, [inner_u] * 1
-    ]
-
-    # 5. Define the outer structure of the assembly
-    main_in_assembly = openmc.Cell(name=f'main_in_assembly_{i}', fill=in_lat, region=prism_inner & -top & +bottom)
-    assembly_sleave = openmc.Cell(name=f'assembly_sleave_{i}', fill=clading, region=prism_middle & ~prism_inner & -top & +bottom)
-    outer_sodium = openmc.Cell(name=f'outer_sodium_{i}', fill=coolant, region=prism_outer & ~prism_middle & -top & +bottom)
-
-    # 6. Create the final, complete universe for this fuel assembly
-    final_assembly_universe = openmc.Universe(name=f'fa_inner_univ_{i}', cells=[main_in_assembly, assembly_sleave, outer_sodium])
-
-    # 7. Dynamically create the global variable (fa_inner_univ_1, fa_inner_univ_2, etc.)
-    globals()[f'fa_inner_univ_{i}'] = final_assembly_universe
-```
-For the full lattice 
-```
-pitch=16.2471
-lattice = openmc.HexLattice(name='Your Reactor Name')
-lattice.center = (0., 0.)
-lattice.pitch = (pitch,)
-lattice.outer = sodium_mod_u
-
-ring_1 = [control_rods_univ]
-
-ring_2 = [fa_inner_univ_1, fa_inner_univ_2, fa_inner_univ_3, fa_inner_univ_4, fa_inner_univ_5, fa_inner_univ_6]
-
-ring_3 = [
-    fa_inner_univ_7, fa_inner_univ_8, fa_inner_univ_9, fa_inner_univ_10, fa_inner_univ_11, fa_inner_univ_12,
-    fa_inner_univ_13, fa_inner_univ_14, fa_inner_univ_15, fa_inner_univ_16, fa_inner_univ_17, fa_inner_univ_18,
-]
-
-ring_4 = [
-    control_rods_univ, fa_inner_univ_19, fa_inner_univ_20, control_rods_univ, fa_inner_univ_21, fa_inner_univ_22,
-    control_rods_univ, fa_inner_univ_23, fa_inner_univ_24, control_rods_univ, fa_inner_univ_25, fa_inner_univ_26,
-    control_rods_univ, fa_inner_univ_27, fa_inner_univ_28, control_rods_univ, fa_inner_univ_29, fa_inner_univ_30,
-]
-
-ring_5 = [
-    fa_inner_univ_31, fa_inner_univ_32, fa_inner_univ_33, fa_inner_univ_34, fa_inner_univ_35, fa_inner_univ_36,
-    fa_inner_univ_37, fa_inner_univ_38, fa_inner_univ_39, fa_inner_univ_40, fa_inner_univ_41, fa_inner_univ_42,
-    fa_inner_univ_43, fa_inner_univ_44, fa_inner_univ_45, fa_inner_univ_46, fa_inner_univ_47, fa_inner_univ_48,
-    fa_inner_univ_49, fa_inner_univ_50, fa_inner_univ_51, fa_inner_univ_52, fa_inner_univ_53, fa_inner_univ_54,
-]
-
-ring_6 = [
-    fa_inner_univ_55, fa_inner_univ_56, fa_inner_univ_57, fa_inner_univ_58, fa_inner_univ_59, fa_inner_univ_60,
-    fa_inner_univ_61, fa_inner_univ_62, fa_inner_univ_63, fa_inner_univ_64, fa_inner_univ_65, fa_inner_univ_66,
-    fa_inner_univ_67, fa_inner_univ_68, fa_inner_univ_69, fa_inner_univ_70, fa_inner_univ_71, fa_inner_univ_72,
-    fa_inner_univ_73, fa_inner_univ_74, fa_inner_univ_75, fa_inner_univ_76, fa_inner_univ_77, fa_inner_univ_78,
-    fa_inner_univ_79, fa_inner_univ_80, fa_inner_univ_81, fa_inner_univ_82, fa_inner_univ_83, fa_inner_univ_84,
-]
-
-ring_7 = [
-    control_rods_univ, fa_inner_univ_85, fa_inner_univ_86, control_rods_univ, fa_inner_univ_87, fa_inner_univ_88,
-    control_rods_univ, fa_inner_univ_89, fa_inner_univ_90, control_rods_univ, fa_inner_univ_91, fa_inner_univ_92,
-    control_rods_univ, fa_inner_univ_93, fa_inner_univ_94, control_rods_univ, fa_inner_univ_95, fa_inner_univ_96,
-    control_rods_univ, fa_inner_univ_97, fa_inner_univ_98, control_rods_univ, fa_inner_univ_99, fa_inner_univ_100,
-    control_rods_univ, fa_inner_univ_101, fa_inner_univ_102, control_rods_univ, fa_inner_univ_103, fa_inner_univ_104,
-    control_rods_univ, fa_inner_univ_105, fa_inner_univ_106, control_rods_univ, fa_inner_univ_107, fa_inner_univ_108,
-]
-
-ring_8 = [
-    fa_inner_univ_109, fa_inner_univ_110, fa_inner_univ_111, fa_inner_univ_112, fa_inner_univ_113, fa_inner_univ_114,
-    fa_inner_univ_115, fa_inner_univ_116, fa_inner_univ_117, fa_inner_univ_118, fa_inner_univ_119, fa_inner_univ_120,
-    fa_inner_univ_121, fa_inner_univ_122, fa_inner_univ_123, fa_inner_univ_124, fa_inner_univ_125, fa_inner_univ_126,
-    fa_inner_univ_127, fa_inner_univ_128, fa_inner_univ_129, fa_inner_univ_130, fa_inner_univ_131, fa_inner_univ_132,
-    fa_inner_univ_133, fa_inner_univ_134, fa_inner_univ_135, fa_inner_univ_136, fa_inner_univ_137, fa_inner_univ_138,
-    fa_inner_univ_139, fa_inner_univ_140, fa_inner_univ_141, fa_inner_univ_142, fa_inner_univ_143, fa_inner_univ_144,
-    fa_inner_univ_145, fa_inner_univ_146, fa_inner_univ_147, fa_inner_univ_148, fa_inner_univ_149, fa_inner_univ_150,
-]
-ring_9     =  ([radial_reflector_univ]*2 + [fa_outer_univ]*5 + [radial_reflector_univ]*1) * 6
-ring_10    =  [radial_reflector_univ]*54
-ring_11    =  ([radial_shield_univ]*2 + [radial_reflector_univ]*7 + [radial_shield_univ]*1)*6
-ring_12    =  ([sodium_mod_u]*2 + [radial_shield_univ]*8 + [sodium_mod_u])*6
-
-lattice.universes = [ring_12, ring_11, ring_10, ring_9, ring_8, ring_7, ring_6, ring_5, ring_4, ring_3, ring_2, ring_1]
-lattice.orientation = 'x'
-
-# Create the prism that will contain the lattice
-outer_core_surface = openmc.model.hexagonal_prism(edge_length=196.9856187, boundary_type='vacuum',orientation='x')
-
-# Fill a cell with the lattice. This cell is filled with the lattice and contained within the prism.
-core = openmc.Cell( fill=lattice, region=outer_core_surface & -top & +bottom)
-
-# Create a universe that contains both 
-main_u = openmc.Universe( cells=[core]) 
-
-
-geom = openmc.Geometry(main_u)
-geom.export_to_xml()
-```
 
 ### Step 2: Set Up Tallies for PPF Calculation
 
@@ -326,73 +167,43 @@ tallies.export_to_xml()
 
 By setting it up this way, the resulting `statepoint.h5` file will contain the exact data NOMAD needs to calculate the PPF and guide the optimization.
 
-## Step 3: Identify Central vs. Outer Assemblies
+### Step 3: Identify Central vs. Outer Assemblies
+Run a baseline OpenMC simulation with uniform enrichment, then analyze the power distribution to determine `num_central_assemblies`.
 
-After running a baseline OpenMC simulation with a uniform enrichment profile, the next crucial step is to analyze the resulting power distribution. This analysis allows for the differentiation between central and outer fuel assemblies based on their power output, a key factor in enrichment zoning. The `num_central_assemblies` parameter, which defines the boundary between these two zones, is determined from this analysis.
-
-### Power Peaking Factor (PPF) Calculation
-
-A Python script is utilized to process the simulation output and calculate the Power Peaking Factor (PPF), which is the ratio of the maximum power produced in a single fuel cell to the average power across all fuel cells. This script also exports the normalized power for each fuel cell, which is essential for identifying high-power regions.
-
-#### Python Script for PPF Calculation
-
+**Python script for PPF calculation**:
 ```python
 import openmc
 import numpy as np
 import pandas as pd
 import glob
 
-# Load the latest statepoint file to access simulation results
+# Load the latest statepoint file
 statepoint_file = sorted(glob.glob("statepoint.*.h5"))[-1]
 sp = openmc.StatePoint(statepoint_file)
 
-# Retrieve the fission tally, which contains power data
+# Get the fission tally
 tally = sp.get_tally(name="fission_in_fuel_cells")
 df = tally.get_pandas_dataframe()
 
-# Extract fission rates and corresponding cell IDs
+# Extract fission rates and cell IDs
 fission_rates = df['mean'].values
 cell_ids = df['cell'].values
 
-# Calculate the Power Peaking Factor (PPF)
+# Calculate PPF
 avg_power = np.mean(fission_rates)
 max_power = np.max(fission_rates)
 ppf = max_power / avg_power
 print(f"Power Peaking Factor (PPF): {ppf:.4f}")
 
-# Compile and export the results to a CSV file for analysis
+# Export results
 results_df = pd.DataFrame({
     'Fuel Cell ID': cell_ids,
     'Fission Rate': fission_rates,
     'Normalized Power': fission_rates / avg_power
 }).sort_values(by='Fuel Cell ID', ascending=True)
-
 results_df.to_csv("fission_rates_and_ppf.csv", index=False)
-print("Fission rate data exported to fission_rates_and_ppf.csv")
 ```
-
-Upon executing the script, open the generated `fission_rates_and_ppf.csv` file. By examining the `Normalized Power` column, you can identify the fuel assemblies operating at the highest power levels. These are typically located in the central region of the reactor core. For instance, after analysis, you might determine that the inner 54 assemblies exhibit the highest power output. This number would then be used to set `num_central_assemblies = 54` in the `config.ini` file.
-
-### Configuring Enrichment Ranges and Initial Sampling
-
-To optimize the enrichment zoning, it is necessary to define the search space for the plutonium content in both the central and outer regions of the core within the `config.ini` file.
-
-#### Determining `central_range` and `outer_range`
-
-The selection of `central_range` and `outer_range` is highly dependent on the specific reactor design and the goals of the optimization (e.g., power flattening, maximizing fuel cycle length). These ranges define the lower bound, upper bound, and step size for the enrichment percentages to be evaluated by the optimization algorithm.
-
-For example, consider a Sodium-Cooled Fast Reactor (SFR) with a core-wide average plutonium content of 15.99%. To flatten the power profile, one might explore lower enrichments in the high-power central region and higher enrichments in the lower-power outer region. A potential configuration could be:
-
-```ini
-central_range = 14.0, 15.5, 0.1
-outer_range = 14.5, 18.0, 0.1
-```
-
-It is critical to understand that these are starting points. Fine-tuning these ranges through iterative analysis is essential to discover the optimal enrichment distribution for your specific reactor design.
-
-#### Setting the `initial_samples`
-
-The `initial_samples` parameter in `config.ini` specifies the number of initial configurations to be simulated. It is recommended to use a value of at least 100. A sufficiently large and well-distributed set of initial samples ensures that the optimization algorithm thoroughly explores the defined search space. You can manually provide these initial configurations to guarantee comprehensive coverage of the possible enrichment combinations within your defined `central_range` and `outer_range`.
+- Open `fission_rates_and_ppf.csv`, identify high-power assemblies (e.g., the inner 54 assemblies), and set `num_central_assemblies = 54` in `config.ini`.
 
 ### Step 4: Configure `config.ini`
 Edit `config.ini` to match your reactor model. Key parameters include:
@@ -545,3 +356,25 @@ We value your input and will review your contributions as soon as possible.
 This project is licensed under the **MIT License**.
 
 See the [LICENSE](LICENSE) file for more details.
+
+**MIT License**
+
+Copyright (c) 2025 [Md Hasebul Hasan Niloy]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

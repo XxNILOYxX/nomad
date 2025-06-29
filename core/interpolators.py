@@ -109,27 +109,6 @@ class BaseInterpolator:
             self.retrain()
             self.last_retrain_size = len(self.features)
 
-    def predict(self, enrichment_config: List[float]) -> float:
-        """Predicts a target value for a given enrichment configuration."""
-        if not self.features or len(self.features) < self.interp_config['min_interp_points'] or self.model is None:
-            # Return a sensible default if not enough data
-            return self.sim_config['target_keff'] if isinstance(self, KeffInterpolator) else 2.0
-
-        feature_vector = self._get_features(enrichment_config).reshape(1, -1)
-        X_scaled = self.scaler.transform(feature_vector)
-        
-        try:
-            if self.use_gpu:
-                X_scaled_gpu = cupy.asarray(X_scaled)
-                prediction = self.model.predict(X_scaled_gpu)
-                return float(cupy.asnumpy(prediction)[0])
-            else:
-                prediction = self.model.predict(X_scaled)
-                return float(prediction[0])
-        except Exception as e:
-            logging.error(f"Prediction failed in {self.__class__.__name__}: {e}")
-            return self.sim_config['target_keff'] if isinstance(self, KeffInterpolator) else 2.0
-
     def retrain(self):
         raise NotImplementedError
 

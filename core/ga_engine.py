@@ -14,7 +14,8 @@ class GeneticAlgorithm:
         self.ga_config = config['ga']
         self.sim_config = config['simulation']
         self.enrich_config = config['enrichment']
-        
+        self.true_fitness_config = config['true_fitness']
+
         self.keff_interpolator = keff_interpolator
         self.ppf_interpolator = ppf_interpolator
 
@@ -94,7 +95,7 @@ class GeneticAlgorithm:
 
     
     def fitness_function(self, keff: float, ppf: float) -> float:
-        """Calculates a balanced fitness score based on keff and PPF."""
+        """Calculates a balanced fitness score based on keff and PPF. Used in the GA LOOP"""
         target_keff = self.sim_config['target_keff']
         keff_tolerance = self.sim_config['keff_tolerance']
         
@@ -122,6 +123,30 @@ class GeneticAlgorithm:
             w_ppf, w_keff = (0.7, 0.3) # Prioritize minimizing PPF
 
         return w_ppf * ppf_score + w_keff * keff_score
+
+    def calculate_true_fitness(self, keff: float, ppf: float) -> float:
+        """
+        Calculates the true fitness score using FIXED, configurable weights.
+        This is used for the final evaluation after an OpenMC simulation.
+        """
+        target_keff = self.sim_config['target_keff']
+        keff_tolerance = self.sim_config['keff_tolerance']
+        keff_penalty_factor = self.ga_config['keff_penalty_factor']
+        
+        keff_diff = abs(keff - target_keff)
+        
+        ppf_score = 1.0 / ppf if ppf > 0 else 0
+
+        if keff_diff > keff_tolerance:
+            keff_score = np.exp(-keff_penalty_factor * (keff_diff - keff_tolerance))
+        else:
+            keff_score = (keff_tolerance - keff_diff) / keff_tolerance
+
+        w_ppf = self.true_fitness_config['ppf_weight']
+        w_keff = self.true_fitness_config['keff_weight']
+        
+        return w_ppf * ppf_score + w_keff * keff_score
+
 
     def _generate_new_population(self, keff_preds: List[float], mut_rate: float, cross_rate: float):
         """Creates the next generation through selection, crossover, and mutation."""
