@@ -15,8 +15,7 @@ class Checkpoint:
             config: The main configuration dictionary.
         """
         self.filepath = config['simulation']['checkpoint_file']
-        self.keff_interp_file = config['simulation']['keff_interp_file']
-        self.ppf_interp_file = config['simulation']['ppf_interp_file']
+        # The interpolator file paths are no longer needed here (BUG FIX)
         
         # Ensure data directory exists
         data_dir = os.path.dirname(self.filepath)
@@ -55,11 +54,6 @@ class Checkpoint:
         """
         if not os.path.exists(self.filepath):
             logging.info("No checkpoint file found. Starting a new run.")
-            return None
-        
-        # A valid state requires both the checkpoint and the interpolator data.
-        if not os.path.exists(self.keff_interp_file) or not os.path.exists(self.ppf_interp_file):
-            logging.warning("Checkpoint file found, but interpolator data is missing. Starting a new run.")
             return None
 
         try:

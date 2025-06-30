@@ -140,19 +140,26 @@ class GeneticAlgorithm:
             child1, child2 = self._crossover(parent1, parent2, cross_rate)
             
             # Get the predicted keff for the parent to guide mutation
-            parent1_idx = self.population.index(parent1)
-            parent2_idx = self.population.index(parent2)
-            
-            new_population.append(self._smart_mutate(child1, mut_rate, keff_preds[parent1_idx]))
+            try: # Use a try-except block in case the parent is from the elite and not in the current population list
+                parent1_idx = self.population.index(parent1)
+                parent2_idx = self.population.index(parent2)
+            except ValueError:
+                parent1_idx = -1
+                parent2_idx = -1
+
+            keff1 = keff_preds[parent1_idx] if parent1_idx != -1 else self.sim_config['target_keff']
+            keff2 = keff_preds[parent2_idx] if parent2_idx != -1 else self.sim_config['target_keff']
+
+            new_population.append(self._smart_mutate(child1, mut_rate, keff1))
             if len(new_population) < self.ga_config['population_size']:
-                new_population.append(self._smart_mutate(child2, mut_rate, keff_preds[parent2_idx]))
+                new_population.append(self._smart_mutate(child2, mut_rate, keff2))
         
         self.population = new_population
 
     def _selection(self) -> List[float]:
         """Tournament selection."""
-        competitors = random.sample(list(enumerate(self.fitnesses)), self.ga_config['tournament_size'])
-        winner_idx, _ = max(competitors, key=lambda item: item[1])
+        competitors_indices = random.sample(range(len(self.population)), self.ga_config['tournament_size'])
+        winner_idx = max(competitors_indices, key=lambda idx: self.fitnesses[idx])
         return self.population[winner_idx]
 
     def _crossover(self, parent1: List[float], parent2: List[float], cross_rate: float) -> Tuple[List[float], List[float]]:
