@@ -7,6 +7,7 @@
 NOMAD is a sophisticated tool for optimizing nuclear reactor core fuel loading patterns. It leverages a **Genetic Algorithm (GA)** coupled with **machine learning (ML)** models to efficiently determine fuel assembly enrichment arrangements that achieve a target **multiplication factor (k_eff)** while minimizing the **Power Peaking Factor (PPF)**. This ensures safe, efficient, and compliant reactor operation.
 
 By integrating ML models as high-speed surrogates for computationally expensive neutron transport simulations (e.g., via OpenMC), NOMAD significantly accelerates the optimization process while maintaining accuracy.
+![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/NOMAD.png?raw=true)
 
 ---
 
