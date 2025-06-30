@@ -14,7 +14,6 @@ class GeneticAlgorithm:
         self.ga_config = config['ga']
         self.sim_config = config['simulation']
         self.enrich_config = config['enrichment']
-        self.true_fitness_config = config['true_fitness']
 
         self.keff_interpolator = keff_interpolator
         self.ppf_interpolator = ppf_interpolator
