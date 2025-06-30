@@ -1,4 +1,4 @@
-# NOMAD: Nuclear Optimization with Machine-learning-Accelerated Design (A Genetic Algorithm with KNN/Random Forest/Ridge for Fuel Pattern Optimization)
+![image](https://github.com/user-attachments/assets/0b7d73e6-8c3f-429f-8af1-92ff99c48276)# NOMAD: Nuclear Optimization with Machine-learning-Accelerated Design (A Genetic Algorithm with KNN/Random Forest/Ridge for Fuel Pattern Optimization)
 [![Powered by](https://img.shields.io/badge/Powered%20by-Genetic%20Algorithm-purple.svg)](https://en.wikipedia.org/wiki/Genetic_algorithm)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.8+-yellow.svg)](https://www.python.org/)
@@ -24,6 +24,7 @@ By integrating ML models as high-speed surrogates for computationally expensive 
   - [Step 5: Configure `setup_fuel.ini`](#step-5-configure-setup_fuelini)
   - [Step 6: Run the Optimizer](#step-6-run-the-optimizer)
   - [Step 7: Monitor Progress with the Live Dashboard](#step-7-monitor-progress-with-the-live-dashboard)
+- [Results](#results)
 - [Example Configuration](#example-configuration)
 - [Disclaimer](#disclaimer)
 - [Contributing](#contributing)
@@ -449,7 +450,37 @@ Visualize GA progress in real-time:
 3. Data appears after the first GA cycle creates `data/ga_checkpoint.json`.
 
 ---
+## Results
+This section presents the results from an initial case study applying the NOMAD framework to a sodium-fast reactor model https://doi.org/10.1016/j.anucene.2024.111019 (specifically the axial model).
 
+# Case Study Configuration
+This preliminary study utilized an earlier, monolithic version of the NOMAD code. The key aspects of this configuration include:
+
+Interpolation Method: K-Nearest Neighbors (KNN) was used as the surrogate model for predicting both k-effective and the Power Peaking Factor (PPF).
+
+Initialization: The optimization process was initialized using a pre-defined set of 40 specific enrichment configurations for the central and outer core regions, rather than randomly generated samples.
+
+# Optimization Process Performance
+The performance of the genetic algorithm and the accuracy of the surrogate models were tracked throughout the optimization. The following figures illustrate the evolution of the fitness score and the error of the KNN interpolators over the OpenMC cycles.
+
+Figure 1: Evolution of the fitness score over the optimization cycles.
+![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/fitness_score.png?raw=true)
+Figure 2: The percentage error of the k-effective KNN interpolator, indicating the model's predictive accuracy from cycle to cycle.
+![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/keff_error_percent.png?raw=true)
+Figure 3: The percentage error of the Power Peaking Factor (PPF) KNN interpolator throughout the run.
+![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/ppf_error_percent.png?raw=true)
+
+# Core Power Profile Optimization
+A primary objective of fuel loading pattern optimization is to flatten the power distribution, which enhances thermal performance and fuel utilization. The figures below compare the power profile of a reference core with uniform (homogeneous) enrichment against the profile achieved using the heterogeneous loading pattern developed by NOMAD.
+
+Figure 4: Power distribution in a reference core with a standard homogeneous fuel loading, showing a significant power peak in the center.
+![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/Without%20NOMAD.png?raw=true)
+
+Figure 5: Optimized power distribution achieved with the heterogeneous fuel loading pattern from NOMAD. The profile is visibly flatter, with a reduced central peak and more uniform power across the assemblies.
+![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/With%20NOMAD.png?raw=true)
+
+As demonstrated, the NOMAD framework successfully identified a fuel loading pattern that significantly flattens the core power profile, achieving a key goal in advanced reactor design.
+---
 ## Example Configuration
 
 **Example `config.ini`**:
