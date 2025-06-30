@@ -122,12 +122,6 @@ class ConfigLoader:
             'n_neighbors': self.config.getint('interpolator', 'n_neighbors'),
         }
 
-        # Load PPF and Keff weights
-        self.params['true_fitness'] = {
-            'ppf_weight': self.config.getfloat('true_fitness', 'ppf_weight'),
-            'keff_weight': self.config.getfloat('true_fitness', 'keff_weight'),
-        }
-
         # Load fuel setup
         self.params['fuel'] = {
             'slack_isotope': self.fuel_setup.get('general', 'slack_isotope'),
@@ -166,10 +160,6 @@ class ConfigLoader:
         hw_p = self.params['hardware']
         if hw_p['cpu'] == 0 and hw_p['gpu'] == 0:
             raise ValueError("Configuration error: At least one of CPU or GPU must be enabled in [hardware].")
-        
-        tf_p = self.params['true_fitness']
-        if not np.isclose(tf_p['ppf_weight'] + tf_p['keff_weight'], 1.0):
-            raise ValueError("Weights in [true_fitness] section must sum to 1.0.")
 
         logging.info("Configuration validated successfully.")
 
