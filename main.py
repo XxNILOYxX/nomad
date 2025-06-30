@@ -235,7 +235,7 @@ class MainOptimizer:
             self.keff_interpolator.add_data_point(best_ga_individual, true_keff)
             self.ppf_interpolator.add_data_point(best_ga_individual, true_ppf)
 
-            true_fitness = self.ga_engine.calculate_true_fitness(true_keff, true_ppf)
+            true_fitness = self.ga_engine.fitness_function(true_keff, true_ppf)
             keff_error_percent = (abs(predicted_keff - true_keff) / true_keff) * 100 if true_keff != 0 else 0.0
             ppf_error_percent = (abs(predicted_ppf - true_ppf) / true_ppf) * 100 if true_ppf != 0 else 0.0
             
