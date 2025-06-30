@@ -210,7 +210,7 @@ for i in range(1, num_assemblies + 1):
     globals()[f'fa_inner_univ_{i}'] = final_assembly_universe
 ```
 And the lattice of the core might look like the following
-```
+```python
 pitch= assembly pitch
 lattice = openmc.HexLattice(name='Your Reactor Name')
 lattice.center = (0., 0.)
