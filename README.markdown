@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/0b7d73e6-8c3f-429f-8af1-92ff99c48276)# NOMAD: Nuclear Optimization with Machine-learning-Accelerated Design (A Genetic Algorithm with KNN/Random Forest/Ridge for Fuel Pattern Optimization)
+# NOMAD: Nuclear Optimization with Machine-learning-Accelerated Design (A Genetic Algorithm with KNN/Random Forest/Ridge for Fuel Pattern Optimization)
 [![Powered by](https://img.shields.io/badge/Powered%20by-Genetic%20Algorithm-purple.svg)](https://en.wikipedia.org/wiki/Genetic_algorithm)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.8+-yellow.svg)](https://www.python.org/)
