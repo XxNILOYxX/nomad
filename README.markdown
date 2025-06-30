@@ -471,7 +471,7 @@ Figure 3: The percentage error of the Power Peaking Factor (PPF) KNN interpolato
 ![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/ppf_error_percent.png?raw=true)
 
 # Core Power Profile Optimization
-A primary objective of fuel loading pattern optimization is to flatten the power distribution, which enhances thermal performance and fuel utilization. The figures below compare the power profile of a reference core with uniform (homogeneous) enrichment against the profile achieved using the heterogeneous loading pattern developed by NOMAD.
+A primary objective of fuel loading pattern optimization is to flatten the power distribution, which enhances thermal performance and fuel utilization. The figures below compare the power profile of a reference core with uniform (homogeneous) enrichment against the profile achieved using the heterogeneous loading pattern developed by NOMAD. In both visualizations, the relative power for each assembly is defined as the ratio of its specific power output to the average assembly power across the entire core.
 
 Figure 4: Power distribution in a reference core with a standard homogeneous fuel loading, showing a significant power peak in the center.
 ![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/Without%20NOMAD.png?raw=true)
@@ -480,6 +480,7 @@ Figure 5: Optimized power distribution achieved with the heterogeneous fuel load
 ![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/With%20NOMAD.png?raw=true)
 
 As demonstrated, the NOMAD framework successfully identified a fuel loading pattern that significantly flattens the core power profile, achieving a key goal in advanced reactor design.
+
 ---
 ## Example Configuration
 
