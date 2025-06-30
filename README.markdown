@@ -7,6 +7,7 @@
 NOMAD is a sophisticated tool for optimizing nuclear reactor core fuel loading patterns. It leverages a **Genetic Algorithm (GA)** coupled with **machine learning (ML)** models to efficiently determine fuel assembly enrichment arrangements that achieve a target **multiplication factor (k_eff)** while minimizing the **Power Peaking Factor (PPF)**. This ensures safe, efficient, and compliant reactor operation.
 
 By integrating ML models as high-speed surrogates for computationally expensive neutron transport simulations (e.g., via OpenMC), NOMAD significantly accelerates the optimization process while maintaining accuracy.
+![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/NOMAD.png?raw=true)
 
 ---
 
@@ -24,6 +25,7 @@ By integrating ML models as high-speed surrogates for computationally expensive 
   - [Step 5: Configure `setup_fuel.ini`](#step-5-configure-setup_fuelini)
   - [Step 6: Run the Optimizer](#step-6-run-the-optimizer)
   - [Step 7: Monitor Progress with the Live Dashboard](#step-7-monitor-progress-with-the-live-dashboard)
+- [Results](#results)
 - [Example Configuration](#example-configuration)
 - [Disclaimer](#disclaimer)
 - [Contributing](#contributing)
@@ -209,6 +211,81 @@ for i in range(1, num_assemblies + 1):
     # 7. Dynamically create the global variable (fa_inner_univ_1, fa_inner_univ_2, etc.)
     globals()[f'fa_inner_univ_{i}'] = final_assembly_universe
 ```
+And the lattice of the core might look like the following
+```python
+pitch= assembly pitch
+lattice = openmc.HexLattice(name='Your Reactor Name')
+lattice.center = (0., 0.)
+lattice.pitch = (pitch,)
+lattice.outer = sodium_mod_u
+
+ring_1 = [control_rods_univ]
+
+ring_2 = [fa_inner_univ_1, fa_inner_univ_2, fa_inner_univ_3, fa_inner_univ_4, fa_inner_univ_5, fa_inner_univ_6]
+
+ring_3 = [
+    fa_inner_univ_7, fa_inner_univ_8, fa_inner_univ_9, fa_inner_univ_10, fa_inner_univ_11, fa_inner_univ_12,
+    fa_inner_univ_13, fa_inner_univ_14, fa_inner_univ_15, fa_inner_univ_16, fa_inner_univ_17, fa_inner_univ_18,
+]
+
+ring_4 = [
+    control_rods_univ, fa_inner_univ_19, fa_inner_univ_20, control_rods_univ, fa_inner_univ_21, fa_inner_univ_22,
+    control_rods_univ, fa_inner_univ_23, fa_inner_univ_24, control_rods_univ, fa_inner_univ_25, fa_inner_univ_26,
+    control_rods_univ, fa_inner_univ_27, fa_inner_univ_28, control_rods_univ, fa_inner_univ_29, fa_inner_univ_30,
+]
+
+ring_5 = [
+    fa_inner_univ_31, fa_inner_univ_32, fa_inner_univ_33, fa_inner_univ_34, fa_inner_univ_35, fa_inner_univ_36,
+    fa_inner_univ_37, fa_inner_univ_38, fa_inner_univ_39, fa_inner_univ_40, fa_inner_univ_41, fa_inner_univ_42,
+    fa_inner_univ_43, fa_inner_univ_44, fa_inner_univ_45, fa_inner_univ_46, fa_inner_univ_47, fa_inner_univ_48,
+    fa_inner_univ_49, fa_inner_univ_50, fa_inner_univ_51, fa_inner_univ_52, fa_inner_univ_53, fa_inner_univ_54,
+]
+
+ring_6 = [
+    fa_inner_univ_55, fa_inner_univ_56, fa_inner_univ_57, fa_inner_univ_58, fa_inner_univ_59, fa_inner_univ_60,
+    fa_inner_univ_61, fa_inner_univ_62, fa_inner_univ_63, fa_inner_univ_64, fa_inner_univ_65, fa_inner_univ_66,
+    fa_inner_univ_67, fa_inner_univ_68, fa_inner_univ_69, fa_inner_univ_70, fa_inner_univ_71, fa_inner_univ_72,
+    fa_inner_univ_73, fa_inner_univ_74, fa_inner_univ_75, fa_inner_univ_76, fa_inner_univ_77, fa_inner_univ_78,
+    fa_inner_univ_79, fa_inner_univ_80, fa_inner_univ_81, fa_inner_univ_82, fa_inner_univ_83, fa_inner_univ_84,
+]
+
+ring_7 = [
+    control_rods_univ, fa_inner_univ_85, fa_inner_univ_86, control_rods_univ, fa_inner_univ_87, fa_inner_univ_88,
+    control_rods_univ, fa_inner_univ_89, fa_inner_univ_90, control_rods_univ, fa_inner_univ_91, fa_inner_univ_92,
+    control_rods_univ, fa_inner_univ_93, fa_inner_univ_94, control_rods_univ, fa_inner_univ_95, fa_inner_univ_96,
+    control_rods_univ, fa_inner_univ_97, fa_inner_univ_98, control_rods_univ, fa_inner_univ_99, fa_inner_univ_100,
+    control_rods_univ, fa_inner_univ_101, fa_inner_univ_102, control_rods_univ, fa_inner_univ_103, fa_inner_univ_104,
+    control_rods_univ, fa_inner_univ_105, fa_inner_univ_106, control_rods_univ, fa_inner_univ_107, fa_inner_univ_108,
+]
+
+ring_8 = [
+    fa_inner_univ_109, fa_inner_univ_110, fa_inner_univ_111, fa_inner_univ_112, fa_inner_univ_113, fa_inner_univ_114,
+    fa_inner_univ_115, fa_inner_univ_116, fa_inner_univ_117, fa_inner_univ_118, fa_inner_univ_119, fa_inner_univ_120,
+    fa_inner_univ_121, fa_inner_univ_122, fa_inner_univ_123, fa_inner_univ_124, fa_inner_univ_125, fa_inner_univ_126,
+    fa_inner_univ_127, fa_inner_univ_128, fa_inner_univ_129, fa_inner_univ_130, fa_inner_univ_131, fa_inner_univ_132,
+    fa_inner_univ_133, fa_inner_univ_134, fa_inner_univ_135, fa_inner_univ_136, fa_inner_univ_137, fa_inner_univ_138,
+    fa_inner_univ_139, fa_inner_univ_140, fa_inner_univ_141, fa_inner_univ_142, fa_inner_univ_143, fa_inner_univ_144,
+    fa_inner_univ_145, fa_inner_univ_146, fa_inner_univ_147, fa_inner_univ_148, fa_inner_univ_149, fa_inner_univ_150,
+]
+ring_9     =  ([radial_reflector_univ]*2 + [fa_outer_univ]*5 + [radial_reflector_univ]*1) * 6
+ring_10    =  [radial_reflector_univ]*54
+ring_11    =  ([radial_shield_univ]*2 + [radial_reflector_univ]*7 + [radial_shield_univ]*1)*6
+ring_12    =  ([sodium_mod_u]*2 + [radial_shield_univ]*8 + [sodium_mod_u])*6
+
+lattice.universes = [ring_12, ring_11, ring_10, ring_9, ring_8, ring_7, ring_6, ring_5, ring_4, ring_3, ring_2, ring_1]
+lattice.orientation = 'x'
+
+# Create the prism that will contain the lattice
+outer_core_surface = openmc.model.hexagonal_prism(edge_length=196.9856187, boundary_type='vacuum',orientation='x')
+
+# Fill a cell with the lattice. This cell is filled with the lattice and contained within the prism.
+core = openmc.Cell( fill=lattice, region=outer_core_surface & -top & +bottom)
+
+# Create a universe that contains both 
+main_u = openmc.Universe( cells=[core]) 
+geom = openmc.Geometry(main_u)
+geom.export_to_xml()
+```
 
 ### Step 2: Set Up Tallies for PPF Calculation
 
@@ -374,7 +451,38 @@ Visualize GA progress in real-time:
 3. Data appears after the first GA cycle creates `data/ga_checkpoint.json`.
 
 ---
+## Results
+This section presents the results from an initial case study applying the NOMAD framework to a sodium-fast reactor model https://doi.org/10.1016/j.anucene.2024.111019 (specifically the axial model).
 
+# Case Study Configuration
+This preliminary study utilized an earlier, monolithic version of the NOMAD code. The key aspects of this configuration include:
+
+Interpolation Method: K-Nearest Neighbors (KNN) was used as the surrogate model for predicting both k-effective and the Power Peaking Factor (PPF).
+
+Initialization: The optimization process was initialized using a pre-defined set of 40 specific enrichment configurations for the central and outer core regions, rather than randomly generated samples.
+
+# Optimization Process Performance
+The performance of the genetic algorithm and the accuracy of the surrogate models were tracked throughout the optimization. The following figures illustrate the evolution of the fitness score and the error of the KNN interpolators over the OpenMC cycles.
+
+Figure 1: Evolution of the fitness score over the optimization cycles.
+![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/fitness_score.png?raw=true)
+Figure 2: The percentage error of the k-effective KNN interpolator, indicating the model's predictive accuracy from cycle to cycle.
+![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/keff_error_percent.png?raw=true)
+Figure 3: The percentage error of the Power Peaking Factor (PPF) KNN interpolator throughout the run.
+![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/ppf_error_percent.png?raw=true)
+
+# Core Power Profile Optimization
+A primary objective of fuel loading pattern optimization is to flatten the power distribution, which enhances thermal performance and fuel utilization. The figures below compare the power profile of a reference core with uniform (homogeneous) enrichment against the profile achieved using the heterogeneous loading pattern developed by NOMAD. In both visualizations, the relative power for each assembly is defined as the ratio of its specific power output to the average assembly power across the entire core.
+
+Figure 4: Power distribution in a reference core with a standard homogeneous fuel loading, showing a significant power peak in the center.
+![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/Without%20NOMAD.png?raw=true)
+
+Figure 5: Optimized power distribution achieved with the heterogeneous fuel loading pattern from NOMAD. The profile is visibly flatter, with a reduced central peak and more uniform power across the assemblies.
+![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/With%20NOMAD.png?raw=true)
+
+As demonstrated, the NOMAD framework successfully identified a fuel loading pattern that significantly flattens the core power profile, achieving a key goal in advanced reactor design.
+
+---
 ## Example Configuration
 
 **Example `config.ini`**:
