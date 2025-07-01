@@ -274,14 +274,14 @@
             console.log('Updating metrics with data:', data);
             
             document.getElementById('bestFitness').textContent = 
-                data.best_overall_fitness !== null && data.best_overall_fitness !== undefined ? 
-                data.best_overall_fitness.toFixed(6) : 'N/A';
-            
-            document.getElementById('actualFitness').textContent =
-                data.best_true_fitness !== null && data.best_true_fitness !== undefined && data.best_true_fitness > -1 ?
+                data.best_true_fitness !== null && data.best_true_fitness !== undefined && data.best_true_fitness > -Infinity ? 
                 data.best_true_fitness.toFixed(6) : 'N/A';
-
+            
             const lastCycle = data.history && data.history.length > 0 ? data.history[data.history.length - 1] : null;
+
+            document.getElementById('actualFitness').textContent =
+                lastCycle && lastCycle.fitness !== undefined ?
+                lastCycle.fitness.toFixed(6) : 'N/A';
 
             document.getElementById('ppf').textContent = 
                 lastCycle && lastCycle.ppf !== undefined ? lastCycle.ppf.toFixed(4) : 'N/A';
@@ -299,8 +299,9 @@
                 data.estimated_remaining_time || 'Calculating...';
             
             document.getElementById('currentCycle').textContent = 
-                data.cycle_number !== null && data.cycle_number !== undefined ? 
-                data.cycle_number + 1 : 'N/A';
+                data.estimated_remaining_time === 'Completed' ? 
+                `${data.cycle_number} (Finished)` :
+                (data.cycle_number !== null && data.cycle_number !== undefined ? data.cycle_number + 1 : 'N/A');
         }
 
         // Function to update chart
