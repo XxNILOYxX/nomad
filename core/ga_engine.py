@@ -94,32 +94,34 @@ class GeneticAlgorithm:
 
     
     def fitness_function(self, keff: float, ppf: float) -> float:
-        """Calculates a balanced fitness score based on keff and PPF. Used in the GA LOOP"""
+        """
+        Calculates a balanced fitness score based on keff and PPF.
+        This function provides a continuous score for keff, always rewarding
+        solutions closer to the target.
+        """
         target_keff = self.sim_config['target_keff']
-        keff_tolerance = self.sim_config['keff_tolerance']
         
         keff_diff = abs(keff - target_keff)
         
-        # Invert PPF so higher is better
+        # Invert PPF so that a lower PPF results in a higher score.
         ppf_score = 1.0 / ppf if ppf > 0 else 0
 
-        # Keff score: 1 if within tolerance, exponentially decaying penalty otherwise
-        if keff_diff <= keff_tolerance:
-            keff_score = 1.0
-        else:
-            penalty_factor = self.ga_config['keff_penalty_factor']
-            keff_score = np.exp(-penalty_factor * (keff_diff - keff_tolerance))
+        # Keff score is calculated using a continuous exponential function.
+        # This ensures that any improvement in keff results in a better score
+        penalty_factor = self.ga_config['keff_penalty_factor']
+        keff_score = np.exp(-penalty_factor * keff_diff)
 
         high_thresh = self.ga_config['high_keff_diff_threshold']
         med_thresh = self.ga_config['med_keff_diff_threshold']
         
-        # Dynamically adjust weights based on how far we are from the target keff
+        # Dynamically adjust weights based on how far we are from the target keff.
         if keff_diff > high_thresh:
-            w_ppf, w_keff = (0.3, 0.7) # Prioritize getting keff right
+            w_ppf, w_keff = (0.3, 0.7) # Prioritize getting keff right.
         elif keff_diff > med_thresh:
-            w_ppf, w_keff = (0.5, 0.5) # Balanced approach
+            w_ppf, w_keff = (0.5, 0.5) # Balanced approach.
         else:
-            w_ppf, w_keff = (0.7, 0.3) # Prioritize minimizing PPF
+            # When keff is close to the target, prioritize minimizing the power peaking factor (PPF).
+            w_ppf, w_keff = (0.7, 0.3) 
 
         return w_ppf * ppf_score + w_keff * keff_score
 
