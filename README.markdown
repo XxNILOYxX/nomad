@@ -402,64 +402,60 @@ Edit `config.ini` to match your reactor model. Key parameters include:
 
 **Example `config.ini`** (see [Example Configuration](#example-configuration) for a full sample).
 
-### The Importance of Coordinated `k-eff` Tuning
+### Tuning the `k-eff` and PPF Balance
 
-In NOMAD, achieving a precise `target_keff` while minimizing the power peaking factor (PPF) is a balancing act. The genetic algorithm's fitness function is designed to dynamically shift its priorities between these two competing objectives. Three key parameters in `config.ini` work together to control this behavior:
+In NOMAD, achieving a precise `target_keff` while minimizing the power peaking factor (PPF) is a balancing act. The genetic algorithm's fitness function is designed to dynamically shift its priorities between these two competing objectives. Two key parameters in `config.ini` control this behavior:
 
-* `keff_tolerance`: Defines the "acceptable" range around the `target_keff`. If a design's `k-eff` is within this range, it receives a perfect score for the `k-eff` portion of its fitness.
-* `med_keff_diff_threshold`: A threshold that tells the GA when to start paying more attention to `k-eff`.
-* `high_keff_diff_threshold`: A higher threshold that tells the GA to *aggressively* prioritize fixing `k-eff` above all else.
+* `med_keff_diff_threshold`: A threshold that tells the GA when to shift from a PPF-focused strategy to a balanced one.
+* `high_keff_diff_threshold`: A higher threshold that tells the GA to *aggressively* prioritize fixing `k-eff` above optimizing PPF.
 
-It is critical to adjust these three parameters in coordination. Simply tightening `keff_tolerance` without adjusting the thresholds will result in inefficient optimization, as the GA won't be sensitive enough to small deviations from the target.
+The fitness score for `k-eff` is now calculated on a continuous curve, meaning **any** improvement that brings `k-eff` closer to the target will result in a better score. The thresholds do not change the score itself, but they are critical for controlling the **weights** in the fitness function, telling the algorithm what to focus on.
 
-Let's explore two scenarios to understand why.
+Let's explore two scenarios to understand why coordinating these thresholds is important.
 
----
+***
 
 #### Scenario 1: Default Configuration
 
-With the default settings, the GA has a relatively relaxed approach to `k-eff`.
+With the default settings, the GA has a relatively relaxed approach, prioritizing PPF improvement until `k-eff` deviates significantly.
 
 **Default Settings:**
 
-* `keff_tolerance = 0.01`
 * `med_keff_diff_threshold = 0.02`
 * `high_keff_diff_threshold = 0.05`
 
 **Behavior:**
 
-1.  **The "Good Enough" Zone (`k-eff` diff < 0.01):** If a design's `k-eff` is within 1000 pcm of the target, the GA considers it "good enough." It receives a full `k-eff` score and the fitness function prioritizes minimizing the PPF (weighting: 70% PPF, 30% `k-eff`).
-2.  **The "Okay" Zone (`k-eff` diff between 0.01 and 0.02):** The design is outside the tolerance, but the difference is still less than the `med_keff_diff_threshold`. The GA is still primarily focused on PPF.
-3.  **The "Balanced" Zone (`k-eff` diff between 0.02 and 0.05):** Once the `k-eff` difference exceeds 2000 pcm, the GA enters a balanced state, weighting PPF and `k-eff` equally (50%/50%).
-4.  **The "Alarm" Zone (`k-eff` diff > 0.05):** Only when the `k-eff` is off by more than 5000 pcm does the GA become aggressive, heavily prioritizing `k-eff` improvement (weighting: 30% PPF, 70% `k-eff`).
+1.  **PPF Priority Zone (`k-eff` diff < 0.02):** If a design's `k-eff` is within 2000 pcm of the target, the GA considers the `k-eff` to be in a good range. The fitness function heavily prioritizes minimizing the PPF (weighting: 70% PPF, 30% `k-eff`).
+2.  **Balanced Zone (`k-eff` diff between 0.02 and 0.05):** Once the `k-eff` difference exceeds the `med_keff_diff_threshold` (2000 pcm), the GA enters a balanced state, weighting PPF and `k-eff` equally (50%/50%).
+3.  **`k-eff` Priority Zone (`k-eff` diff > 0.05):** Only when the `k-eff` is off by more than 5000 pcm (`high_keff_diff_threshold`) does the GA become aggressive, heavily prioritizing `k-eff` improvement (weighting: 30% PPF, 70% `k-eff`).
 
-**Conclusion:** The default settings are suitable for initial exploration but are not sensitive enough for achieving high-precision results.
+**Conclusion:** The default settings are suitable for initial exploration but are not sensitive enough for achieving high-precision results, as the GA will tolerate a large `k-eff` deviation before shifting its focus.
 
----
+***
 
 #### Scenario 2: High-Precision Configuration
 
-Now, let's see what happens when we tighten the tolerance and make the thresholds much more sensitive to match.
+Now, let's see what happens when we make the thresholds much more sensitive.
 
 **High-Precision Settings:**
 
-* `keff_tolerance = 0.001`
 * `med_keff_diff_threshold = 0.005`
 * `high_keff_diff_threshold = 0.01`
 
 **Behavior:**
 
-1.  **The "Good Enough" Zone (`k-eff` diff < 0.001):** The acceptable zone is now extremely tight—just 100 pcm. Inside this window, the GA focuses on minimizing PPF.
-2.  **The "Balanced" Zone (`k-eff` diff between 0.001 and 0.005):** As soon as the `k-eff` is more than 100 pcm off target, the GA *immediately* starts to worry. Because the difference is now greater than `keff_tolerance` but less than `med_keff_diff_threshold`, it still prioritizes PPF but is aware of the deviation.
-3.  **The "Alarm" Zone (`k-eff` diff between 0.005 and 0.01):** Once the `k-eff` difference exceeds 500 pcm (`med_keff_diff_threshold`), the GA quickly shifts to a balanced 50%/50% focus. It doesn't wait until the error is large.
-4.  **The "Emergency" Zone (`k-eff` diff > 0.01):** When the `k-eff` is off by 1000 pcm (`high_keff_diff_threshold`), the GA dedicates most of its effort (70% weight) to correcting `k-eff`.
+1.  **PPF Priority Zone (`k-eff` diff < 0.005):** The window for prioritizing PPF is now much smaller. The GA will focus on PPF only if the `k-eff` is within 500 pcm of the target.
+2.  **Balanced Zone (`k-eff` diff between 0.005 and 0.01):** As soon as the `k-eff` difference exceeds 500 pcm (`med_keff_diff_threshold`), the GA *immediately* shifts to a balanced 50%/50% focus. It doesn't wait for the error to become large.
+3.  **`k-eff` Priority Zone (`k-eff` diff > 0.01):** When the `k-eff` is off by more than 1000 pcm (`high_keff_diff_threshold`), the GA dedicates most of its effort (70% weight) to correcting `k-eff`.
 
-**Conclusion:** By aligning the thresholds with the tight tolerance, the GA becomes highly sensitive and responsive. It actively works to correct even small deviations from the `target_keff`, making it far more likely to find a solution that satisfies your precise requirements.
+**Conclusion:** By tightening the thresholds, the GA becomes highly sensitive and responsive. It actively works to correct even small deviations from the `target_keff`, making it far more likely to find a solution that satisfies your precise requirements.
 
 ### Recommendation
 
-When you require a highly accurate `k-eff`, always adjust `med_keff_diff_threshold` and `high_keff_diff_threshold` to be proportionally close to your new `keff_tolerance`. This ensures the genetic algorithm's priorities are aligned with your optimization goals from the very beginning.
+When you require a highly accurate `k-eff`, you should set lower values for **`med_keff_diff_threshold`** and **`high_keff_diff_threshold`**.
 
+By tightening these thresholds, the genetic algorithm becomes more sensitive to deviations from the `target_keff` and will prioritize correcting them much more quickly. This ensures the GA's focus is aligned with your high-precision optimization goals from the very beginning.
 
 ### Step 5: Configure `setup_fuel.ini`
 
