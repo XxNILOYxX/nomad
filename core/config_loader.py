@@ -91,7 +91,6 @@ class ConfigLoader:
         # Load [simulation] section
         self.params['simulation'] = {
             'target_keff': self.config.getfloat('simulation', 'target_keff'),
-            'keff_tolerance': self.config.getfloat('simulation', 'keff_tolerance'),
             'num_cycles': self.config.getint('simulation', 'num_cycles'),
             'num_assemblies': self.config.getint('simulation', 'num_assemblies'),
             'num_central_assemblies': self.config.getint('simulation', 'num_central_assemblies'),
