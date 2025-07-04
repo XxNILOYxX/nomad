@@ -1,6 +1,8 @@
 import logging
 import os
 import random
+import datetime
+import sys
 import numpy as np
 from typing import List, Dict
 
@@ -98,3 +100,51 @@ def is_dropping(scores: List[float], window: int = 5) -> bool:
     
     recent_scores = scores[-window:]
     return all(recent_scores[i] > recent_scores[i+1] for i in range(len(recent_scores) - 1))
+
+def show_splash_screen():
+    """
+    Displays the NOMAD ASCII art logo and application details.
+    """
+    logo = r"""
+                                                              
+                              @@@@@@                          
+                @@@@         @@@@@@@@         @@@@            
+              @@@@@@@@@@  @@@@@@@@@@@@@@  @@@@@@@@@@          
+            @@        @@@@@@@@@@@@@@@ @@@@       @@@         
+            @@          @@@@       @@@@          @@@         
+            @@             @@@   @@@@            @@@         
+            @@@              @@@@@               @@          
+              @@              @@@@@              @@@          
+              @@@         @@@@@@@@@@@@@          @@           
+            @ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @          
+            @@@@@@@      @@@          @@@      @@@@@@         
+        @@@@    @@    @@@  @@@@@@@@@@ @@    @@@   @@@@      
+      @@@        @@  @@@  @@@      @@@  @@  @@@       @@@    
+      @@           @@@@        @@@        @@@@          @@   
+      @@           @@@@        @@@         @@@           @@@  
+      @@@         @@@@@@   @@@@    @@@    @@@@@         @@@   
+        @@@@     @@@   @@   @@@@@@@@@   @@@   @@      @@@@    
+          @@@@@@@@@     @@@           @@@      @@ @@@@@       
+              @@@@@@@@@   @@@        @@@  @@@@@@@@@@          
+            @ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @          
+              @@             @@@ @@@             @@           
+            @@@               @@@@               @@          
+            @@              @@@ @@@@             @@@         
+            @@            @@@     @@@@           @@@         
+            @@         @@@@@@@@@@@@@ @@@         @@@         
+            @@@    @@@@@ @@@@@@@@@@@@@ @@@@@     @@          
+              @@@@@@@       @@@@@@@@       @@@@@@@           
+                              @@@@@@                          
+                                                                                      
+    """
+    __version__ = "1.0.5"
+    __copyright__ = "2025, MD Hasebul Hasan Niloy"
+    __license__ = "https://github.com/XxNILOYxX/nomad/blob/main/LICENSE"
+
+    print(logo)
+    print(f"{'':>15} | The NOMAD Fuel Optimizer")
+    print(f"{'Copyright':>15} | {__copyright__}")
+    print(f"{'License':>15} | {__license__}")
+    print(f"{'Version':>15} | {__version__}")
+    print(f"{'Date/Time':>15} | {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print("-" * 50)
