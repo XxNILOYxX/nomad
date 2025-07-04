@@ -48,14 +48,25 @@ This hybrid approach enables rapid exploration of fuel enrichment configurations
 
 ## How It Works
 
-1. **Initial Data Generation**: Run OpenMC simulations for a diverse set of fuel enrichment configurations to create a baseline dataset.
-2. **ML Model Training**:
-   - **k_eff Interpolator**: A K-Nearest Neighbors (KNN) regressor predicts k_eff for a given fuel pattern.
-   - **PPF Interpolator**: Predicts PPF using KNN, Random Forest, or Ridge regression (configurable).
-3. **Genetic Algorithm Cycle**: The GA evolves a population of fuel loading patterns over thousands of generations, evaluating fitness using ML predictors for speed.
-4. **Verification**: The best fuel pattern is verified with a full OpenMC simulation.
-5. **Iterative Improvement**: Verification results are added to the dataset, and ML models are retrained to improve accuracy for subsequent GA cycles.
+1.  **Initial Data Generation**: Run OpenMC simulations for a diverse set of fuel enrichment configurations to create a baseline dataset.
 
+2.  **ML Model Training**:
+    * **$k_{eff}$ Interpolator**: A K-Nearest Neighbors (KNN) regressor predicts $k_{eff}$ for a given fuel pattern.
+    * **PPF Interpolator**: Predicts the Power Peaking Factor (PPF) using KNN, Random Forest, or Ridge regression (configurable).
+
+3.  **Choosing the PPF Predictor (Experimental)** 🧪
+    The optimal choice for the PPF predictor is not fixed. During testing, sometimes **Random Forest** performs better than **KNN**, and sometimes the opposite is true. For best results, you should run the full optimization process with both models and use the superior result.
+    > **Pro Tip:**
+    > 1.  First, run the entire optimization with `knn` set as the PPF regression model.
+    > 2.  Once complete, rename the final checkpoint file in the `data/` directory (e.g., from `ga_checkpoint.json` to `ga_checkpoint_knn.json`).
+    > 3.  Next, change the model in your configuration file to `random_forest` and run the optimization again.
+    > 4.  The Random Forest model will benefit from the large dataset (`keff_interp_data.json` and `ppf_interp_data.json`) already generated, potentially yielding more accurate predictions and a different, sometimes better, outcome.
+
+4.  **Genetic Algorithm Cycle**: The GA evolves a population of fuel loading patterns over thousands of generations, evaluating fitness using the ML predictors for speed.
+
+5.  **Verification**: The best fuel pattern found by the GA is verified with a full, high-fidelity OpenMC simulation.
+
+6.  **Iterative Improvement**: The results from the verification simulation are added back into the dataset, and the ML models are retrained. This makes the predictors more accurate for all subsequent GA cycles.
 ---
 
 ## Requirements
