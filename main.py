@@ -8,7 +8,7 @@ from typing import Dict, Any, List
 from scipy.stats import qmc
 
 from core.config_loader import ConfigLoader
-from core.utils import setup_logging, detect_hardware
+from core.utils import setup_logging, detect_hardware, show_splash_screen 
 from core.fuel_handler import FuelHandler
 from core.openmc_runner import OpenMCRunner
 from core.interpolators import KeffInterpolator, PPFInterpolator
@@ -21,8 +21,9 @@ class MainOptimizer:
     """
     def __init__(self, config_path: str = 'config/config.ini', fuel_setup_path: str = 'config/setup_fuel.ini'):
         """Initializes all components of the optimizer."""
+        show_splash_screen() 
         setup_logging()
-        
+
         try:
             self.config_loader = ConfigLoader(config_path, fuel_setup_path)
             self.config = self.config_loader.get_params()
@@ -39,6 +40,7 @@ class MainOptimizer:
         self.checkpoint = Checkpoint(self.config)
         
         self.state = self._load_or_initialize_state()
+        
 
     def _load_or_initialize_state(self) -> Dict[str, Any]:
         """
