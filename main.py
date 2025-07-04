@@ -221,7 +221,12 @@ class MainOptimizer:
             predicted_keff = self.keff_interpolator.predict(best_ga_individual)
             predicted_ppf = self.ppf_interpolator.predict(best_ga_individual)
             
-            self.fuel_handler.update_materials(best_ga_individual)
+            # Check the return value of update_materials. If it's False, the proposed
+            # individual is invalid (e.g., causes negative slack material weight).
+            if not self.fuel_handler.update_materials(best_ga_individual):
+                logging.critical(f"Cycle {i+1} failed: The proposed individual resulted in an invalid material composition. Skipping simulation for this individual.")
+                continue # Skip to the next GA cycle
+            
             if not self.openmc_runner.run_simulation():
                 logging.error("OpenMC simulation failed. Skipping to next cycle.")
                 continue
