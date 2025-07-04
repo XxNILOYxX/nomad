@@ -190,12 +190,16 @@ class GeneticAlgorithm:
                 # Nudge mutation in the right direction
                 # Using a hardcoded 0.01 here as it's a small nudge value, not a major threshold
                 if keff_diff < -0.01: # Keff is too low, need higher enrichment
-                    available = [v for v in values if v >= mutated[i]] or values
+                    available = [v for v in values if v >= mutated[i]]
                 elif keff_diff > 0.01: # Keff is too high, need lower enrichment
-                    available = [v for v in values if v <= mutated[i]] or values
+                    available = [v for v in values if v <= mutated[i]]
                 else: # Keff is close, any change is fine
                     available = values
                 
+                # If the directional choice results in an empty list (e.g., current value
+                # is already at the max), fall back to the full list of values to prevent a crash.
+                if not available:
+                    available = values                
                 mutated[i] = random.choice(available)
         return mutated
 
