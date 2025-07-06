@@ -22,6 +22,7 @@ class GeneticAlgorithm:
         self.fitnesses = []
         self.best_fitness_history = []
         self.stagnation_counter = 0
+        self._initialize_population()
 
     def run_genetic_algorithm(self, seed_individual: List[float] = None) -> List[float]:
         """
@@ -33,7 +34,12 @@ class GeneticAlgorithm:
         Returns:
             The best individual found during the cycle based on interpolator predictions.
         """
-        self._initialize_population(seed_individual)
+        # The call to _initialize_population was removed from here to prevent resets.
+        # If a new best individual is found from OpenMC, inject it into the
+        # current population by replacing a random member.
+        if seed_individual:
+            rand_idx = random.randint(0, len(self.population) - 1)
+            self.population[rand_idx] = seed_individual
         
         best_individual_cycle = self.population[0]
         best_fitness_cycle = -float('inf')
