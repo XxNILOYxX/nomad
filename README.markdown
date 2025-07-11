@@ -343,7 +343,7 @@ After running a baseline OpenMC simulation with a uniform enrichment profile, th
 
 ### Power Peaking Factor (PPF) Calculation
 
-A Python script is utilized to process the simulation output and calculate the Power Peaking Factor (PPF), which is the ratio of the maximum power produced in a single fuel cell to the average power across all fuel cells. This script also exports the normalized power for each fuel cell, which is essential for identifying high-power regions.
+A Python script is utilized to process the simulation output and calculate the Power Peaking Factor (PPF), which is the ratio of the maximum power produced in a single fuel assembly to the average power across all the fuel assemblies. This script also exports the normalized power for each fuel cell, which is essential for identifying high-power regions.
 
 #### Python Script for PPF Calculation
 
