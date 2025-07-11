@@ -639,7 +639,7 @@ We value your input and will review your contributions as soon as possible.
 
 ## License
 
-This project is licensed under the **MIT License**.
+This project is licensed under the **GPL-3.0 license**.
 
 See the [LICENSE](LICENSE) file for more details.
 
