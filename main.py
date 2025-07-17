@@ -8,16 +8,19 @@ from typing import Dict, Any, List
 from scipy.stats import qmc
 
 from core.config_loader import ConfigLoader
-from core.utils import setup_logging, detect_hardware, show_splash_screen 
+from core.utils import setup_logging, detect_hardware, show_splash_screen, find_nearest, fitness_function
 from core.fuel_handler import FuelHandler
 from core.openmc_runner import OpenMCRunner
 from core.interpolators import KeffInterpolator, PPFInterpolator
 from core.ga_engine import GeneticAlgorithm
+from core.pso_engine import ParticleSwarmOptimizer
+from core.hybrid_engine import HybridEngine
 from core.checkpoint import Checkpoint
 
 class MainOptimizer:
     """
-    Orchestrates the entire GA-based optimization process for nuclear reactor fuel loading patterns.
+    Orchestrates the entire optimization process for nuclear reactor fuel loading patterns,
+    supporting multiple optimization techniques like GA and PSO.
     """
     def __init__(self, config_path: str = 'config/config.ini', fuel_setup_path: str = 'config/setup_fuel.ini'):
         """Initializes all components of the optimizer."""
@@ -36,37 +39,60 @@ class MainOptimizer:
         self.openmc_runner = OpenMCRunner(self.config)
         self.keff_interpolator = KeffInterpolator(self.config, use_gpu)
         self.ppf_interpolator = PPFInterpolator(self.config, use_gpu)
-        self.ga_engine = GeneticAlgorithm(self.config, self.keff_interpolator, self.ppf_interpolator)
         self.checkpoint = Checkpoint(self.config)
-        
+
+        self.optimizer_technique = self.config['optimizer']['technique']
+        self.optimizer_engine = None
+        logging.info(f"Using optimization technique: {self.optimizer_technique.upper()}")
+
+        if self.optimizer_technique == 'ga':
+            self.optimizer_engine = GeneticAlgorithm(self.config, self.keff_interpolator, self.ppf_interpolator)
+        elif self.optimizer_technique == 'pso':
+            self.optimizer_engine = ParticleSwarmOptimizer(self.config, self.keff_interpolator, self.ppf_interpolator)
+        elif self.optimizer_technique == 'hybrid':
+            self.optimizer_engine = HybridEngine(self.config, self.keff_interpolator, self.ppf_interpolator)
+        else:
+            raise ValueError(f"Unknown optimizer technique specified: {self.optimizer_technique}")
+
         self.state = self._load_or_initialize_state()
         
 
     def _load_or_initialize_state(self) -> Dict[str, Any]:
         """
-        Loads state from checkpoint. If no valid GA state exists (i.e., cycle > 0),
+        Loads state from checkpoint. If no valid state exists,
         it triggers the resumable initialization phase for the interpolators.
         """
         loaded_state = self.checkpoint.load()
 
         if loaded_state and loaded_state.get('cycle_number', 0) > 0:
-            # Ensure time tracking fields exist when resuming
             loaded_state.setdefault('cycle_durations', [])
             loaded_state.setdefault('estimated_remaining_time', 'Calculating...')
             keff_loaded = self.keff_interpolator.load_data(self.config['simulation']['keff_interp_file'])
             ppf_loaded = self.ppf_interpolator.load_data(self.config['simulation']['ppf_interp_file'])
-            if keff_loaded and ppf_loaded:
-                logging.info(f"Resuming GA from cycle {loaded_state['cycle_number']}.")
+            
+            optimizer_state_loaded = False
+            if 'optimizer_state' in loaded_state and loaded_state['optimizer_state']:
+                try:
+                    if hasattr(self.optimizer_engine, 'load_state'):
+                        self.optimizer_engine.load_state(loaded_state['optimizer_state'])
+                        optimizer_state_loaded = True
+                    else:
+                         logging.error(f"Optimizer {self.optimizer_technique.upper()} does not support loading state. This is a critical error.")
+                except Exception as e:
+                    logging.error(f"Failed to load optimizer state from checkpoint: {e}. The search will restart from a random population.")
+
+            if keff_loaded and ppf_loaded and optimizer_state_loaded:
+                logging.info(f"Successfully resumed {self.optimizer_technique.upper()} from cycle {loaded_state['cycle_number']}.")
                 return loaded_state
             else:
-                logging.error("Checkpoint exists but interpolator data is missing or corrupt. Re-initializing.")
+                logging.error("Checkpoint exists but interpolator data or optimizer state is missing/corrupt. Re-initializing.")
                 if os.path.exists(self.checkpoint.filepath):
                     os.remove(self.checkpoint.filepath)
     
-        logging.info("Entering data initialization phase.")
+        logging.info("No valid checkpoint found or resume failed. Entering data initialization phase.")
         self._initialize_interpolator_data()
         
-        logging.info("Initialization complete. Preparing for main GA cycles.")
+        logging.info("Initialization complete. Preparing for main optimization cycles.")
         return {
             "cycle_number": 0,
             "best_individual_overall": None,
@@ -75,16 +101,9 @@ class MainOptimizer:
             "best_true_ppf": float('inf'),
             "history": [],
             "cycle_durations": [],
-            "estimated_remaining_time": "Calculating..."
+            "estimated_remaining_time": "Calculating...",
+            "optimizer_state": None,
         }
-
-    def _find_nearest(self, array: List[float], value: float) -> float:
-        """Finds the nearest value in a sorted array."""
-        idx = np.searchsorted(array, value, side="left")
-        if idx > 0 and (idx == len(array) or abs(value - array[idx-1]) < abs(value - array[idx])):
-            return array[idx-1]
-        else:
-            return array[idx]
 
     def _format_time(self, seconds: float) -> str:
         """Formats seconds into a human-readable string like Xd Yh Zm Ws."""
@@ -137,8 +156,8 @@ class MainOptimizer:
             
             temp_configs = set()
             for sample in scaled_samples:
-                central_enrich = self._find_nearest(central_vals, sample[0])
-                outer_enrich = self._find_nearest(outer_vals, sample[1])
+                central_enrich = find_nearest(central_vals, sample[0])
+                outer_enrich = find_nearest(outer_vals, sample[1])
                 temp_configs.add((central_enrich, outer_enrich))
             
             sample_configurations = list(temp_configs)
@@ -189,7 +208,6 @@ class MainOptimizer:
                     self.ppf_interpolator.save_data(self.config['simulation']['ppf_interp_file'])
                     logging.info(f"Successfully completed and saved sample {i + 1}.")
 
-                    # Calculate and log estimated time remaining
                     duration = time.time() - sample_start_time
                     initial_run_durations.append(duration)
                     avg_duration = np.mean(initial_run_durations)
@@ -215,19 +233,28 @@ class MainOptimizer:
         
         for i in range(start_cycle, num_cycles):
             self.state['cycle_number'] = i
-            logging.info(f"--- Starting GA Cycle {i+1}/{num_cycles} ---")
+            logging.info(f"--- Starting {self.optimizer_technique.upper()} Cycle {i+1}/{num_cycles} ---")
             cycle_start_time = time.time()
 
             seed = self.state['best_individual_overall']
-            best_ga_individual = self.ga_engine.run_genetic_algorithm(seed_individual=seed)
-            predicted_keff = self.keff_interpolator.predict(best_ga_individual)
-            predicted_ppf = self.ppf_interpolator.predict(best_ga_individual)
             
-            # Check the return value of update_materials. If it's False, the proposed
-            # individual is invalid (e.g., causes negative slack material weight).
-            if not self.fuel_handler.update_materials(best_ga_individual):
-                logging.critical(f"Cycle {i+1} failed: The proposed individual resulted in an invalid material composition. Skipping simulation for this individual.")
-                continue # Skip to the next GA cycle
+            best_individual_from_cycle = None
+            
+            if self.optimizer_technique == 'hybrid':
+                last_fitness = self.state['history'][-1]['fitness'] if self.state['history'] else -float('inf')
+                best_fitness = self.state['best_true_fitness']
+                best_individual_from_cycle = self.optimizer_engine.run_hybrid_algorithm(i, seed, last_fitness, best_fitness)
+            elif self.optimizer_technique == 'ga':
+                best_individual_from_cycle = self.optimizer_engine.run_genetic_algorithm(seed_individual=seed)
+            elif self.optimizer_technique == 'pso':
+                best_individual_from_cycle = self.optimizer_engine.run_pso_algorithm(seed_individual=seed)
+
+            predicted_keff = self.keff_interpolator.predict(best_individual_from_cycle)
+            predicted_ppf = self.ppf_interpolator.predict(best_individual_from_cycle)
+            
+            if not self.fuel_handler.update_materials(best_individual_from_cycle):
+                logging.critical(f"Cycle {i+1} failed: The proposed individual resulted in an invalid material composition. Skipping simulation.")
+                continue
             
             if not self.openmc_runner.run_simulation():
                 logging.error("OpenMC simulation failed. Skipping to next cycle.")
@@ -239,10 +266,11 @@ class MainOptimizer:
                 continue
             true_keff, true_ppf = results
             
-            self.keff_interpolator.add_data_point(best_ga_individual, true_keff)
-            self.ppf_interpolator.add_data_point(best_ga_individual, true_ppf)
+            self.keff_interpolator.add_data_point(best_individual_from_cycle, true_keff)
+            self.ppf_interpolator.add_data_point(best_individual_from_cycle, true_ppf)
 
-            true_fitness = self.ga_engine.fitness_function(true_keff, true_ppf)
+            true_fitness = fitness_function(true_keff, true_ppf, self.config['simulation'], self.config['fitness'])
+            
             keff_error_percent = (abs(predicted_keff - true_keff) / true_keff) * 100 if true_keff != 0 else 0.0
             ppf_error_percent = (abs(predicted_ppf - true_ppf) / true_ppf) * 100 if true_ppf != 0 else 0.0
             
@@ -251,7 +279,7 @@ class MainOptimizer:
 
             if true_fitness > self.state['best_true_fitness']:
                 self.state['best_true_fitness'] = true_fitness
-                self.state['best_individual_overall'] = best_ga_individual
+                self.state['best_individual_overall'] = best_individual_from_cycle
                 self.state['best_true_keff'] = true_keff
                 self.state['best_true_ppf'] = true_ppf
                 logging.info(f"*** New best-ever individual found! Fitness: {true_fitness:.6f} ***")
@@ -263,18 +291,23 @@ class MainOptimizer:
                 'fitness': true_fitness,
                 'keff_error_percent': keff_error_percent,
                 'ppf_error_percent': ppf_error_percent,
-                'individual': best_ga_individual
+                'individual': best_individual_from_cycle
             })
 
             cycle_duration = time.time() - cycle_start_time
             self.state['cycle_durations'].append(cycle_duration)
             
-            avg_duration = self.state['cycle_durations'][-1]
+            last_n_durations = self.state['cycle_durations'][-5:]
+            avg_duration = np.mean(last_n_durations)
             remaining_cycles = num_cycles - (i + 1)
             remaining_seconds = avg_duration * remaining_cycles
             self.state['estimated_remaining_time'] = self._format_time(remaining_seconds)
             
             logging.info(f"Estimated time remaining: {self.state['estimated_remaining_time']}")
+            
+            # Get the optimizer's internal state before saving the checkpoint
+            if hasattr(self.optimizer_engine, 'get_state'):
+                self.state['optimizer_state'] = self.optimizer_engine.get_state()
             
             self.checkpoint.save(self.state)
             self.keff_interpolator.save_data(self.config['simulation']['keff_interp_file'])
