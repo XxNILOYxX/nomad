@@ -2,10 +2,25 @@ import json
 import logging
 import os
 from typing import Dict, Any, Optional
+import numpy as np
+
+
+class NumpyEncoder(json.JSONEncoder):
+    """ Custom encoder for numpy data types """
+    def default(self, obj):
+        if isinstance(obj, (np.int_, np.intc, np.intp, np.int8,
+                            np.int16, np.int32, np.int64, np.uint8,
+                            np.uint16, np.uint32, np.uint64)):
+            return int(obj)
+        elif isinstance(obj, (np.float_, np.float16, np.float32, np.float64)):
+            return float(obj)
+        elif isinstance(obj, (np.ndarray,)):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
 
 class Checkpoint:
     """
-    Handles saving and loading of the GA's state to a JSON file.
+    Handles saving and loading of the application's state to a JSON file.
     """
     def __init__(self, config: Dict):
         """
@@ -15,31 +30,54 @@ class Checkpoint:
             config: The main configuration dictionary.
         """
         self.filepath = config['simulation']['checkpoint_file']
-        # The interpolator file paths are no longer needed here (BUG FIX)
         
         # Ensure data directory exists
         data_dir = os.path.dirname(self.filepath)
         if not os.path.exists(data_dir):
             os.makedirs(data_dir)
 
+    def _convert_infinities_to_str(self, data: Any) -> Any:
+        """
+        Recursively traverses a data structure to convert float infinities to strings.
+        This is necessary because JSON does not support infinity values.
+        """
+        if isinstance(data, dict):
+            return {k: self._convert_infinities_to_str(v) for k, v in data.items()}
+        elif isinstance(data, list):
+            return [self._convert_infinities_to_str(i) for i in data]
+        elif data == float('inf'):
+            return "inf"
+        elif data == -float('inf'):
+            return "-inf"
+        return data
+
+    def _convert_str_to_infinities(self, data: Any) -> Any:
+        """
+        Recursively traverses a data structure to convert "inf" strings back to float infinities
+        after loading from a JSON file.
+        """
+        if isinstance(data, dict):
+            return {k: self._convert_str_to_infinities(v) for k, v in data.items()}
+        elif isinstance(data, list):
+            return [self._convert_str_to_infinities(i) for i in data]
+        elif data == "inf":
+            return float('inf')
+        elif data == "-inf":
+            return float('-inf')
+        return data
+
     def save(self, state: Dict[str, Any]):
         """
-        Saves the current state to the checkpoint file.
+        Saves the current state to the checkpoint file after handling non-serializable values.
 
         Args:
-            state: A dictionary containing the GA state.
+            state: A dictionary containing the application state.
         """
         try:
-            # Handle non-JSON-serializable float values
-            state_to_save = state.copy()
-            if 'best_true_fitness' in state_to_save:
-                if state_to_save['best_true_fitness'] == float('inf'):
-                    state_to_save['best_true_fitness'] = "inf"
-                elif state_to_save['best_true_fitness'] == -float('inf'):
-                    state_to_save['best_true_fitness'] = "-inf"
-
+            # Recursively handle all potential infinity values in the state dictionary
+            state_to_save = self._convert_infinities_to_str(state)
             with open(self.filepath, 'w') as f:
-                json.dump(state_to_save, f, indent=4)
+                json.dump(state_to_save, f, indent=4, cls=NumpyEncoder)
             logging.info(f"Checkpoint successfully saved to {self.filepath}")
 
         except (TypeError, IOError) as e:
@@ -47,7 +85,7 @@ class Checkpoint:
 
     def load(self) -> Optional[Dict[str, Any]]:
         """
-        Loads the state from the checkpoint file.
+        Loads the state from the checkpoint file and restores non-serializable values.
 
         Returns:
             A dictionary containing the loaded state, or None if no valid checkpoint exists.
@@ -58,13 +96,10 @@ class Checkpoint:
 
         try:
             with open(self.filepath, 'r') as f:
-                state = json.load(f)
+                loaded_state = json.load(f)
             
-            # Restore non-JSON-serializable float values
-            if state.get('best_true_fitness') == "inf":
-                state['best_true_fitness'] = float('inf')
-            elif state.get('best_true_fitness') == "-inf":
-                state['best_true_fitness'] = -float('inf')
+            # Recursively restore all potential infinity values from their string representation
+            state = self._convert_str_to_infinities(loaded_state)
 
             logging.info(f"Checkpoint successfully loaded from {self.filepath}")
             return state
