@@ -120,14 +120,35 @@ class FuelHandler:
 
             # Calculate new weights for the fissile isotopes targeted by the GA
             new_fissile_weights = {}
-            if 'Pu239' in self.fissile_isotopes: # Assume Pu distribution if any Pu isotope is a target
+            # Check if any of the targeted fissile isotopes is a Plutonium isotope
+            is_pu_mixture = any(iso.startswith('Pu') for iso in self.fissile_isotopes)
+
+            if is_pu_mixture:
+                # Ensure all fissile isotopes are Pu, as mixing U and Pu is not supported by this logic
+                if not all(iso.startswith('Pu') for iso in self.fissile_isotopes):
+                    logging.error(f"Unsupported fissile configuration. Mixture of Pu and non-Pu isotopes is not allowed. Fissile isotopes: {self.fissile_isotopes}")
+                    return False
+
                 for isotope in self.fissile_isotopes:
+                    # Defensive check if a Pu isotope is not in the distribution map
+                    if isotope not in self.fuel_config['pu_dist']:
+                        logging.error(f"Fissile isotope {isotope} is missing from the [plutonium_distribution] section in setup_fuel.ini.")
+                        return False
                     new_fissile_weights[isotope] = self.fuel_config['pu_dist'][isotope] * ga_total_fissile_wo
-            elif self.fissile_isotopes: # Handles cases like only U235 or U233
+            
+            elif len(self.fissile_isotopes) == 1: # Handles cases like only U235 or U233
                 isotope = list(self.fissile_isotopes)[0] # Assumes only one if not Pu
                 new_fissile_weights[isotope] = ga_total_fissile_wo
+            
+            elif not self.fissile_isotopes:
+                 # This case should not happen if validation is correct, but is a safe fallback
+                 logging.warning("No fissile isotopes were selected for optimization.")
+            
+            else: # Catches unsupported cases like trying to vary {U233, U235} simultaneously
+                logging.error(f"Unsupported fissile configuration. Cannot vary multiple non-Pu isotopes. Fissile isotopes: {self.fissile_isotopes}")
+                return False
 
-            # The new weight for U238 is what's left over
+            # The new weight for the slack isotope is what's left over
             new_slack_weight = 1.0 - preserved_weight_sum - ga_total_fissile_wo
             
             if new_slack_weight < 0:
