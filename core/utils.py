@@ -100,6 +100,48 @@ def is_dropping(scores: List[float], window: int = 5) -> bool:
     
     recent_scores = scores[-window:]
     return all(recent_scores[i] > recent_scores[i+1] for i in range(len(recent_scores) - 1))
+    
+def find_nearest(array: List[float], value: float) -> float:
+    """Finds the nearest value in a sorted array."""
+    # Ensure array is a numpy array and sorted
+    arr = np.asarray(array)
+    idx = np.searchsorted(arr, value, side="left")
+    if idx > 0 and (idx == len(arr) or abs(value - arr[idx-1]) < abs(value - arr[idx])):
+        return arr[idx-1]
+    else:
+        return arr[idx]
+    
+def fitness_function(keff: float, ppf: float, sim_config: Dict, tuning_config: Dict) -> float:
+        """
+        Calculates a balanced fitness score based on keff and PPF.
+        This function provides a continuous score for keff, always rewarding
+        solutions closer to the target.
+        """
+        target_keff = sim_config['target_keff']
+        keff_diff = abs(keff - target_keff)
+        
+        # Invert PPF so that a lower PPF results in a higher score.
+        ppf_score = 1.0 / ppf if ppf > 0 else 0
+
+        # Keff score is calculated using a continuous exponential function.
+        # This ensures that any improvement in keff results in a better score
+        penalty_factor = tuning_config['keff_penalty_factor']
+        keff_score = np.exp(-penalty_factor * keff_diff)
+
+        high_thresh = tuning_config['high_keff_diff_threshold']
+        med_thresh = tuning_config['high_keff_diff_threshold']
+        
+        # Dynamically adjust weights based on how far we are from the target keff.
+        if keff_diff > high_thresh:
+            w_ppf, w_keff = (0.3, 0.7) # Prioritize getting keff right.
+        elif keff_diff > med_thresh:
+            w_ppf, w_keff = (0.5, 0.5) # Balanced approach.
+        else:
+            # When keff is close to the target, prioritize minimizing the power peaking factor (PPF).
+            w_ppf, w_keff = (0.7, 0.3) 
+
+        return w_ppf * ppf_score + w_keff * keff_score
+
 
 def show_splash_screen():
     """
@@ -137,7 +179,7 @@ def show_splash_screen():
                               @@@@@@                          
                                                                                       
     """
-    __version__ = "1.0.5.1"
+    __version__ = "1.0.6" # Version updated for PSO addition
     __copyright__ = "2025, MD Hasebul Hasan Niloy"
     __license__ = "https://github.com/XxNILOYxX/nomad/blob/main/LICENSE"
 
