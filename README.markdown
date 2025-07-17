@@ -1,10 +1,12 @@
-# NOMAD: Nuclear Optimization with Machine-learning-Accelerated Design (A Genetic Algorithm with KNN/Random Forest/Ridge for Fuel Pattern Optimization)
-[![Powered by](https://img.shields.io/badge/Powered%20by-Genetic%20Algorithm-purple.svg)](https://en.wikipedia.org/wiki/Genetic_algorithm)
+# NOMAD: Nuclear Optimization with Machine-learning-Accelerated Design (A Genetic Algorithm (GA) / Discrete Particle Swarm Optimization/ Hybrid (GA-PSO) with KNN/Random Forest/Ridge for Fuel Pattern Optimization)
+[![Powered by GA](https://img.shields.io/badge/Powered%20by-Genetic%20Algorithm-purple.svg)](https://en.wikipedia.org/wiki/Genetic_algorithm)
+[![Powered by PSO](https://img.shields.io/badge/Powered%20by-Particle%20Swarm%20Optimization-orange.svg)](https://en.wikipedia.org/wiki/Particle_swarm_optimization)
 [![License](https://img.shields.io/badge/License-GPL%203.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Python](https://img.shields.io/badge/Python-3.8+-yellow.svg)](https://www.python.org/)
 [![OpenMC](https://img.shields.io/badge/OpenMC-Required-green.svg)](https://docs.openmc.org/)
 
-NOMAD is a sophisticated tool for optimizing nuclear reactor core fuel loading patterns. It leverages a **Genetic Algorithm (GA)** coupled with **machine learning (ML)** models to efficiently determine fuel assembly enrichment arrangements that achieve a target **multiplication factor (k_eff)** while minimizing the **Power Peaking Factor (PPF)**. This ensures safe, efficient, and compliant reactor operation.
+
+NOMAD is a sophisticated tool for optimizing nuclear reactor core fuel loading patterns. It leverages a **Genetic Algorithm (GA) / Discrete Particle Swarm Optimization / Hybrid (GA-PSO)** coupled with **machine learning (ML)** models to efficiently determine fuel assembly enrichment arrangements that achieve a target **multiplication factor (k_eff)** while minimizing the **Power Peaking Factor (PPF)**. This ensures safe, efficient, and compliant reactor operation.
 
 By integrating ML models as high-speed surrogates for computationally expensive neutron transport simulations (e.g., via OpenMC), NOMAD significantly accelerates the optimization process while maintaining accuracy.
 ![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/NOMAD.png?raw=true)
@@ -26,6 +28,7 @@ By integrating ML models as high-speed surrogates for computationally expensive 
   - [Step 6: Run the Optimizer](#step-6-run-the-optimizer)
   - [Step 7: Monitor Progress with the Live Dashboard](#step-7-monitor-progress-with-the-live-dashboard)
 - [Results](#results)
+- [DPSO & Hybrid mode](#dpso)
 - [Example Configuration](#example-configuration)
 - [Disclaimer](#disclaimer)
 - [Contributing](#contributing)
@@ -547,6 +550,145 @@ Figure 5: Optimized power distribution achieved with the heterogeneous fuel load
 ![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/With%20NOMAD.png?raw=true)
 
 As demonstrated, the NOMAD framework successfully identified a fuel loading pattern that significantly flattens the core power profile, achieving a key goal in advanced reactor design.
+
+---
+## DPSO
+## Advanced Optimization Engines: PSO and Hybrid
+
+NOMAD now includes a **Particle Swarm Optimizer (PSO)** for efficient local searches and a **Hybrid Engine** that combines the global exploration of the GA with the local exploitation of the PSO.
+
+To use these advanced engines, set the `technique` parameter in your `config.ini` file:
+
+```ini
+[optimizer]
+# The optimization technique to use. Options: ga, pso, hybrid
+technique = hybrid
+```
+
+### Particle Swarm Optimization (PSO) Configuration
+
+The PSO is a powerful optimizer that simulates a "swarm" of particles searching for the best solution. Its behavior is controlled by the [pso] section in config.ini.
+
+```ini
+[pso]
+# Number of particles in the swarm. Analogous to GA's population_size. (Default: 1500)
+swarm_size = 1500
+
+# Number of iterations the PSO will run using ML predictors before an OpenMC verification. (Default: 1000)
+iterations_per_openmc_cycle = 1000
+
+# Cognitive coefficient (c1), controls the particle's attraction to its personal best. (Default: 2.0)
+cognitive_coeff = 2.0
+
+# Social coefficient (c2), controls the particle's attraction to the global/neighborhood best. (Default: 2.0)
+social_coeff = 2.0
+
+# Number of iterations without improvement before the PSO cycle exits early.
+pso_convergence_threshold = 800
+
+# Starting and ending inertia weights for linear decay.
+inertia_weight_start = 0.95
+inertia_weight_end = 0.35
+```
+
+### Key PSO Parameter Effects:
+
+- **swarm_size**: A larger swarm explores more of the search space but requires more computational resources per iteration.
+- **cognitive_coeff (c1)**: Increasing this value makes particles more independent, encouraging them to explore around their own best-found positions. Too high a value can lead to premature convergence on many different local optima.
+- **social_coeff (c2)**: Increasing this value makes particles more influenced by the swarm's best-found position, promoting faster convergence. Too high a value can cause the entire swarm to get stuck in a single local optimum.
+- **inertia_weight_start / inertia_weight_end**: The inertia weight controls the particle's momentum. It starts high (0.95) to encourage global exploration at the beginning of a run and decreases (0.35) to promote fine-tuning and local exploitation as the run progresses.
+
+---
+
+### Advanced PSO Features
+
+NOMAD's PSO includes several advanced features for enhanced performance, configured under the [pso] section.
+
+```ini
+# Topology defines how particles are connected. Options: global, ring, random, fitness_based
+topology = ring
+
+# For 'ring', 'random', or 'fitness_based' topologies, the number of neighbors for each particle. (e.g., 2, 4)
+neighborhood_size = 4
+
+# Frequency (in iterations) to rebuild neighborhoods for 'random' and 'fitness_based' topologies.
+neighborhood_rebuild_frequency = 100
+
+# Set to true to enable adaptive velocity clamping, false to use a fixed max_change_probability.
+adaptive_velocity = true
+
+# Base and max probability of change, used for adaptive velocity clamping.
+base_change_probability = 0.25
+max_change_probability = 0.90
+
+# Multi-swarm parameters
+enable_multi_swarm = true
+num_sub_swarms = 4
+migration_frequency = 200
+migration_rate = 0.05
+
+# Moderated Local Search
+enable_local_search = true
+# How often (in iterations) to attempt local search.
+local_search_frequency = 50
+```
+
+### Advanced Feature Details:
+
+- **topology**: Defines the communication structure of the swarm.
+  - **global**: All particles are influenced by the single best particle in the entire swarm. Converges fast but can get stuck.
+  - **ring**: Each particle is only influenced by its immediate neighbors in a ring structure. Slower convergence but less prone to getting stuck.
+  - **random**: Each particle has a random set of neighbors, which are periodically rebuilt.
+- **adaptive_velocity**: If true, the maximum velocity (chance of a particle changing a value) decreases over time, shifting the search from exploration to exploitation.
+- **enable_multi_swarm**: If true, the main swarm is split into smaller sub-swarms. This is highly recommended for complex problems. Some sub-swarms are configured to explore aggressively, while others focus on exploitation. They periodically exchange their best particles (migration_rate) to share information, which is a very effective strategy for avoiding local optima.
+- **enable_local_search**: If true, the algorithm will periodically apply a simple hill-climbing search to the current best solution to see if small, incremental changes can improve it further.
+
+---
+
+### Hybrid (GA-PSO) Engine Configuration
+
+The hybrid engine dynamically switches between the GA and PSO to leverage the strengths of both. Its strategy is set in the [hybrid] section.
+
+```ini
+[hybrid]
+# Defines the strategy for switching between GA and PSO.
+# Options: fixed_cycles, stagnation, oscillate, adaptive
+switch_mode = oscillate
+
+# Parameters for 'fixed_cycles' and 'oscillate' modes
+ga_phase_cycles = 20
+pso_phase_cycles = 10
+
+# Parameters for 'stagnation' mode
+# Number of cycles with no fitness improvement to be considered stagnation.
+stagnation_threshold = 10
+# Diversity threshold below which the GA is considered to have converged.
+ga_min_diversity_for_switch = 0.25
+
+# Parameters for PSO -> GA Seeding
+# The fraction of the GA population to be seeded with the best individuals from PSO.
+ga_seed_ratio = 0.25
+
+# Parameters for 'adaptive' mode
+# Switch to the other algorithm if its average fitness gain is this much better (e.g., 1.2 = 20% better).
+adaptive_switching_threshold = 1.2
+# The minimum number of cycles a phase must run before an adaptive switch can occur.
+min_adaptive_phase_duration = 5
+# Factor for comparing negative trends in adaptive mode.
+adaptive_trend_dampening_factor = 0.5
+```
+
+---
+
+### Hybrid Switching Modes Explained:
+
+- **switch_mode**: This is the core setting for the hybrid engine.
+  - **fixed_cycles**: A simple approach. It runs the GA for `ga_phase_cycles` OpenMC cycles, then switches to the PSO indefinitely.
+  - **stagnation**: Runs the GA until its fitness improvement stagnates and its population diversity drops below `ga_min_diversity_for_switch`. Then it switches to the PSO.
+  - **oscillate**: The recommended balanced strategy. It runs the GA for `ga_phase_cycles` cycles, then switches to the PSO. The PSO runs for `pso_phase_cycles` cycles, and then it switches back to the GA. This continues, oscillating between the two engines. A switch can also be triggered early if an engine's fitness stagnates for `stagnation_threshold` cycles.
+  - **adaptive**: The most complex mode. It tracks the performance (fitness gain) of both algorithms. It will switch to the other algorithm if its historical performance is significantly better (defined by `adaptive_switching_threshold`) and the performance trend looks promising.
+
+- **ga_seed_ratio**: When switching from PSO to GA, this determines what fraction of the new GA population is created from the best particles found by the PSO. A higher value (e.g., 0.4) means more knowledge is transferred from the PSO, but it also reduces the initial diversity of the new GA population.
 
 ---
 ## Example Configuration
