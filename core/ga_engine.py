@@ -2,8 +2,10 @@ import random
 import numpy as np
 import logging
 from typing import List, Tuple, Dict
+
 from .interpolators import KeffInterpolator, PPFInterpolator
-from .utils import calculate_diversity
+# Import the shared fitness_function from utils
+from .utils import calculate_diversity, fitness_function
 
 class GeneticAlgorithm:
     """
@@ -14,6 +16,7 @@ class GeneticAlgorithm:
         self.ga_config = config['ga']
         self.sim_config = config['simulation']
         self.enrich_config = config['enrichment']
+        self.fitness_config = config['fitness']
 
         self.keff_interpolator = keff_interpolator
         self.ppf_interpolator = ppf_interpolator
@@ -24,54 +27,152 @@ class GeneticAlgorithm:
         self.stagnation_counter = 0
         self._initialize_population()
 
-    def run_genetic_algorithm(self, seed_individual: List[float] = None) -> List[float]:
+
+    def get_state(self) -> Dict:
+            """
+            Returns the current internal state of the GA for checkpointing.
+            """
+            return {
+                "population": self.population,
+                "fitnesses": self.fitnesses,
+                "best_fitness_history": self.best_fitness_history,
+                "stagnation_counter": self.stagnation_counter,
+            }
+
+    def load_state(self, state: Dict):
         """
-        Runs one full GA cycle (multiple generations).
+        Loads the internal state of the GA from a checkpoint dictionary.
+        """
+        self.population = state.get("population", [])
+        self.fitnesses = state.get("fitnesses", [])
+        self.best_fitness_history = state.get("best_fitness_history", [])
+        self.stagnation_counter = state.get("stagnation_counter", 0)
+        
+        if not self.population:
+            logging.warning("GA state from checkpoint was empty. Re-initializing a random population.")
+            self._initialize_population()
+        else:
+            logging.info(f"GA state loaded. Population size: {len(self.population)}. Stagnation counter: {self.stagnation_counter}.")
+
+
+    def get_top_individuals(self, n: int) -> List[List[float]]:
+        """
+        Returns the top N individuals from the current population based on fitness.
 
         Args:
-            seed_individual: An optional individual to seed the initial population.
+            n (int): The number of top individuals to return.
 
         Returns:
-            The best individual found during the cycle based on interpolator predictions.
+            A list of the N best individuals.
         """
-        # The call to _initialize_population was removed from here to prevent resets.
-        # If a new best individual is found from OpenMC, inject it into the
-        # current population by replacing a random member.
-        if seed_individual:
-            rand_idx = random.randint(0, len(self.population) - 1)
-            self.population[rand_idx] = seed_individual
+        if not self.population or not self.fitnesses:
+            return []
         
+        # Get indices of the N best individuals
+        sorted_indices = np.argsort(self.fitnesses)[::-1]
+        top_n_indices = sorted_indices[:n]
+        
+        return [self.population[i] for i in top_n_indices]
+    
+
+    def run_genetic_algorithm(self, seed_individual: List[float] = None) -> List[float]:
+        """
+        Runs one full GA cycle on the existing, persistent population.
+        """
+        if seed_individual and seed_individual not in self.population:
+            # If a new best individual from OpenMC is provided, inject it into the
+            # population by replacing the worst individual. This preserves genetic diversity.
+            if self.fitnesses:
+                worst_idx = np.argmin(self.fitnesses)
+                self.population[worst_idx] = seed_individual
+                # The fitness for the new individual will be calculated in the next step,
+                # so explicitly setting it to -inf is redundant.
+            else:
+                # This case handles the very first run if the population is empty
+                self.population.append(seed_individual)
+
+        
+        # Full evaluation of the persistent population
+        # This re-evaluates the entire population with the latest ML models.
+        keff_preds, ppf_preds = self._evaluate_individuals(self.population)
+
+        self.fitnesses = [fitness_function(k, p, self.sim_config, self.fitness_config) for k, p in zip(keff_preds, ppf_preds)]
+
         best_individual_cycle = self.population[0]
         best_fitness_cycle = -float('inf')
+        
+        convergence_counter = 0
+        convergence_threshold = self.ga_config.get('convergence_threshold', 200)
         
         current_mutation_rate = self.ga_config['mutation_rate']
         current_crossover_rate = self.ga_config['crossover_rate']
         
         for gen in range(self.ga_config['generations_per_openmc_cycle']):
-            keff_preds, ppf_preds = self._evaluate_population()
-
-            # Update best of cycle
+            # Check for improvement and log (using previous generation's complete fitness list)
             current_best_idx = np.argmax(self.fitnesses)
             if self.fitnesses[current_best_idx] > best_fitness_cycle:
                 best_fitness_cycle = self.fitnesses[current_best_idx]
                 best_individual_cycle = self.population[current_best_idx]
                 self.stagnation_counter = 0
+                convergence_counter = 0 
             else:
                 self.stagnation_counter += 1
+                convergence_counter += 1
 
-            if (gen + 1) % self.ga_config['log_frequency'] == 0:
-                diversity = calculate_diversity(self.population, self.ga_config['diversity_sample_size'])
-                current_mutation_rate, current_crossover_rate = self._get_adaptive_parameters(
-                    diversity, current_mutation_rate, current_crossover_rate
-                )
-                logging.info(f"Gen {gen+1:4d}: Best Fitness={best_fitness_cycle:.6f}, Diversity={diversity:.4f}, Mut. Rate={current_mutation_rate:.3f}")
+            log_freq = self.ga_config['log_frequency']
+            div_check_multiplier = self.ga_config.get('diversity_check_multiplier', 5)
+            if (gen + 1) % log_freq == 0:
+                if (gen + 1) % (log_freq * div_check_multiplier) == 0:
+                    diversity = calculate_diversity(self.population, self.ga_config['diversity_sample_size'])
+                    current_mutation_rate, current_crossover_rate = self._get_adaptive_parameters(
+                        diversity, current_mutation_rate, current_crossover_rate
+                    )
+                    msg = f"Gen {gen+1:4d}: Best Fitness={best_fitness_cycle:.6f}, Mut. Rate={current_mutation_rate:.3f}, Diversity={diversity:.4f}"
+                else:
+                    msg = f"Gen {gen+1:4d}: Best Fitness={best_fitness_cycle:.6f}, Mut. Rate={current_mutation_rate:.3f}"
+                
+                logging.info(msg)
 
-            self._generate_new_population(keff_preds, current_mutation_rate, current_crossover_rate)
+            if convergence_counter > convergence_threshold:
+                logging.info(f"Convergence reached after {gen+1} generations. Best predicted fitness has not improved in {convergence_threshold} generations. Exiting GA cycle.")
+                break
+
+            # Create the next generation
+            elite_count = self.ga_config['elitism_count']
+            
+            # 1. Preserve the elites from the previous generation
+            elite_indices = np.argsort(self.fitnesses)[-elite_count:]
+            
+            next_gen_population = [self.population[i] for i in elite_indices]
+            next_gen_keff_preds = [keff_preds[i] for i in elite_indices]
+            next_gen_ppf_preds = [ppf_preds[i] for i in elite_indices]
+            next_gen_fitnesses = [self.fitnesses[i] for i in elite_indices]
+
+            # 2. Generate the offspring (the rest of the population)
+            num_offspring = self.ga_config['population_size'] - elite_count
+            offspring_population = self._create_offspring(num_offspring, keff_preds, current_mutation_rate, current_crossover_rate)
+            
+            # 3. Evaluate ONLY the new offspring
+            if offspring_population:
+                offspring_keff_preds, offspring_ppf_preds = self._evaluate_individuals(offspring_population)
+                offspring_fitnesses = [fitness_function(k, p, self.sim_config, self.fitness_config) for k, p in zip(offspring_keff_preds, offspring_ppf_preds)]
+                
+                # 4. Combine elites and offspring into the new generation's complete lists
+                next_gen_population.extend(offspring_population)
+                next_gen_keff_preds.extend(offspring_keff_preds)
+                next_gen_ppf_preds.extend(offspring_ppf_preds)
+                next_gen_fitnesses.extend(offspring_fitnesses)
+
+            # 5. Update the main population state for the next iteration
+            self.population = next_gen_population
+            self.fitnesses = next_gen_fitnesses
+            keff_preds = next_gen_keff_preds
+            ppf_preds = next_gen_ppf_preds
 
         return best_individual_cycle
-
+    
     def _initialize_population(self, seed_individual: List[float] = None):
-        """Creates the initial population for the GA."""
+        """Creates the initial, random population for the GA."""
         self.population = []
         if seed_individual:
             self.population.append(seed_individual)
@@ -91,84 +192,74 @@ class GeneticAlgorithm:
         individual.extend([random.choice(outer_vals) for _ in range(num_total - num_central)])
         return individual
 
-    def _evaluate_population(self) -> Tuple[List[float], List[float]]:
-        """Calculates fitness for the entire population using interpolators."""
-        keff_preds = self.keff_interpolator.predict_batch(self.population)
-        ppf_preds = self.ppf_interpolator.predict_batch(self.population)
-        self.fitnesses = [self.fitness_function(k, p) for k, p in zip(keff_preds, ppf_preds)]
+    def _evaluate_individuals(self, individuals: List[List[float]]) -> Tuple[List[float], List[float]]:
+        """A helper to evaluate a list of individuals, returning predictions."""
+        if not individuals:
+            return [], []
+        keff_preds = self.keff_interpolator.predict_batch(individuals)
+        ppf_preds = self.ppf_interpolator.predict_batch(individuals)
         return keff_preds, ppf_preds
 
-    
-    def fitness_function(self, keff: float, ppf: float) -> float:
-        """
-        Calculates a balanced fitness score based on keff and PPF.
-        This function provides a continuous score for keff, always rewarding
-        solutions closer to the target.
-        """
-        target_keff = self.sim_config['target_keff']
-        
-        keff_diff = abs(keff - target_keff)
-        
-        # Invert PPF so that a lower PPF results in a higher score.
-        ppf_score = 1.0 / ppf if ppf > 0 else 0
+    def _create_offspring(self, num_offspring: int, parent_keff_preds: List[float], mut_rate: float, cross_rate: float) -> List[List[float]]:
+        """Creates new individuals through selection, crossover, and mutation."""
+        offspring = []
+        while len(offspring) < num_offspring:
+            parent1, p1_idx = self._selection()
+            parent2, p2_idx = self._selection()
 
-        # Keff score is calculated using a continuous exponential function.
-        # This ensures that any improvement in keff results in a better score
-        penalty_factor = self.ga_config['keff_penalty_factor']
-        keff_score = np.exp(-penalty_factor * keff_diff)
-
-        high_thresh = self.ga_config['high_keff_diff_threshold']
-        med_thresh = self.ga_config['med_keff_diff_threshold']
-        
-        # Dynamically adjust weights based on how far we are from the target keff.
-        if keff_diff > high_thresh:
-            w_ppf, w_keff = (0.3, 0.7) # Prioritize getting keff right.
-        elif keff_diff > med_thresh:
-            w_ppf, w_keff = (0.5, 0.5) # Balanced approach.
-        else:
-            # When keff is close to the target, prioritize minimizing the power peaking factor (PPF).
-            w_ppf, w_keff = (0.7, 0.3) 
-
-        return w_ppf * ppf_score + w_keff * keff_score
-
-    def _generate_new_population(self, keff_preds: List[float], mut_rate: float, cross_rate: float):
-        """Creates the next generation through selection, crossover, and mutation."""
-        new_population = []
-        
-        # Elitism
-        elite_indices = np.argsort(self.fitnesses)[-self.ga_config['elitism_count']:]
-        for idx in elite_indices:
-            new_population.append(self.population[idx])
-
-        # Generate the rest of the population
-        while len(new_population) < self.ga_config['population_size']:
-            parent1 = self._selection()
-            parent2 = self.population[np.random.choice(len(self.population))] # One tournament, one random parent
-            
             child1, child2 = self._crossover(parent1, parent2, cross_rate)
             
-            # Get the predicted keff for the parent to guide mutation
-            try: # Use a try-except block in case the parent is from the elite and not in the current population list
-                parent1_idx = self.population.index(parent1)
-                parent2_idx = self.population.index(parent2)
-            except ValueError:
-                parent1_idx = -1
-                parent2_idx = -1
+            keff1 = parent_keff_preds[p1_idx]
+            keff2 = parent_keff_preds[p2_idx]
 
-            keff1 = keff_preds[parent1_idx] if parent1_idx != -1 else self.sim_config['target_keff']
-            keff2 = keff_preds[parent2_idx] if parent2_idx != -1 else self.sim_config['target_keff']
+            offspring.append(self._smart_mutate(child1, mut_rate, keff1))
+            if len(offspring) < num_offspring:
+                offspring.append(self._smart_mutate(child2, mut_rate, keff2))
+        return offspring
 
-            new_population.append(self._smart_mutate(child1, mut_rate, keff1))
-            if len(new_population) < self.ga_config['population_size']:
-                new_population.append(self._smart_mutate(child2, mut_rate, keff2))
+    def _selection(self) -> Tuple[List[float], int]:
+        """
+        Tournament selection with diversity-based tie-breaking.
+        """
+        tournament_size = self.ga_config['tournament_size']
+        if tournament_size > len(self.population):
+            tournament_size = len(self.population)
+
+        competitor_indices = random.sample(range(len(self.population)), tournament_size)
         
-        self.population = new_population
+        max_fitness = -float('inf')
+        for idx in competitor_indices:
+            if self.fitnesses[idx] > max_fitness:
+                max_fitness = self.fitnesses[idx]
+                
+        winners_indices = [idx for idx in competitor_indices if self.fitnesses[idx] == max_fitness]
+        
+        if len(winners_indices) == 1:
+            winner_idx = winners_indices[0]
+            return self.population[winner_idx], winner_idx
+        else:
+            # Tie-breaking: select the winner that is most diverse from the *other winners*.
+            best_winner_idx = -1
+            max_diversity_score = -1.0
+            
+            # Get the genomes of the tied winners
+            winner_genomes = [np.array(self.population[i]) for i in winners_indices]
 
-    def _selection(self) -> List[float]:
-        """Tournament selection."""
-        competitors_indices = random.sample(range(len(self.population)), self.ga_config['tournament_size'])
-        winner_idx = max(competitors_indices, key=lambda idx: self.fitnesses[idx])
-        return self.population[winner_idx]
+            for i, winner_idx in enumerate(winners_indices):
+                current_winner_genome = winner_genomes[i]
+                # Calculate distance only to other tied winners
+                other_winner_genomes = winner_genomes[:i] + winner_genomes[i+1:]
+                if not other_winner_genomes: # Should not happen if len > 1, but safe
+                    best_winner_idx = winner_idx
+                    break
+
+                total_distance = sum(np.mean(np.abs(current_winner_genome - other_genome)) for other_genome in other_winner_genomes)
+                
+                if total_distance > max_diversity_score:
+                    max_diversity_score = total_distance
+                    best_winner_idx = winner_idx
+            
+            return self.population[best_winner_idx], best_winner_idx
 
     def _crossover(self, parent1: List[float], parent2: List[float], cross_rate: float) -> Tuple[List[float], List[float]]:
         """Single-point crossover."""
@@ -178,52 +269,87 @@ class GeneticAlgorithm:
         return parent1[:], parent2[:]
 
     def _smart_mutate(self, individual: List[float], mut_rate: float, current_keff: float) -> List[float]:
-        """Mutates an individual with a bias towards improving k-effective."""
+        """Enhanced mutation with better edge case handling and adaptive bias."""
         mutated = list(individual)
         keff_diff = current_keff - self.sim_config['target_keff']
         
-        increase_factor = self.ga_config['smart_mutate_increase_factor']
-        decrease_factor = self.ga_config['smart_mutate_decrease_factor']
-        threshold = self.ga_config['med_keff_diff_threshold']
-
-        # Adjust mutation intensity based on how far keff is from target
-        rate_multiplier = increase_factor if abs(keff_diff) > threshold else decrease_factor
+        # Dynamic bias based on distance from target
+        if abs(keff_diff) > self.fitness_config['high_keff_diff_threshold']:
+            prob_bias = 0.85  # High bias when far from target
+            rate_multiplier = self.ga_config['smart_mutate_increase_factor']
+        elif abs(keff_diff) > self.fitness_config['med_keff_diff_threshold']:
+            prob_bias = 0.75  # Medium bias when moderately off
+            rate_multiplier = 1.0
+        else:
+            prob_bias = 0.65  # Lower bias when close to target
+            rate_multiplier = self.ga_config['smart_mutate_decrease_factor']
         
+        # Calculate the effective mutation rate for this individual, but cap it
+        # to prevent excessively disruptive mutations.
+        effective_mut_rate = min(mut_rate * rate_multiplier, self.ga_config['max_mutation_rate'])
+
         for i in range(len(mutated)):
-            if random.random() < (mut_rate * rate_multiplier):
-                values = self.enrich_config['central_values'] if i < self.sim_config['num_central_assemblies'] else self.enrich_config['outer_values']
+            if random.random() < effective_mut_rate:
+                is_central = i < self.sim_config['num_central_assemblies']
+                values = self.enrich_config['central_values'] if is_central else self.enrich_config['outer_values']
+                current_val = mutated[i]
                 
-                # Nudge mutation in the right direction
-                # Using a hardcoded 0.01 here as it's a small nudge value, not a major threshold
-                if keff_diff < -0.01: # Keff is too low, need higher enrichment
-                    available = [v for v in values if v >= mutated[i]]
-                elif keff_diff > 0.01: # Keff is too high, need lower enrichment
-                    available = [v for v in values if v <= mutated[i]]
-                else: # Keff is close, any change is fine
-                    available = values
+                # Determine mutation direction based on keff_diff
+                if abs(keff_diff) > 0.0005:  # Only apply bias if significantly off target
+                    if keff_diff < 0:  # Need to increase reactivity
+                        higher_vals = [v for v in values if v > current_val]
+                        
+                        if random.random() < prob_bias and higher_vals:
+                            # Use higher values (desired direction)
+                            available = higher_vals
+                        elif higher_vals:
+                            # Still prefer higher values even if bias roll failed
+                            available = higher_vals
+                        else:
+                            # No higher values available - skip mutation for this gene
+                            continue
+                            
+                    else:  # keff_diff > 0, need to decrease reactivity
+                        lower_vals = [v for v in values if v < current_val]
+                        
+                        if random.random() < prob_bias and lower_vals:
+                            # Use lower values (desired direction)
+                            available = lower_vals
+                        elif lower_vals:
+                            # Still prefer lower values even if bias roll failed
+                            available = lower_vals
+                        else:
+                            # No lower values available - skip mutation for this gene
+                            continue
+                else:
+                    # Near target, use uniform random mutation
+                    available = [v for v in values if v != current_val]
+                    if not available:
+                        continue  # Skip if only one possible value
                 
-                # If the directional choice results in an empty list (e.g., current value
-                # is already at the max), fall back to the full list of values to prevent a crash.
-                if not available:
-                    available = values                
-                mutated[i] = random.choice(available)
+                # Weighted selection favoring smaller changes when close to target
+                if len(available) > 1 and abs(keff_diff) < self.fitness_config['med_keff_diff_threshold']:
+                    # Calculate distances from current value
+                    distances = [abs(v - current_val) for v in available]
+                    max_dist = max(distances) if distances else 1
+                    # Invert weights so smaller distances have higher probability
+                    weights = [(max_dist - d + 0.1) for d in distances]
+                    mutated[i] = random.choices(available, weights=weights, k=1)[0]
+                elif available:
+                    mutated[i] = random.choice(available)
+        
         return mutated
 
     def _get_adaptive_parameters(self, diversity: float, current_mut_rate: float, current_cross_rate: float) -> Tuple[float, float]:
         """Adjusts mutation and crossover rates based on stagnation and diversity."""
-        # Start with the current rates, not the base rates from the config file.
         mut_rate = current_mut_rate
         cross_rate = current_cross_rate
 
-        # Increase mutation if stagnated
         if self.stagnation_counter > self.ga_config['stagnation_threshold']:
-            # Increment the rate by 0.01 instead of multiplying by a factor.
             mut_rate = min(mut_rate + 0.01, self.ga_config['max_mutation_rate'])
 
-        # Increase mutation and crossover if diversity is low
         if diversity < self.ga_config['diversity_threshold']:
-            # Increment the rate by 0.01 instead of multiplying by a factor.
             mut_rate = min(mut_rate + 0.01, self.ga_config['max_mutation_rate'])
-            cross_rate = min(cross_rate + 0.01, self.ga_config['max_crossover_rate']) # Make crossover incremental too
+            cross_rate = min(cross_rate + 0.01, self.ga_config['max_crossover_rate'])
 
         return mut_rate, cross_rate
