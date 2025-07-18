@@ -25,6 +25,7 @@ class HybridEngine:
         self.stagnation_threshold = self.hybrid_config.get('stagnation_threshold', 10)
         self.ga_min_diversity_for_switch = self.hybrid_config.get('ga_min_diversity_for_switch', 0.25)
         self.ga_seed_ratio = self.hybrid_config.get('ga_seed_ratio', 0.25)
+        self.pso_seed_ratio = self.hybrid_config.get('pso_seed_ratio', 0.5)
         self.fitness_improvement_tolerance = self.hybrid_config.get('fitness_improvement_tolerance', 1e-6)
         self.adaptive_switching_threshold = self.hybrid_config.get('adaptive_switching_threshold', 1.2)
         self.min_adaptive_phase_duration = self.hybrid_config.get('min_adaptive_phase_duration', 5)
@@ -100,6 +101,11 @@ class HybridEngine:
             ratio = self.hybrid_config['ga_seed_ratio']
             if not (0.0 <= ratio <= 1.0):
                 raise ValueError("Hybrid 'ga_seed_ratio' must be between 0.0 and 1.0.")
+        
+        if 'pso_seed_ratio' in self.hybrid_config:
+            ratio = self.hybrid_config['pso_seed_ratio']
+            if not (0.0 <= ratio <= 1.0):
+                raise ValueError("Hybrid 'pso_seed_ratio' must be between 0.0 and 1.0.")
 
         if self.switch_mode == 'adaptive':
             if self.adaptive_switching_threshold < 1.0:
@@ -168,7 +174,11 @@ class HybridEngine:
                 if self.current_phase == 'ga':
                     self.current_phase = 'pso'
                     logging.info(f"--- Switching GA -> PSO --- Reason: {switch_reason}")
-                    top_individuals = self.ga_engine.get_top_individuals(n=self.config['pso']['swarm_size'])
+                    
+                    num_seeds = int(self.config['pso']['swarm_size'] * self.pso_seed_ratio)
+                    logging.info(f"Seeding PSO with {num_seeds} best individuals from GA.")
+                    top_individuals = self.ga_engine.get_top_individuals(n=num_seeds)
+                    
                     if hasattr(self.pso_engine, 'initialize_with_population'):
                         self.pso_engine.initialize_with_population(top_individuals)
                     else:
