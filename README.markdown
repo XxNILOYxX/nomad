@@ -690,6 +690,29 @@ adaptive_trend_dampening_factor = 0.5
 
 - **ga_seed_ratio**: When switching from PSO to GA, this determines what fraction of the new GA population is created from the best particles found by the PSO. A higher value (e.g., 0.4) means more knowledge is transferred from the PSO, but it also reduces the initial diversity of the new GA population.
 
+#### Smart Mutation (GA-style) for PSO
+
+NOMAD now supports **intelligent mutation** during PSO runs via a GA-inspired operator. This mechanism biases changes toward directions predicted to improve $k_{\text{eff}}$, enhancing convergence and escaping local optima.
+
+To enable this feature, use the following settings in your `config.ini`:
+
+```ini
+[pso]
+# Set to true to enable GA-style smart mutation in PSO
+enable_smart_mutation = true
+
+# Probability (0.5 to 1.0) that the mutation will move in a beneficial direction
+smart_mutation_bias = 0.75
+```
+
+- When enabled, particles mutate their current positions using feedback from the $k_{\text{eff}}$ predictor, making search steps more informed.
+- The `smart_mutation_bias` controls how strongly the system favors beneficial mutations. A value of `0.75` means there's a 75% chance the mutation will head toward a more promising configuration.
+
+> **Tip:** Use this feature in conjunction with dynamic exploration and multi-swarm modes to maximize robustness.
+
+
+
+
 ---
 ## Example Configuration
 
