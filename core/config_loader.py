@@ -50,6 +50,7 @@ class ConfigLoader:
                 'ga_min_diversity_for_switch': self.config.getfloat('hybrid', 'ga_min_diversity_for_switch', fallback=0.25),
                 'pso_min_diversity_for_switch': self.config.getfloat('hybrid', 'pso_min_diversity_for_switch', fallback=0.15),
                 'ga_seed_ratio': self.config.getfloat('hybrid', 'ga_seed_ratio', fallback=0.25),
+                'pso_seed_ratio': self.config.getfloat('hybrid', 'pso_seed_ratio', fallback=0.5),
                 'adaptive_switching_threshold': self.config.getfloat('hybrid', 'adaptive_switching_threshold', fallback=1.2),
                 'min_adaptive_phase_duration': self.config.getint('hybrid', 'min_adaptive_phase_duration', fallback=5),
                 'adaptive_trend_dampening_factor': self.config.getfloat('hybrid', 'adaptive_trend_dampening_factor', fallback=0.5)
@@ -118,6 +119,8 @@ class ConfigLoader:
             'migration_rate': self.config.getfloat('pso', 'migration_rate', fallback=0.1),
             'enable_local_search': self.config.getboolean('pso', 'enable_local_search', fallback=True),
             'local_search_frequency': self.config.getint('pso', 'local_search_frequency', fallback=25),
+            'enable_smart_mutation': self.config.getboolean('pso', 'enable_smart_mutation', fallback=True),
+            'smart_mutation_bias': self.config.getfloat('pso', 'smart_mutation_bias', fallback=0.75),
         }
 
 
@@ -221,6 +224,9 @@ class ConfigLoader:
                 raise ValueError("Hybrid 'pso_min_diversity_for_switch' must be between 0 and 1.")
             if not (0 < hybrid_p['adaptive_trend_dampening_factor'] < 1):
                 raise ValueError("Hybrid 'adaptive_trend_dampening_factor' must be between 0 and 1.")
+            if not (0.0 <= hybrid_p['pso_seed_ratio'] <= 1.0):
+                raise ValueError("Hybrid 'pso_seed_ratio' must be between 0.0 and 1.0.")
+
 
         # --- Fuel Setup Validation ---
         fissile_flags = self.params['fuel']['fissile_flags']
