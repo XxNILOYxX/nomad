@@ -129,7 +129,7 @@ def fitness_function(keff: float, ppf: float, sim_config: Dict, tuning_config: D
         keff_score = np.exp(-penalty_factor * keff_diff)
 
         high_thresh = tuning_config['high_keff_diff_threshold']
-        med_thresh = tuning_config['high_keff_diff_threshold']
+        med_thresh = tuning_config['med_keff_diff_threshold']
         
         # Dynamically adjust weights based on how far we are from the target keff.
         if keff_diff > high_thresh:
