@@ -358,6 +358,8 @@ class PPFInterpolator(BaseInterpolator):
         X = np.array(features)
         y = np.array(targets)
         
+        logging.info(f"Training PPF model using regressor: {self.regressor_type.upper()}")
+        
         try:
             X_scaled = temp_scaler.fit_transform(X)
             self._train_temp_model(temp_model, X_scaled, y, use_early_stopping=True)
