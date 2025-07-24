@@ -55,7 +55,7 @@ This hybrid approach enables rapid exploration of fuel enrichment configurations
 
 2.  **ML Model Training**:
     * **$k_{eff}$ Interpolator**: A K-Nearest Neighbors (KNN) regressor predicts $k_{eff}$ for a given fuel pattern.
-    * **PPF Interpolator**: Predicts the Power Peaking Factor (PPF) using KNN, Random Forest, or Ridge regression (configurable).
+    * **PPF Interpolator**: Predicts the Power Peaking Factor (PPF) using KNN, Random Forest, Ridge regression, or a Deep Neural Network (DNN) (configurable). The DNN is a more advanced option capable of capturing complex non-linear relationships.
 
 3.  **Choosing the PPF Predictor (Experimental)** 🧪
     The optimal choice for the PPF predictor is not fixed. During testing, sometimes **Random Forest** performs better than **KNN**, and sometimes the opposite is true. For best results, you should run the full optimization process with both models and use the superior result.
@@ -406,7 +406,9 @@ It is critical to understand that these are starting points. Fine-tuning these r
 
 #### Setting the `initial_samples`
 
-The `initial_samples` parameter in `config.ini` specifies the number of initial configurations to be simulated. It is recommended to use a value of at least 100. A sufficiently large and well-distributed set of initial samples ensures that the optimization algorithm thoroughly explores the defined search space. You can manually provide these initial configurations to guarantee comprehensive coverage of the possible enrichment combinations within your defined `central_range` and `outer_range`.
+The `initial_samples` parameter in `config.ini` specifies the number of initial configurations to be simulated. A minimum of 300 initial samples is recommended when using the DNN regressor, while 100 is sufficient for other regressors. For the best results with the DNN, a value of 500 or more is highly encouraged to ensure the model has enough data to learn effectively.
+
+A large and well-distributed set of initial samples is essential for the optimization algorithm to thoroughly explore the search space. You can manually provide these initial configurations to guarantee comprehensive coverage of the possible enrichment combinations within your defined `central_range` and `outer_range`.
 
 ### Step 4: Configure `config.ini`
 Edit `config.ini` to match your reactor model. Key parameters include:
