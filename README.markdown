@@ -57,7 +57,7 @@ This hybrid approach enables rapid exploration of fuel enrichment configurations
     * **$k_{eff}$ Interpolator**: A K-Nearest Neighbors (KNN) regressor predicts $k_{eff}$ for a given fuel pattern.
     * **PPF Interpolator**: Predicts the Power Peaking Factor (PPF) using KNN, Random Forest, Ridge regression, or a Deep Neural Network (DNN) (configurable). The DNN is a more advanced option capable of capturing complex non-linear relationships.
 
-3.  **Choosing the PPF Predictor (Experimental)** 🧪
+3.  **Choosing the PPF Predictor (Experimental)**
     The optimal choice for the PPF predictor is not fixed. During testing, sometimes **Random Forest** performs better than **KNN**, and sometimes the opposite is true. For best results, you should run the full optimization process with both models and use the superior result.
     > **Pro Tip:**
     > 1.  First, run the entire optimization with `knn` set as the PPF regression model.
