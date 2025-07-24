@@ -68,21 +68,26 @@ class Checkpoint:
 
     def save(self, state: Dict[str, Any]):
         """
-        Saves the current state to the checkpoint file after handling non-serializable values.
-
-        Args:
-            state: A dictionary containing the application state.
+        Saves the current state to the checkpoint file using an atomic write pattern.
         """
+        temp_filepath = self.filepath + ".tmp"
         try:
-            # Recursively handle all potential infinity values in the state dictionary
             state_to_save = self._convert_infinities_to_str(state)
-            with open(self.filepath, 'w') as f:
+            with open(temp_filepath, 'w') as f:
                 json.dump(state_to_save, f, indent=4, cls=NumpyEncoder)
+            
+            # This is the atomic operation.
+            os.replace(temp_filepath, self.filepath)
+            
             logging.info(f"Checkpoint successfully saved to {self.filepath}")
 
         except (TypeError, IOError) as e:
             logging.error(f"Could not save checkpoint file to {self.filepath}: {e}")
-
+        finally:
+            # Clean up the temporary file if it still exists after an error
+            if os.path.exists(temp_filepath):
+                os.remove(temp_filepath)
+                
     def load(self) -> Optional[Dict[str, Any]]:
         """
         Loads the state from the checkpoint file and restores non-serializable values.
