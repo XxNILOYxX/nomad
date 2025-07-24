@@ -158,6 +158,7 @@ class ConfigLoader:
             'materials_xml_path': self.config.get('simulation', 'materials_xml_path'),
             'fission_tally_name': self.config.get('simulation', 'fission_tally_name'),
             'ppf_interp_file': self.config.get('simulation', 'ppf_interp_file'),
+            'ppf_interp_file_best': self.config.get('simulation', 'ppf_interp_file_best'),
             'keff_interp_file': self.config.get('simulation', 'keff_interp_file'),
             'checkpoint_file': self.config.get('simulation', 'checkpoint_file'),
             'statepoint_filename_pattern': self.config.get('simulation', 'statepoint_filename_pattern'),
@@ -178,7 +179,13 @@ class ConfigLoader:
             'min_interp_points': self.config.getint('interpolator', 'min_interp_points'),
             'min_validation_score': self.config.getfloat('interpolator', 'min_validation_score'),
             'regressor_type': self.config.get('interpolator', 'regressor_type'),
+            'nn_epochs': self.config.getint('interpolator', 'nn_epochs', fallback=100),
+            'nn_batch_size': self.config.getint('interpolator', 'nn_batch_size', fallback=32),
+            'nn_learning_rate': self.config.getfloat('interpolator', 'nn_learning_rate', fallback=0.001),
             'n_neighbors': self.config.getint('interpolator', 'n_neighbors'),
+            'nn_dropout_rate': self.config.getfloat('interpolator', 'nn_dropout_rate', fallback=0.2),
+            'nn_patience': self.config.getint('interpolator', 'nn_patience', fallback=10),
+            'nn_random_seed': self.config.getint('interpolator', 'nn_random_seed', fallback=42),
         }
 
         # Load fuel setup
@@ -211,7 +218,7 @@ class ConfigLoader:
             if hybrid_p['switch_mode'] not in ['fixed_cycles', 'stagnation', 'oscillate', 'adaptive']:
                 raise ValueError("Hybrid 'switch_mode' must be 'fixed_cycles', 'stagnation', 'oscillate', or 'adaptive'.")
 
-            min_phase_cycles = 3  # A reasonable minimum for a phase to be meaningful
+            min_phase_cycles = 3
             if hybrid_p['ga_phase_cycles'] < min_phase_cycles:
                 logging.warning(f"Hybrid 'ga_phase_cycles' is set to {hybrid_p['ga_phase_cycles']}, which is very low and may lead to ineffective optimization. A value of {min_phase_cycles} or higher is recommended.")
             if hybrid_p['pso_phase_cycles'] < min_phase_cycles:
@@ -226,7 +233,6 @@ class ConfigLoader:
                 raise ValueError("Hybrid 'adaptive_trend_dampening_factor' must be between 0 and 1.")
             if not (0.0 <= hybrid_p['pso_seed_ratio'] <= 1.0):
                 raise ValueError("Hybrid 'pso_seed_ratio' must be between 0.0 and 1.0.")
-
 
         # --- Fuel Setup Validation ---
         fissile_flags = self.params['fuel']['fissile_flags']
