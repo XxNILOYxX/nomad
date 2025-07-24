@@ -67,8 +67,9 @@ class MainOptimizer:
         if loaded_state and loaded_state.get('cycle_number', 0) > 0:
             loaded_state.setdefault('cycle_durations', [])
             loaded_state.setdefault('estimated_remaining_time', 'Calculating...')
-            keff_loaded = self.keff_interpolator.load_data(self.config['simulation']['keff_interp_file'])
-            ppf_loaded = self.ppf_interpolator.load_data(self.config['simulation']['ppf_interp_file'])
+            # Load data for both interpolators
+            keff_loaded = self.keff_interpolator.load_data()
+            ppf_loaded = self.ppf_interpolator.load_data()
             
             optimizer_state_loaded = False
             if 'optimizer_state' in loaded_state and loaded_state['optimizer_state']:
@@ -131,9 +132,10 @@ class MainOptimizer:
         Runs initial OpenMC simulations to build a baseline dataset.
         This process is resumable and provides time estimates.
         """
-        self.keff_interpolator.load_data(self.config['simulation']['keff_interp_file'])
-        self.ppf_interpolator.load_data(self.config['simulation']['ppf_interp_file'])
-        num_completed_samples = len(self.keff_interpolator.features)
+        self.keff_interpolator.load_data()
+        self.ppf_interpolator.load_data()
+        # For PPF, check against the live dataset for completion status
+        num_completed_samples = len(self.ppf_interpolator.live_features)
 
         sample_configurations = self.config['enrichment'].get('initial_configs', [])
 
@@ -204,8 +206,8 @@ class MainOptimizer:
                     self.keff_interpolator.add_data_point(individual, keff)
                     self.ppf_interpolator.add_data_point(individual, ppf)
                     
-                    self.keff_interpolator.save_data(self.config['simulation']['keff_interp_file'])
-                    self.ppf_interpolator.save_data(self.config['simulation']['ppf_interp_file'])
+                    self.keff_interpolator.save_data()
+                    self.ppf_interpolator.save_data() # Saves both live and best datasets
                     logging.info(f"Successfully completed and saved sample {i + 1}.")
 
                     duration = time.time() - sample_start_time
@@ -310,8 +312,8 @@ class MainOptimizer:
                 self.state['optimizer_state'] = self.optimizer_engine.get_state()
             
             self.checkpoint.save(self.state)
-            self.keff_interpolator.save_data(self.config['simulation']['keff_interp_file'])
-            self.ppf_interpolator.save_data(self.config['simulation']['ppf_interp_file'])
+            self.keff_interpolator.save_data()
+            self.ppf_interpolator.save_data()
             
             logging.info(f"--- Cycle {i+1} finished in {self._format_time(cycle_duration)} ---")
 
@@ -320,3 +322,4 @@ class MainOptimizer:
         logging.info(f"Best true Keff: {self.state['best_true_keff']:.5f}")
         logging.info(f"Best true PPF: {self.state['best_true_ppf']:.4f}")
         logging.info(f"Best true Fitness: {self.state['best_true_fitness']:.6f}")
+
