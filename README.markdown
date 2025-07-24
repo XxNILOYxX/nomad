@@ -77,7 +77,7 @@ This hybrid approach enables rapid exploration of fuel enrichment configurations
 ### Software Dependencies
 - **Python 3.8+** with the following packages:
   ```bash
-  pip install numpy scipy pandas matplotlib scikit-learn
+  pip install numpy scipy pandas matplotlib scikit-learn torch
   ```
 - **OpenMC**: A working installation is required for physics simulations. See the [OpenMC documentation](https://docs.openmc.org/) for installation instructions.
 
