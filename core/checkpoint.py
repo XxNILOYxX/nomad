@@ -68,47 +68,52 @@ class Checkpoint:
 
     def save(self, state: Dict[str, Any]):
         """
-        Saves the current state to the checkpoint file using an atomic write pattern.
+        Saves the current state using a robust backup rotation system.
         """
         temp_filepath = self.filepath + ".tmp"
+        backup_filepath = self.filepath + ".bak"
+        
         try:
+            # 1. Write the new state to a temporary file
             state_to_save = self._convert_infinities_to_str(state)
             with open(temp_filepath, 'w') as f:
                 json.dump(state_to_save, f, indent=4, cls=NumpyEncoder)
+
+            # 2. If a primary checkpoint exists, rename it to be the backup
+            if os.path.exists(self.filepath):
+                os.replace(self.filepath, backup_filepath)
             
-            # This is the atomic operation.
+            # 3. Rename the new temp file to be the primary checkpoint
             os.replace(temp_filepath, self.filepath)
             
-            logging.info(f"Checkpoint successfully saved to {self.filepath}")
+            logging.info(f"Checkpoint saved to {self.filepath}, with backup at {backup_filepath}")
 
         except (TypeError, IOError) as e:
-            logging.error(f"Could not save checkpoint file to {self.filepath}: {e}")
+            logging.error(f"Could not save checkpoint file: {e}")
         finally:
-            # Clean up the temporary file if it still exists after an error
             if os.path.exists(temp_filepath):
                 os.remove(temp_filepath)
                 
     def load(self) -> Optional[Dict[str, Any]]:
         """
-        Loads the state from the checkpoint file and restores non-serializable values.
-
-        Returns:
-            A dictionary containing the loaded state, or None if no valid checkpoint exists.
+        Loads state from the primary checkpoint, falling back to the backup if needed.
         """
-        if not os.path.exists(self.filepath):
-            logging.info("No checkpoint file found. Starting a new run.")
-            return None
+        files_to_try = [self.filepath, self.filepath + ".bak"]
+        
+        for file in files_to_try:
+            if not os.path.exists(file):
+                continue
 
-        try:
-            with open(self.filepath, 'r') as f:
-                loaded_state = json.load(f)
-            
-            # Recursively restore all potential infinity values from their string representation
-            state = self._convert_str_to_infinities(loaded_state)
+            try:
+                with open(file, 'r') as f:
+                    loaded_state = json.load(f)
+                
+                state = self._convert_str_to_infinities(loaded_state)
+                logging.info(f"Checkpoint successfully loaded from {file}")
+                return state
 
-            logging.info(f"Checkpoint successfully loaded from {self.filepath}")
-            return state
-
-        except (json.JSONDecodeError, IOError, KeyError) as e:
-            logging.error(f"Failed to load or parse checkpoint file {self.filepath}: {e}. Starting a new run.")
-            return None
+            except (json.JSONDecodeError, IOError, KeyError) as e:
+                logging.warning(f"Failed to load checkpoint {file}: {e}. Trying next...")
+        
+        logging.info("No valid checkpoint or backup file found. Starting a new run.")
+        return None
