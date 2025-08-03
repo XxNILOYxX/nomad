@@ -1,106 +1,267 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Genetic Algorithm Fitness Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            /* Control Room (dark) */
+            --steel-900: #0c0f12;
+            --steel-800: #12161b;
+            --steel-700: #1a2026;
+            --steel-600: #232a31;
+            --text-bright: #eaf1f1;
+            --text-dim: #97a3a3;
+            --rad-green: #7DFA52;
+            --rad-green-soft: rgba(125, 250, 82, 0.25);
+            --amber: #ffbe55;
+            --amber-soft: rgba(255, 190, 85, 0.25);
+            --alert-red: #ff4d4f;
+            --grid: rgba(255, 255, 255, 0.06);
+            --panel: rgba(24, 29, 36, 0.6);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --glow-green: 0 0 16px rgba(125, 250, 82, 0.3), 0 0 32px rgba(125, 250, 82, 0.18);
+            --glow-amber: 0 0 16px rgba(255, 190, 85, 0.3), 0 0 32px rgba(255, 190, 85, 0.18);
+            --glow-red: 0 0 16px rgba(255, 77, 79, 0.35), 0 0 28px rgba(255, 77, 79, 0.2);
+            --chart-grid: rgba(255,255,255,0.06);
+            --tooltip-bg: rgba(15, 20, 22, 0.95);
+            --tooltip-border: rgba(125, 250, 82, 0.35);
+            --accent: var(--rad-green);
+        }
+
+        /* Lab (light) theme overrides */
+        .theme-lab {
+            --steel-900: #f7fafc;
+            --steel-800: #edf2f7;
+            --steel-700: #e2e8f0;
+            --steel-600: #cbd5e1;
+            --text-bright: #0f172a;
+            --text-dim: #334155;
+            --rad-green: #1db954;
+            --rad-green-soft: rgba(29, 185, 84, 0.18);
+            --amber: #eab308;
+            --amber-soft: rgba(234, 179, 8, 0.18);
+            --alert-red: #ef4444;
+            --grid: rgba(15, 23, 42, 0.06);
+            --panel: rgba(255, 255, 255, 0.7);
+            --panel-border: rgba(15, 23, 42, 0.08);
+            --glow-green: 0 0 0 rgba(0,0,0,0);
+            --glow-amber: 0 0 0 rgba(0,0,0,0);
+            --glow-red: 0 0 0 rgba(0,0,0,0);
+            --chart-grid: rgba(15, 23, 42, 0.08);
+            --tooltip-bg: rgba(255, 255, 255, 0.98);
+            --tooltip-border: rgba(15, 23, 42, 0.2);
+            --accent: #0ea5e9;
+        }
+
+        /* Neon Astral theme overrides */
+        .theme-neon {
+            --steel-900: #05010a;
+            --steel-800: #080314;
+            --steel-700: #0b051d;
+            --steel-600: #120a2a;
+            --text-bright: #e7e1ff;
+            --text-dim: #b6b2c8;
+            --rad-green: #5df27a;
+            --rad-green-soft: rgba(93, 242, 122, 0.18);
+            --amber: #ffb86b;
+            --amber-soft: rgba(255, 184, 107, 0.18);
+            --alert-red: #ff5470;
+            --grid: rgba(255,255,255,0.08);
+            --panel: rgba(15, 10, 28, 0.5);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --glow-green: 0 0 24px rgba(157, 78, 221, 0.35), 0 0 48px rgba(34, 211, 238, 0.15);
+            --glow-amber: 0 0 24px rgba(157, 78, 221, 0.25);
+            --glow-red: 0 0 24px rgba(255, 84, 112, 0.35);
+            --chart-grid: rgba(255,255,255,0.08);
+            --tooltip-bg: rgba(10, 6, 22, 0.95);
+            --tooltip-border: rgba(167,139,250,0.35);
+            --accent: #22d3ee;
+        }
+
+        /* Backgrounds */
         body {
-            background-color: #000;
-            color: #9370DB; 
+            background:
+                linear-gradient(180deg, var(--steel-900) 0%, var(--steel-800) 55%, var(--steel-900) 100%),
+                radial-gradient(1000px 500px at 80% 0%, rgba(125,250,82,0.06), transparent 60%),
+                radial-gradient(900px 600px at 0% 20%, rgba(255,190,85,0.05), transparent 60%);
+            color: var(--text-bright);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial;
+            transition: background 300ms ease, color 300ms ease;
         }
-        .dashboard-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        body.theme-neon {
+            background: radial-gradient(1200px 800px at 20% 10%, rgba(157, 78, 221, 0.15), transparent 60%),
+                        radial-gradient(900px 600px at 80% 30%, rgba(34, 211, 238, 0.12), transparent 65%),
+                        linear-gradient(180deg, #09021a 0%, #060014 40%, #05010a 100%);
         }
+
+        /* Scanning grid */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(0deg, var(--grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 28px 28px, 28px 28px;
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: -1;
+            animation: grid-scan 16s linear infinite;
+        }
+        @keyframes grid-scan {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-28px); }
+        }
+
+        .dashboard-container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+        .title-row {
+            display: flex; justify-content: center; align-items: baseline;
+            gap: 12px; margin-bottom: 6px;
+        }
+        h1 {
+            font-weight: 800; letter-spacing: 0.02em; text-transform: uppercase; font-size: 1.4rem;
+            margin: 0;
+        }
+        .subtitle { text-align: center; color: var(--text-dim); font-size: 0.9rem; margin: 6px 0 18px; }
+
+        .caution {
+            height: 6px; border-radius: 3px;
+            background: repeating-linear-gradient(45deg, rgba(255, 190, 85, 0.12) 0 12px, rgba(0,0,0,0.2) 12px 24px);
+            border: 1px solid var(--panel-border);
+            margin-bottom: 18px;
+        }
+
         .card {
             margin-bottom: 20px;
-            border: 1px solid #444;
-            background-color: #1a1a1a;
-            border-radius: 15px;
+            border: 1px solid var(--panel-border);
+            background: linear-gradient(180deg, rgba(20, 24, 30, 0.8), rgba(16, 20, 26, 0.75));
+            backdrop-filter: blur(6px);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+            position: relative;
+            overflow: hidden;
+            transition: background 300ms ease, border-color 300ms ease, color 300ms ease;
         }
-        .metric-card {
-            text-align: center;
-            padding: 10px;
+        .theme-lab .card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(250,250,255,0.75));
+            box-shadow: 0 8px 24px rgba(15,23,42,0.08);
         }
-        .metric-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #00FF00; 
+        .theme-neon .card {
+            background: linear-gradient(180deg, rgba(20, 14, 35, 0.6), rgba(12, 8, 24, 0.55));
+            box-shadow: 0 8px 24px rgba(157,78,221,0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        #fitnessChart {
-            max-height: 250px;
-            background-color: #1a1a1a;
+        .card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(400px 100px at 20% 0%, rgba(125,250,82,0.05), transparent 50%);
+            pointer-events: none;
         }
-        .text-purple {
-            color: #9370DB;
-        }
-        .btn-primary {
-            background-color: #9370DB;
-            border-color: #9370DB;
-        }
-        .btn-primary:hover {
-            background-color: #7B68EE;
-            border-color: #7B68EE;
-        }
+        .theme-neon .card::after { background-image: none; }
+
+        .metric-card .card-body { text-align: center; padding: 16px 14px; }
+        .card-title { color: var(--text-dim); font-weight: 700; font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; }
+        .metric-value { font-size: 1.6rem; font-weight: 800; color: var(--text-bright); text-shadow: 0 0 10px rgba(125, 250, 82, 0.15); }
+        .theme-neon .metric-value { text-shadow: 0 0 16px rgba(93, 242, 122, 0.3); }
+        .metric-card:hover .metric-value { color: var(--rad-green); text-shadow: 0 0 14px rgba(125, 250, 82, 0.35); transition: all 200ms ease; }
+
+        .status-row { align-items: center; }
         .status-indicator {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 8px;
+            display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 8px; box-shadow: 0 0 12px currentColor;
         }
-        .status-connecting {
-            background-color: #FFA500;
-            animation: pulse 2s infinite;
+        .status-connecting { color: var(--amber); background-color: var(--amber); animation: pulse 1.5s infinite; }
+        .status-connected  { color: var(--rad-green); background-color: var(--rad-green); }
+        .status-error      { color: var(--alert-red); background-color: var(--alert-red); animation: pulse 1.1s infinite; }
+        .text-muted { color: var(--text-dim) !important; }
+        .last-update { font-size: 0.85rem; color: var(--text-dim); }
+
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.85); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
+
+        /* Buttons toolbar */
+        .btn-toolbar {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            align-items: center;
+            flex-wrap: wrap;
         }
-        .status-connected {
-            background-color: #00FF00;
+        .btn {
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            padding: 0 14px;
         }
-        .status-error {
-            background-color: #FF0000;
-            animation: pulse 2s infinite;
+
+        .btn-primary {
+            background: linear-gradient(135deg, rgba(125,250,82,0.95), rgba(90, 196, 60, 0.95));
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #0a130a; font-weight: 700; box-shadow: var(--glow-green);
         }
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+        .btn-primary:hover { transform: translateY(-1px); }
+        .btn-outline-primary { color: var(--amber); border-color: rgba(255,190,85,0.65); }
+        .btn-outline-primary:hover { background: rgba(255,190,85,0.12); border-color: rgba(255,190,85,0.9); color: var(--text-bright); box-shadow: var(--glow-amber); }
+        .theme-neon .btn-primary {
+            background: linear-gradient(135deg, rgba(157,78,221,0.95), rgba(34,211,238,0.95));
+            color: #0d0a15; box-shadow: 0 8px 24px rgba(157,78,221,0.35);
+            border: none;
         }
-        .last-update {
-            font-size: 0.8rem;
-            color: #888;
-        }
+        .theme-neon .btn-outline-primary { color: #22d3ee; border-color: rgba(34,211,238,0.5); }
+        .theme-neon .btn-outline-primary:hover { background: rgba(34,211,238,0.15); border-color: rgba(34,211,238,0.8); color: var(--text-bright); }
+
+        #fitnessChart { background-color: transparent; }
+        .chart-panel .card-title { color: var(--amber); }
+        .theme-neon .chart-panel .card-title { color: #22d3ee; }
+
+        .geiger { height: 2px; width: 100%; margin: 6px 0 10px; background: linear-gradient(90deg, var(--rad-green), transparent); position: relative; overflow: hidden; }
+        .geiger::after { content: ""; position: absolute; top: -2px; left: -10%; height: 6px; width: 18%; background: radial-gradient(10px 6px at 50% 50%, rgba(125,250,82,0.8), transparent 70%); animation: sweep 2.2s linear infinite; }
+        .theme-neon .geiger { background: linear-gradient(90deg, #22d3ee, transparent); }
+        @keyframes sweep { 0% { left: -10%; } 100% { left: 100%; } }
+
+        .text-danger { color: var(--alert-red) !important; }
+        .theme-neon .text-danger { color: #ff5470 !important; }
     </style>
 </head>
 <body>
     <div class="dashboard-container">
-        <h1 class="text-center mb-4 text-purple">Genetic Algorithm Fitness Dashboard</h1>
-        
-        <div class="row mb-3">
+        <div class="title-row">
+            <h1>Reactor Genetic Optimization Console</h1>
+        </div>
+        <div class="subtitle">Core performance metrics and evolutionary fitness tracking</div>
+        <div class="caution"></div>
+
+        <div class="row mb-3 status-row">
             <div class="col-md-8">
-                <p id="connectionStatus" class="text-muted">
+                <p id="connectionStatus" class="text-muted mb-1">
                     <span id="statusIndicator" class="status-indicator status-connecting"></span>
-                    Attempting to connect...
+                    Establishing core link...
                 </p>
                 <p id="lastUpdate" class="last-update">Last update: Never</p>
             </div>
-            <div class="col-md-4 text-end">
-                <button id="loadTestData" class="btn btn-primary me-2">Load Test Data</button>
-                <button id="togglePolling" class="btn btn-outline-primary">Pause Auto-Update</button>
+            <div class="col-md-4">
+                <div class="btn-toolbar">
+                    <button id="loadTestData" class="btn btn-primary">Load Calibration Data</button>
+                    <button id="togglePolling" class="btn btn-outline-primary">Pause Auto-Update</button>
+                    <button id="toggleTheme" class="btn btn-outline-primary">Theme: Control Room</button>
+                </div>
             </div>
         </div>
 
-        <div class="row">
+        <div class="row g-3">
             <div class="col-md-6">
-                <div class="row">
+                <div class="row g-3">
                     <div class="col-md-6">
                         <div class="card metric-card">
                             <div class="card-body">
-                                <h5 class="card-title text-purple">Best Fitness</h5>
+                                <h5 class="card-title">Best Fitness</h5>
                                 <p id="bestFitness" class="metric-value">N/A</p>
                             </div>
                         </div>
@@ -108,7 +269,7 @@
                     <div class="col-md-6">
                         <div class="card metric-card">
                             <div class="card-body">
-                                <h5 class="card-title text-purple">Actual Fitness</h5>
+                                <h5 class="card-title">Actual Fitness</h5>
                                 <p id="actualFitness" class="metric-value">N/A</p>
                             </div>
                         </div>
@@ -116,7 +277,7 @@
                     <div class="col-md-6">
                         <div class="card metric-card">
                             <div class="card-body">
-                                <h5 class="card-title text-purple">PPF</h5>
+                                <h5 class="card-title">PPF</h5>
                                 <p id="ppf" class="metric-value">N/A</p>
                             </div>
                         </div>
@@ -124,7 +285,7 @@
                     <div class="col-md-6">
                         <div class="card metric-card">
                             <div class="card-body">
-                                <h5 class="card-title text-purple">K-eff</h5>
+                                <h5 class="card-title">K-eff</h5>
                                 <p id="keff" class="metric-value">N/A</p>
                             </div>
                         </div>
@@ -132,7 +293,7 @@
                     <div class="col-md-6">
                         <div class="card metric-card">
                             <div class="card-body">
-                                <h5 class="card-title text-purple">K-eff Error (%)</h5>
+                                <h5 class="card-title">K-eff Error (%)</h5>
                                 <p id="keffErrorPercent" class="metric-value">N/A</p>
                             </div>
                         </div>
@@ -140,7 +301,7 @@
                     <div class="col-md-6">
                         <div class="card metric-card">
                             <div class="card-body">
-                                <h5 class="card-title text-purple">PPF Error (%)</h5>
+                                <h5 class="card-title">PPF Error (%)</h5>
                                 <p id="ppfErrorPercent" class="metric-value">N/A</p>
                             </div>
                         </div>
@@ -148,7 +309,7 @@
                     <div class="col-md-6">
                         <div class="card metric-card">
                             <div class="card-body">
-                                <h5 class="card-title text-purple">Current Cycle</h5>
+                                <h5 class="card-title">Current Cycle</h5>
                                 <p id="currentCycle" class="metric-value">N/A</p>
                             </div>
                         </div>
@@ -156,25 +317,34 @@
                     <div class="col-md-6">
                         <div class="card metric-card">
                             <div class="card-body">
-                                <h5 class="card-title text-purple">Time Remaining</h5>
+                                <h5 class="card-title">Time Remaining</h5>
                                 <p id="timeRemaining" class="metric-value">Calculating...</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="col-md-6">
-                <div class="card mt-3">
+                <div class="card mt-3 chart-panel">
                     <div class="card-body">
-                        <h5 class="card-title text-purple">Fitness Progress Over Cycles</h5>
-                        <canvas id="fitnessChart"></canvas>
-                        <p id="chartError" class="text-danger" style="display: none;">
+                        <h5 class="card-title">Reactor Fitness Trend</h5>
+                        <div class="geiger"></div>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="fitnessChart"></canvas>
+                        </div>
+                        <p id="chartError" class="text-danger mt-2" style="display: none;">
                             Error loading chart data. Check console for details.
                         </p>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Geiger tick audio (base64 tiny wav) -->
+        <audio id="geigerTick" preload="auto">
+            <source src="data:audio/wav;base64,UklGRmQAAABXQVZFZm10IBAAAAABAAEAgD4AAIA+AAABAAgAZGF0YQQAAACAgICAgP8AAP8AAICAgICA/wAA/wAAgICAgID/AAAAAICAgICA/wAA" type="audio/wav">
+        </audio>
     </div>
 
     <script>
@@ -182,6 +352,12 @@
         let fitnessChart;
         let pollingInterval;
         let isPolling = true;
+
+        // Theme state: 0 = Control Room, 1 = Lab, 2 = Neon
+        let themeIndex = 0;
+
+        // Best fitness tracker for geiger ticks
+        let lastBestFitness = -Infinity;
 
         // Initialize Chart.js
         const ctx = document.getElementById('fitnessChart').getContext('2d');
@@ -192,12 +368,15 @@
                 datasets: [{
                     label: 'Best Fitness per Cycle',
                     data: [],
-                    borderColor: '#9370DB',
-                    backgroundColor: 'rgba(147, 112, 219, 0.2)',
+                    borderColor: getComputedStyle(document.body).getPropertyValue('--rad-green').trim() || '#7DFA52',
+                    backgroundColor: 'rgba(125, 250, 82, 0.08)',
                     fill: true,
-                    tension: 0.4,
+                    tension: 0.3,
                     pointRadius: 3,
-                    pointHoverRadius: 5
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: getComputedStyle(document.body).getPropertyValue('--rad-green').trim() || '#7DFA52',
+                    pointBorderColor: '#0f1515',
+                    borderWidth: 2
                 }]
             },
             options: {
@@ -205,110 +384,132 @@
                 maintainAspectRatio: false,
                 scales: {
                     x: { 
-                        title: { display: true, text: 'Cycle', color: '#9370DB' }, 
-                        ticks: { color: '#9370DB' },
-                        grid: { color: '#444' }
+                        title: { display: true, text: 'Cycle', color: getComputedStyle(document.body).getPropertyValue('--text-dim').trim() }, 
+                        ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-bright').trim() },
+                        grid: { color: getComputedStyle(document.body).getPropertyValue('--chart-grid').trim() }
                     },
                     y: {
-                        title: { display: true, text: 'Fitness', color: '#9370DB' },
-                        ticks: { color: '#9370DB' },
-                        grid: { color: '#444' }
+                        title: { display: true, text: 'Fitness', color: getComputedStyle(document.body).getPropertyValue('--text-dim').trim() },
+                        ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-bright').trim() },
+                        grid: { color: getComputedStyle(document.body).getPropertyValue('--chart-grid').trim() }
                     }
                 },
                 plugins: {
-                    legend: { 
-                        labels: { color: '#9370DB' }
+                    legend: { labels: { color: getComputedStyle(document.body).getPropertyValue('--text-bright').trim() } },
+                    tooltip: {
+                        backgroundColor: getComputedStyle(document.body).getPropertyValue('--tooltip-bg').trim(),
+                        borderColor: getComputedStyle(document.body).getPropertyValue('--tooltip-border').trim(),
+                        borderWidth: 1,
+                        titleColor: getComputedStyle(document.body).getPropertyValue('--text-bright').trim(),
+                        bodyColor: getComputedStyle(document.body).getPropertyValue('--text-dim').trim(),
+                        displayColors: false
                     }
+                },
+                elements: {
+                    line: { borderJoinStyle: 'round', borderCapStyle: 'round' }
                 }
             }
         });
 
-        // Function to update status indicator
+        function refreshChartTheme() {
+            const cs = getComputedStyle(document.body);
+            const rad = cs.getPropertyValue('--rad-green').trim();
+            const grid = cs.getPropertyValue('--chart-grid').trim();
+            const tDim = cs.getPropertyValue('--text-dim').trim();
+            const tBright = cs.getPropertyValue('--text-bright').trim();
+            const tipBg = cs.getPropertyValue('--tooltip-bg').trim();
+            const tipBorder = cs.getPropertyValue('--tooltip-border').trim();
+
+            const ds = fitnessChart.data.datasets[0];
+            ds.borderColor = rad || '#7DFA52';
+            ds.pointBackgroundColor = rad || '#7DFA52';
+            ds.backgroundColor = 'rgba(125, 250, 82, 0.08)';
+            fitnessChart.options.scales.x.grid.color = grid;
+            fitnessChart.options.scales.y.grid.color = grid;
+            fitnessChart.options.scales.x.ticks.color = tBright;
+            fitnessChart.options.scales.y.ticks.color = tBright;
+            fitnessChart.options.scales.x.title.color = tDim;
+            fitnessChart.options.scales.y.title.color = tDim;
+            fitnessChart.options.plugins.legend.labels.color = tBright;
+            fitnessChart.options.plugins.tooltip.backgroundColor = tipBg;
+            fitnessChart.options.plugins.tooltip.borderColor = tipBorder;
+            fitnessChart.options.plugins.tooltip.titleColor = tBright;
+            fitnessChart.options.plugins.tooltip.bodyColor = tDim;
+            fitnessChart.update('none');
+        }
+
+        // Status indicator
         function updateStatusIndicator(status) {
             const indicator = document.getElementById('statusIndicator');
             indicator.className = 'status-indicator status-' + status;
         }
 
-        // Function to update last update time
         function updateLastUpdateTime() {
             const now = new Date();
             const timeString = now.toLocaleTimeString();
             document.getElementById('lastUpdate').textContent = `Last update: ${timeString}`;
         }
 
-        // Function to fetch checkpoint data
+        // Fetch checkpoint data
         async function fetchCheckpointData() {
-            console.log('Fetching checkpoint data...');
             try {
                 updateStatusIndicator('connecting');
-                
                 const timestamp = new Date().getTime();
-
                 const response = await fetch(`data/ga_checkpoint.json?t=${timestamp}`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                
+                if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 const data = await response.json();
-                console.log('Checkpoint data received:', data);
                 
                 document.getElementById('connectionStatus').innerHTML = 
-                    '<span id="statusIndicator" class="status-indicator status-connected"></span>Connected - Live Data';
+                    '<span id="statusIndicator" class="status-indicator status-connected"></span>Core link stable — Live Data';
                 updateStatusIndicator('connected');
                 updateLastUpdateTime();
 
                 updateMetrics(data);
                 updateChart(data);
-                
             } catch (error) {
-                console.error('Error fetching checkpoint data:', error);
                 document.getElementById('connectionStatus').innerHTML = 
-                    '<span id="statusIndicator" class="status-indicator status-error"></span>Connection failed - ' + error.message;
+                    '<span id="statusIndicator" class="status-indicator status-error"></span>Core link failure — ' + error.message;
                 updateStatusIndicator('error');
             }
         }
 
-        // Function to update metrics
+        // Update metrics
         function updateMetrics(data) {
-            console.log('Updating metrics with data:', data);
-            
             document.getElementById('bestFitness').textContent = 
                 data.best_true_fitness !== null && data.best_true_fitness !== undefined && data.best_true_fitness > -Infinity ? 
                 data.best_true_fitness.toFixed(6) : 'N/A';
             
             const lastCycle = data.history && data.history.length > 0 ? data.history[data.history.length - 1] : null;
 
-            document.getElementById('actualFitness').textContent =
-                lastCycle && lastCycle.fitness !== undefined ?
-                lastCycle.fitness.toFixed(6) : 'N/A';
+            const actualFitness = lastCycle && lastCycle.fitness !== undefined ? lastCycle.fitness : null;
+            const ppf = lastCycle && lastCycle.ppf !== undefined ? lastCycle.ppf : null;
+            const keff = lastCycle && lastCycle.keff !== undefined ? lastCycle.keff : null;
 
-            document.getElementById('ppf').textContent = 
-                lastCycle && lastCycle.ppf !== undefined ? lastCycle.ppf.toFixed(4) : 'N/A';
-            
-            document.getElementById('keff').textContent = 
-                lastCycle && lastCycle.keff !== undefined ? lastCycle.keff.toFixed(5) : 'N/A';
+            document.getElementById('actualFitness').textContent = actualFitness != null ? actualFitness.toFixed(6) : 'N/A';
+            document.getElementById('ppf').textContent = ppf != null ? ppf.toFixed(4) : 'N/A';
+            document.getElementById('keff').textContent = keff != null ? keff.toFixed(5) : 'N/A';
             
             document.getElementById('keffErrorPercent').textContent = 
                 lastCycle && lastCycle.keff_error_percent !== undefined ? lastCycle.keff_error_percent.toFixed(2) + '%' : 'N/A';
-            
             document.getElementById('ppfErrorPercent').textContent = 
                 lastCycle && lastCycle.ppf_error_percent !== undefined ? lastCycle.ppf_error_percent.toFixed(2) + '%' : 'N/A';
             
-            document.getElementById('timeRemaining').textContent = 
-                data.estimated_remaining_time || 'Calculating...';
-            
+            document.getElementById('timeRemaining').textContent = data.estimated_remaining_time || 'Calculating...';
             document.getElementById('currentCycle').textContent = 
-                data.estimated_remaining_time === 'Completed' ? 
-                `${data.cycle_number} (Finished)` :
+                data.estimated_remaining_time === 'Completed' ? `${data.cycle_number} (Finished)` :
                 (data.cycle_number !== null && data.cycle_number !== undefined ? data.cycle_number + 1 : 'N/A');
+
+            // Geiger tick for new best fitness
+            const bestTrue = data.best_true_fitness;
+            if (typeof bestTrue === 'number' && bestTrue > lastBestFitness) {
+                playGeigerTick();
+                lastBestFitness = bestTrue;
+            }
         }
 
-        // Function to update chart
+        // Update chart
         function updateChart(data) {
             const fitnessHistory = data.history ? data.history.map(item => item.fitness) : [];
-            console.log('Updating chart with fitness history:', fitnessHistory);
-            
             if (fitnessHistory && fitnessHistory.length > 0) {
                 fitnessChart.data.labels = Array.from({length: fitnessHistory.length}, (_, i) => i + 1);
                 fitnessChart.data.datasets[0].data = fitnessHistory;
@@ -320,24 +521,23 @@
             }
         }
 
-        // Function to load test data
+        // Load test data
         function loadTestData() {
-            console.log('Loading test data...');
             const testData = {
                 best_overall_fitness: 0.835580,
                 best_true_fitness: 0.831122,
                 history: [
-                    { cycle: 1, keff: 1.12437, ppf: 2.1234, fitness: 0.8101, keff_error_percent: 0.09, ppf_error_percent: 0.47 },
-                    { cycle: 2, keff: 1.11234, ppf: 2.0987, fitness: 0.8234, keff_error_percent: 0.12, ppf_error_percent: 0.52 },
-                    { cycle: 3, keff: 1.12890, ppf: 2.1156, fitness: 0.8155, keff_error_percent: 0.08, ppf_error_percent: 0.43 },
-                    { cycle: 4, keff: 1.11567, ppf: 1.9876, fitness: 0.8311, keff_error_percent: 0.11, ppf_error_percent: 0.49 }
+                    { cycle: 1, keff: 1.00000, ppf: 2.1234, fitness: 0.8101, keff_error_percent: 0.09, ppf_error_percent: 0.47 },
+                    { cycle: 2, keff: 0.99780, ppf: 2.0987, fitness: 0.8234, keff_error_percent: 0.12, ppf_error_percent: 0.52 },
+                    { cycle: 3, keff: 1.00690, ppf: 2.1156, fitness: 0.8255, keff_error_percent: 0.08, ppf_error_percent: 0.43 },
+                    { cycle: 4, keff: 1.01234, ppf: 1.9876, fitness: 0.8311, keff_error_percent: 0.11, ppf_error_percent: 0.49 }
                 ],
                 estimated_remaining_time: '2 days, 15:30:45',
                 cycle_number: 4,
             };
             
             document.getElementById('connectionStatus').innerHTML = 
-                '<span id="statusIndicator" class="status-indicator status-connected"></span>Test Data Loaded';
+                '<span id="statusIndicator" class="status-indicator status-connected"></span>Calibration feed online';
             updateStatusIndicator('connected');
             updateLastUpdateTime();
             
@@ -345,77 +545,82 @@
             updateChart(testData);
         }
 
-        // Function to start polling
+        // Polling control
         function startPolling() {
-            if (pollingInterval) {
-                clearInterval(pollingInterval);
-            }
-            
-            console.log('Starting auto-update polling every 5 seconds...');
+            if (pollingInterval) clearInterval(pollingInterval);
             pollingInterval = setInterval(() => {
-                if (isPolling) {
-                    console.log('Polling interval triggered');
-                    fetchCheckpointData();
-                }
+                if (isPolling) fetchCheckpointData();
             }, 5000);
         }
-
-        // Function to stop polling
         function stopPolling() {
-            if (pollingInterval) {
-                clearInterval(pollingInterval);
-                pollingInterval = null;
-            }
-            console.log('Polling stopped');
+            if (pollingInterval) { clearInterval(pollingInterval); pollingInterval = null; }
         }
-
-        // Function to toggle polling
         function togglePolling() {
             const button = document.getElementById('togglePolling');
-            
             if (isPolling) {
                 isPolling = false;
                 button.textContent = 'Resume Auto-Update';
                 button.className = 'btn btn-success';
-                console.log('Auto-update paused');
             } else {
                 isPolling = true;
                 button.textContent = 'Pause Auto-Update';
                 button.className = 'btn btn-outline-primary';
-                console.log('Auto-update resumed');
                 fetchCheckpointData();
             }
+        }
+
+        // Theme toggle: cycles Control → Lab → Neon
+        function applyTheme() {
+            const body = document.body;
+            body.classList.remove('theme-lab', 'theme-neon');
+            const button = document.getElementById('toggleTheme');
+            if (themeIndex === 1) {
+                body.classList.add('theme-lab');
+                button.textContent = 'Theme: Lab';
+            } else if (themeIndex === 2) {
+                body.classList.add('theme-neon');
+                button.textContent = 'Theme: Neon Astral';
+            } else {
+                button.textContent = 'Theme: Control Room';
+            }
+            refreshChartTheme();
+        }
+        function toggleTheme() {
+            themeIndex = (themeIndex + 1) % 3;
+            applyTheme();
+        }
+
+        // Geiger tick player (throttled)
+        let lastTickTime = 0;
+        function playGeigerTick() {
+            const now = Date.now();
+            if (now - lastTickTime < 200) return;
+            lastTickTime = now;
+            const audio = document.getElementById('geigerTick');
+            if (!audio) return;
+            try { audio.currentTime = 0; audio.play().catch(() => {}); } catch {}
         }
 
         // Event listeners
         document.getElementById('loadTestData').addEventListener('click', loadTestData);
         document.getElementById('togglePolling').addEventListener('click', togglePolling);
+        document.getElementById('toggleTheme').addEventListener('click', toggleTheme);
 
-        // Initialize the dashboard
-        console.log('Initializing dashboard...');
+        // Initialize
+        applyTheme();
         fetchCheckpointData();
         startPolling();
 
-        // Handle page visibility changes
+        // Visibility
         document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                console.log('Page hidden, polling continues in background');
-            } else {
-                console.log('Page visible, ensuring polling is active');
-                if (isPolling && !pollingInterval) {
-                    startPolling();
-                }
+            if (!document.hidden) {
+                if (isPolling && !pollingInterval) startPolling();
                 fetchCheckpointData();
             }
         });
 
-        // Handle page unload
-        window.addEventListener('beforeunload', () => {
-            stopPolling();
-        });
-
-        console.log('Dashboard initialized. Auto-update will occur every 5 seconds.');
-        console.log('Check the browser console for update logs.');
+        // Unload
+        window.addEventListener('beforeunload', () => { stopPolling(); });
     </script>
 </body>
 </html>
