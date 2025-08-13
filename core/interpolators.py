@@ -308,7 +308,7 @@ class PPFInterpolator(BaseInterpolator):
             # --- Primary loading strategy: Use the self-contained .pth checkpoint ---
             if self.regressor_type == 'dnn' and os.path.exists(self.model_state_path):
                 try:
-                    checkpoint = torch.load(self.model_state_path, map_location=self.device)
+                    checkpoint = torch.load(self.model_state_path, map_location=self.device, weights_only=False)
 
                     # Gracefully handle older checkpoints missing a scaler or data
                     if 'scaler' not in checkpoint or 'features' not in checkpoint:
