@@ -275,13 +275,11 @@ class PPFInterpolator(BaseInterpolator):
     def __init__(self, config: Dict, use_gpu: bool):
         super().__init__(config, use_gpu)
         self.live_file_path = self.sim_config['ppf_interp_file']
-        # The .json file for the best dataset is now legacy; the .pth is the primary state file.
-        self.model_state_path = self.sim_config['ppf_interp_file_best'].replace('.json', '.pth')
-        
+        self.best_file_path = self.sim_config['ppf_interp_file_best']
         self.live_features, self.live_targets = [], []
         self.regressor_type = self.interp_config['regressor_type']
         self.validation_scores = []
-        self.lock = threading.Lock()
+        self.lock = threading.Lock() # For thread safety
         self._setup_model()
 
     def _setup_model(self):
@@ -305,62 +303,25 @@ class PPFInterpolator(BaseInterpolator):
 
     def load_data(self):
         with self.lock:
-            # --- Primary loading strategy: Use the self-contained .pth checkpoint ---
-            if self.regressor_type == 'dnn' and os.path.exists(self.model_state_path):
-                try:
-                    checkpoint = torch.load(self.model_state_path, map_location=self.device, weights_only=False)
-
-                    # Gracefully handle older checkpoints missing a scaler or data
-                    if 'scaler' not in checkpoint or 'features' not in checkpoint:
-                        logging.warning(f"Checkpoint '{self.model_state_path}' is outdated. Falling back to retraining.")
-                        # Returning False will trigger the legacy load path below
-                        return False 
-
-                    self.model.load_state_dict(checkpoint['model_state'])
-                    self.model.to(self.device)
-                    self.scaler = checkpoint['scaler']
-                    self.features = [np.array(f) for f in checkpoint['features']]
-                    self.targets = checkpoint['targets']
-                    self.model_is_ready = True
-                    
-                    # Verify the loaded model's performance and log it
-                    try:
-                        X_scaled = self.scaler.transform(self.features)
-                        X_tensor = torch.tensor(X_scaled, dtype=torch.float32).to(self.device)
-                        self.model.eval()
-                        with torch.no_grad():
-                            preds = self.model(X_tensor).cpu().numpy()
-                        score = r2_score(self.targets, preds)
-                        logging.info(f"Loaded DNN model and data from '{self.model_state_path}'. Verification R² score: {score:.4f}.")
-                    except Exception as e:
-                        logging.warning(f"Could not verify loaded model performance: {e}")
-
-                    return True
-                except Exception as e:
-                    logging.error(f"Failed to load checkpoint '{self.model_state_path}': {e}. Proceeding to retrain.")
-
-            # --- Fallback strategy: Load from .json files ---
             self.live_features, self.live_targets = self._load_dataset_from_file(self.live_file_path)
-            # For legacy support, check for the old best_file.json
-            best_features, best_targets = self._load_dataset_from_file(self.sim_config['ppf_interp_file_best'])
+            best_features, best_targets = self._load_dataset_from_file(self.best_file_path)
             
             if best_features:
-                logging.info(f"Found 'best' dataset with {len(best_features)} points. Training new model.")
+                logging.info(f"Found 'best' dataset with {len(best_features)} points. Training model.")
                 if self._train_on_best_data(best_features, best_targets):
                     self.features = best_features
                     self.targets = best_targets
                 return True
             elif self.live_features:
-                logging.info("No checkpoint or 'best' dataset found. Validating 'live' dataset.")
+                logging.info("No 'best' dataset found. Attempting to validate and promote 'live' dataset.")
                 self.retrain()
                 return True
         return False
 
     def save_data(self):
         with self.lock:
-            # Only the 'live' dataset is saved here. The 'best' model/data are saved
-            # atomically during the training process.
             self._save_dataset_to_file(self.live_features, self.live_targets, self.live_file_path)
+            self._save_dataset_to_file(self.features, self.targets, self.best_file_path)
 
     def _best_effort_prediction(self, enrichment_configs: List[List[float]]) -> List[float]:
         temp_model = self._create_new_model_instance()
@@ -392,11 +353,6 @@ class PPFInterpolator(BaseInterpolator):
             self.model_is_ready = False
             return False
 
-        # Avoid retraining if the model already exists and the data is identical
-        if self.model_is_ready and np.array_equal(np.array(self.features), np.array(features)):
-             logging.info("Skipping retraining — incoming 'best' dataset is identical to the current one.")
-             return True
-
         temp_model = self._create_new_model_instance()
         temp_scaler = StandardScaler()
         X = np.array(features)
@@ -411,34 +367,11 @@ class PPFInterpolator(BaseInterpolator):
             self.model = temp_model
             self.scaler = temp_scaler
             self.model_is_ready = True
-            
-            # Atomically save the complete state (model, scaler, data) to the .pth file
-            if self.regressor_type == 'dnn':
-                self._save_model_checkpoint(features, targets)
-
             logging.info(f"Successfully trained new PPF model on dataset with {len(features)} points.")
             return True
         except Exception as e:
             logging.error(f"Failed to train new PPF model: {e}. The old model (if any) will be kept.")
             return False
-            
-    def _save_model_checkpoint(self, features, targets):
-        """Saves the model, scaler, and data to a single atomic .pth file."""
-        checkpoint = {
-            'model_state': self.model.state_dict(),
-            'scaler': self.scaler,
-            'features': [f.tolist() for f in features],
-            'targets': targets
-        }
-        tmp_path = self.model_state_path + ".tmp"
-        try:
-            torch.save(checkpoint, tmp_path)
-            os.replace(tmp_path, self.model_state_path)
-            logging.info(f"Saved complete model checkpoint to '{self.model_state_path}'.")
-        except Exception as e:
-            logging.error(f"Could not save DNN model checkpoint: {e}")
-            if os.path.exists(tmp_path):
-                os.remove(tmp_path)
 
     def retrain(self):
         self._prune_live_dataset()
@@ -465,9 +398,8 @@ class PPFInterpolator(BaseInterpolator):
         self._log_validation(score)
         
         if score >= self.interp_config['min_validation_score']:
-            logging.info(f"Live dataset passed validation with R^2 = {score:.4f}. Attempting to promote to 'best'.")
+            logging.info(f"Live dataset passed validation with R^2 = {score:.4f}. Attempting to promote and train.")
             
-            # Promote the live dataset to be the new "best"
             if self._train_on_best_data(self.live_features, self.live_targets):
                 self.features = copy.deepcopy(self.live_features)
                 self.targets = copy.deepcopy(self.live_targets)
