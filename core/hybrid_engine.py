@@ -181,6 +181,7 @@ class HybridEngine:
                     
                     if hasattr(self.pso_engine, 'initialize_with_population'):
                         self.pso_engine.initialize_with_population(top_individuals)
+                        self.pso_engine.activate_post_switch_boost() # Activate exploration boost
                     else:
                         logging.warning("PSO engine is missing 'initialize_with_population' method. Cannot seed from GA.")
                 else:
