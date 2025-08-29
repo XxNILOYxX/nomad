@@ -179,7 +179,7 @@ def show_splash_screen():
                               @@@@@@                          
                                                                                       
     """
-    __version__ = "1.0.7" # Version updated for PSO addition
+    __version__ = "1.0.8"
     __copyright__ = "2025, MD Hasebul Hasan Niloy"
     __license__ = "https://github.com/XxNILOYxX/nomad/blob/main/LICENSE"
 
