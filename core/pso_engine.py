@@ -68,7 +68,7 @@ class MultiSwarmPSO:
 
     def _initialize_sub_swarms(self):
         """
-        Initializes multiple sub-swarms with potentially different characteristics.
+        Initializes multiple sub-swarms with different characteristics and topologies.
         """
         total_particles = self.config['swarm_size']
         particles_per_swarm = total_particles // self.num_sub_swarms
@@ -79,15 +79,19 @@ class MultiSwarmPSO:
         for i in range(self.num_sub_swarms):
             sub_swarm_config = self.config.copy()
 
-            if i == 0:  # Exploration-focused swarm
+            # Assign different topologies and coefficients per sub-swarm
+            if i == 0:  # Exploration-focused swarm with limited communication
+                sub_swarm_config['topology'] = 'ring'
                 sub_swarm_config['cognitive_coeff'] = 2.5
                 sub_swarm_config['social_coeff'] = 1.0
-            elif i == 1:  # Exploitation-focused swarm
-                sub_swarm_config['cognitive_coeff'] = 1.0
-                sub_swarm_config['social_coeff'] = 2.5
-            else:  # Balanced swarm
+            elif i == 1:  # Balanced swarm with random connections
+                sub_swarm_config['topology'] = 'random'
                 sub_swarm_config['cognitive_coeff'] = 1.5
                 sub_swarm_config['social_coeff'] = 1.5
+            else:  # Exploitation-focused swarm with full communication
+                sub_swarm_config['topology'] = 'global'
+                sub_swarm_config['cognitive_coeff'] = 1.0
+                sub_swarm_config['social_coeff'] = 2.5
 
             num_particles_in_swarm = particles_per_swarm + (1 if i < remainder else 0)
 
@@ -98,11 +102,9 @@ class MultiSwarmPSO:
                 'particle_indices': list(range(particle_start_idx, particle_start_idx + num_particles_in_swarm))
             }
             
-            # (Thread Safety): Use the main PSO's RNGs to ensure consistency
             for _ in range(num_particles_in_swarm):
                 position = self.main_pso._create_random_particle()
                 max_v = sub_swarm_config.get('max_change_probability', 0.5)
-                # Use main_pso._np_rng for numpy random operations
                 velocity = self.main_pso._np_rng.uniform(0, max_v, len(position)).astype(np.float32)
                 sub_swarm['positions'].append(position)
                 sub_swarm['velocities'].append(velocity)
@@ -111,10 +113,12 @@ class MultiSwarmPSO:
 
             self.sub_swarms.append(sub_swarm)
             particle_start_idx += num_particles_in_swarm
+            logging.info(f"Initialized sub-swarm {i} with {num_particles_in_swarm} particles and '{sub_swarm_config['topology']}' topology.")
 
     def _migrate_particles(self):
         """
-        Migrates the best particles from each swarm to another.
+        Performs particle migration between swarms using an adaptive strategy
+        based on overall swarm stagnation.
         """
         if not self.sub_swarms or len(self.sub_swarms) < 2:
             return
@@ -129,79 +133,142 @@ class MultiSwarmPSO:
                     max(1, int(len(source_swarm['positions']) * self.migration_rate)),
                     len(target_swarm['positions']) // 2
                 )
+                if num_migrate == 0:
+                    continue
 
-                if num_migrate == 0: continue
+                # --- Choose migration mode adaptively ---
+                if self.main_pso.stagnation_counter > 300:
+                    # Stagnating badly → prefer exploration
+                    mode = random.choices(
+                        ["random_to_random", "worst_to_random", "best_to_worst"],
+                        weights=[0.5, 0.3, 0.2]
+                    )[0]
+                else:
+                    # Improving or not stagnating → prefer exploitation
+                    mode = random.choices(
+                        ["best_to_worst", "random_to_random", "worst_to_random"],
+                        weights=[0.6, 0.3, 0.1]
+                    )[0]
 
-                source_fitnesses = source_swarm['personal_best_fitnesses']
-                best_source_indices = np.argsort(source_fitnesses)[-num_migrate:]
+                before_div = self.main_pso._calculate_swarm_diversity()
 
-                target_fitnesses = target_swarm['personal_best_fitnesses']
-                worst_target_indices = np.argsort(target_fitnesses)[:num_migrate]
+                # --- Select indices based on mode ---
+                if mode == "best_to_worst":
+                    source_indices = np.argsort(source_swarm['personal_best_fitnesses'])[-num_migrate:]
+                    target_indices = np.argsort(target_swarm['personal_best_fitnesses'])[:num_migrate]
+                elif mode == "random_to_random":
+                    source_indices = random.sample(range(len(source_swarm['positions'])), num_migrate)
+                    target_indices = random.sample(range(len(target_swarm['positions'])), num_migrate)
+                else:  # worst_to_random
+                    source_indices = np.argsort(source_swarm['personal_best_fitnesses'])[:num_migrate]
+                    target_indices = random.sample(range(len(target_swarm['positions'])), num_migrate)
 
-                for source_idx, target_idx in zip(best_source_indices, worst_target_indices):
-                    # Deep copy to prevent reference issues
+                # --- Perform migration ---
+                for source_idx, target_idx in zip(source_indices, target_indices):
                     migrating_position = source_swarm['personal_bests'][source_idx][:]
                     migrating_velocity = source_swarm['velocities'][source_idx].copy()
                     migrating_fitness = source_swarm['personal_best_fitnesses'][source_idx]
-                    
+
                     target_swarm['positions'][target_idx] = migrating_position
                     target_swarm['velocities'][target_idx] = migrating_velocity
                     target_swarm['personal_bests'][target_idx] = migrating_position
                     target_swarm['personal_best_fitnesses'][target_idx] = migrating_fitness
-                    
+
+                    # Sync with main swarm state
                     global_target_idx = target_swarm['particle_indices'][target_idx]
                     self.main_pso.swarm_positions[global_target_idx] = migrating_position
                     self.main_pso.swarm_velocities[global_target_idx] = migrating_velocity
                     self.main_pso.personal_best_positions[global_target_idx] = migrating_position
                     self.main_pso.personal_best_fitnesses[global_target_idx] = migrating_fitness
+                
+                after_div = self.main_pso._calculate_swarm_diversity()
+                logging.info(f"Migration mode: {mode}, migrated {num_migrate} particles. Diversity {before_div:.3f} -> {after_div:.3f}")
+                self.main_pso.adaptive_event_log.append(
+                    f"Iter {self.main_pso._current_iteration}: Migration (mode={mode}, diversity {before_div:.3f}->{after_div:.3f})"
+                )
 
         except (IndexError, ValueError) as e:
             logging.error(f"Error during particle migration: {e}. Skipping migration for this iteration.")
 
 
-    def run_multi_swarm_iteration(self, inertia_weight: float, neighborhood_bests: List[List[float]], current_keffs: List[Optional[float]]):
+    def run_multi_swarm_iteration(self, inertia_weight: float, current_keffs: List[Optional[float]]):
         """
         Runs one full iteration of the multi-swarm PSO algorithm.
-
-        Args:
-            inertia_weight (float): The current inertia weight for the PSO update.
-            neighborhood_bests (List[List[float]]): Pre-calculated neighborhood bests for all particles.
-            current_keffs (List[Optional[float]]): Pre-calculated keffs for smart mutation.
         """
         if not self.sub_swarms:
+            # Fallback to single swarm logic if multi-swarm is not configured
+            neighborhood_bests = [self.main_pso._get_neighborhood_best(i) for i in range(self.config['swarm_size'])]
             self.main_pso._update_swarm_discrete(inertia_weight, neighborhood_bests, current_keffs)
             return
 
-        # First, update all sub-swarms based on their own logic
+        # Update all sub-swarms based on their own logic and topology
         for swarm in self.sub_swarms:
-            self._update_sub_swarm(swarm, inertia_weight, neighborhood_bests, current_keffs)
+            self._update_sub_swarm(swarm, inertia_weight, current_keffs)
 
-        # Then, synchronize the main swarm with the new positions/velocities from sub-swarms
+        # Synchronize the main swarm with the new positions/velocities from sub-swarms
         self._synchronize_main_swarm_from_subs()
 
-        # Perform migration if it's time
-        if self.main_pso._current_iteration > 0 and self.main_pso._current_iteration % self.migration_frequency == 0:
-            self._migrate_particles()
-            self.main_pso.adaptive_event_log.append(f"Iter {self.main_pso._current_iteration}: Multi-swarm migration performed")
+        # Perform migration with adaptive frequency
+        if self.main_pso.stagnation_counter > 300:
+            freq = max(10, self.migration_frequency // 4)  # More frequent migration
+        else:
+            freq = self.migration_frequency
 
-    def _update_sub_swarm(self, swarm: Dict, inertia_weight: float, neighborhood_bests: List[List[float]], current_keffs: List[Optional[float]]):
+        if self.main_pso._current_iteration > 0 and self.main_pso._current_iteration % freq == 0:
+            self._migrate_particles()
+            
+    def _get_sub_swarm_neighborhood_best(self, swarm: Dict, particle_local_idx: int) -> List[float]:
         """
-        Updates the velocities and positions of all particles in a single sub-swarm.
+        Finds the best particle in the neighborhood of a given particle, respecting the
+        sub-swarm's specific topology.
+        """
+        topology = swarm['config'].get('topology', 'global')
+        pbest_positions = swarm['personal_bests']
+        pbest_fitnesses = swarm['personal_best_fitnesses']
+
+        # The particle's own pbest is the baseline
+        best_pos = pbest_positions[particle_local_idx]
+        best_fitness = pbest_fitnesses[particle_local_idx]
+
+        if topology == 'global':
+            # The neighborhood is the entire sub-swarm; find its best particle
+            if swarm['best_fitness'] > best_fitness:
+                return swarm['best_position']
+            return best_pos
+
+        neighbor_indices = []
+        swarm_size = len(pbest_positions)
         
-        Args:
-            swarm (Dict): The sub-swarm to update.
-            inertia_weight (float): The current inertia weight.
-            neighborhood_bests (List[List[float]]): The pre-calculated neighborhood best positions for ALL particles in the main swarm.
-            current_keffs (List[Optional[float]]): The pre-calculated keffs for ALL particles in the main swarm.
+        if topology == 'ring':
+            k = swarm['config'].get('neighborhood_size', 4)
+            for j in range(-(k//2), k//2 + 1):
+                if j == 0: continue
+                neighbor_indices.append((particle_local_idx + j) % swarm_size)
+        
+        elif topology == 'random':
+            k = swarm['config'].get('neighborhood_size', 4)
+            others = [p for p in range(swarm_size) if p != particle_local_idx]
+            neighbor_indices = self.main_pso._rng.sample(others, min(k, len(others)))
+
+        for neighbor_idx in neighbor_indices:
+            if pbest_fitnesses[neighbor_idx] > best_fitness:
+                best_fitness = pbest_fitnesses[neighbor_idx]
+                best_pos = pbest_positions[neighbor_idx]
+        
+        return best_pos
+
+    def _update_sub_swarm(self, swarm: Dict, inertia_weight: float, current_keffs: List[Optional[float]]):
+        """
+        Updates the velocities and positions of all particles in a single sub-swarm,
+        respecting its unique topology.
         """
         c1 = swarm['config']['cognitive_coeff']
         c2 = swarm['config']['social_coeff']
         max_v = swarm['config']['max_change_probability']
 
         for i, global_idx in enumerate(swarm['particle_indices']):
-            # (Race Condition): Use the pre-calculated neighborhood best for the current global index.
-            # This ensures all particles in one iteration use the same consistent state.
-            nbest_position = neighborhood_bests[global_idx]
+            # Get the neighborhood best based on the sub-swarm's specific topology
+            nbest_position = self._get_sub_swarm_neighborhood_best(swarm, i)
             
             new_pos, new_vel = self.main_pso._update_single_particle(
                 global_idx, inertia_weight, c1, c2, max_v, nbest_position, current_keffs[global_idx]
@@ -209,12 +276,9 @@ class MultiSwarmPSO:
             swarm['positions'][i] = new_pos
             swarm['velocities'][i] = new_vel
     
-    # Renamed for clarity. This method now correctly syncs sub-swarm data *to* the main swarm
-    # before the main evaluation step.
     def _synchronize_main_swarm_from_subs(self):
         """
         Aggregates positions and velocities from all sub-swarms into the main PSO handler's attributes.
-        This is done BEFORE global evaluation to ensure the main swarm has the latest particle states.
         """
         if not self.sub_swarms: return
 
@@ -226,8 +290,6 @@ class MultiSwarmPSO:
         self.main_pso.swarm_positions = all_positions
         self.main_pso.swarm_velocities = all_velocities
 
-    # This method now propagates updated fitness values FROM the main swarm back to sub-swarms
-    # AFTER the main evaluation step.
     def update_sub_swarm_bests_from_main(self):
         """
         Updates personal and swarm-level bests for each sub-swarm using the globally evaluated fitnesses
@@ -237,7 +299,6 @@ class MultiSwarmPSO:
 
         for swarm in self.sub_swarms:
             for i, global_idx in enumerate(swarm['particle_indices']):
-                # Check if the main swarm's pbest is better
                 if self.main_pso.personal_best_fitnesses[global_idx] > swarm['personal_best_fitnesses'][i]:
                     swarm['personal_best_fitnesses'][i] = self.main_pso.personal_best_fitnesses[global_idx]
                     swarm['personal_bests'][i] = self.main_pso.personal_best_positions[global_idx][:]
@@ -281,8 +342,6 @@ class ParticleSwarmOptimizer:
         self.adaptive_event_log = []
         self.performance_metrics = {'diversity_history': [], 'velocity_stats': []}
 
-        # Per-instance RNGs for thread safety.
-        # All random calls in this class will use these.
         self._rng = random.Random()
         self._np_rng = np.random.RandomState()
 
@@ -353,14 +412,11 @@ class ParticleSwarmOptimizer:
         swarm_size = self.pso_config['swarm_size']
         seeded_population = [ind[:] for ind in individuals]
 
-        # If not enough individuals are provided, fill the rest of the swarm randomly
         while len(seeded_population) < swarm_size:
             seeded_population.append(self._create_random_particle())
         
-        # Trim if too many individuals were provided
         self.swarm_positions = seeded_population[:swarm_size]
         
-        # Reset velocities for the new swarm
         self.swarm_velocities = []
         initial_max_v = self.pso_config.get('max_change_probability', 0.5)
         num_dims = self.sim_config['num_assemblies']
@@ -368,13 +424,11 @@ class ParticleSwarmOptimizer:
             velocity = self._np_rng.uniform(0, initial_max_v, num_dims).astype(np.float32)
             self.swarm_velocities.append(velocity)
 
-        # Reset personal and global bests to force re-evaluation
         self.personal_best_positions = []
         self.personal_best_fitnesses = []
         self.global_best_position = None
         self.global_best_fitness = -float('inf')
         
-        # Perform an initial evaluation of the new (seeded) swarm
         self._evaluate_and_update_bests()
         logging.info(f"PSO swarm successfully seeded. New global best fitness: {self.global_best_fitness:.6f}")
 
@@ -402,7 +456,9 @@ class ParticleSwarmOptimizer:
 
         max_iterations = self.pso_config['iterations_per_openmc_cycle']
         convergence_threshold = self.pso_config.get('pso_convergence_threshold', 200)
-        self.stagnation_counter = 0
+        
+        # Stagnation counter is now managed by the HybridEngine, but we can reset it locally at the start of a run
+        # self.stagnation_counter = 0 
 
         for iteration in range(max_iterations):
             self._current_iteration = iteration
@@ -411,30 +467,30 @@ class ParticleSwarmOptimizer:
             w_start, w_end = self.pso_config.get('inertia_weight_start', 0.9), self.pso_config.get('inertia_weight_end', 0.4)
             current_inertia = w_start - (w_start - w_end) * (iteration / max_iterations)
 
-            # Rebuild dynamic neighborhoods if needed
-            if (iteration + 1) % self.pso_config.get('neighborhood_rebuild_frequency', 100) == 0:
-                self._update_dynamic_neighborhoods()
-            
-            # Pre-calculate neighborhood bests for all particles to ensure consistency
-            neighborhood_bests = [self._get_neighborhood_best(i) for i in range(self.pso_config['swarm_size'])]
-
-            # Pre-calculate keffs for smart mutation, if enabled
             if self.pso_config.get('enable_smart_mutation', False):
                 current_keffs = self.keff_interpolator.predict_batch(self.swarm_positions)
             else:
                 current_keffs = [None] * self.pso_config['swarm_size']
 
-            # Run the appropriate update logic
             if self.multi_swarm_handler:
-                self.multi_swarm_handler.run_multi_swarm_iteration(current_inertia, neighborhood_bests, current_keffs)
+                self.multi_swarm_handler.run_multi_swarm_iteration(current_inertia, current_keffs)
             else:
+                # For single swarm, rebuild dynamic neighborhoods if needed
+                if (iteration + 1) % self.pso_config.get('neighborhood_rebuild_frequency', 100) == 0:
+                    self._update_dynamic_neighborhoods()
+                
+                neighborhood_bests = [self._get_neighborhood_best(i) for i in range(self.pso_config['swarm_size'])]
                 self._update_swarm_discrete(current_inertia, neighborhood_bests, current_keffs)
 
-            # Evaluate the entire swarm and update personal/global bests
+            # --- NEW: Apply stagnation recovery every 50 iterations if stuck ---
+            if self.stagnation_counter > 400 and (iteration + 1) % 50 == 0:
+                self._apply_stagnation_recovery()
+
             self._evaluate_and_update_bests()
 
-            # Stagnation and convergence check
             if self.global_best_fitness > previous_gbest_fitness:
+                # This local counter is for PSO's internal convergence check
+                # The HybridEngine maintains the master stagnation counter
                 self.stagnation_counter = 0
             else:
                 self.stagnation_counter += 1
@@ -443,7 +499,6 @@ class ParticleSwarmOptimizer:
                 logging.info(f"PSO convergence after {self.stagnation_counter} stagnant iterations... Exiting.")
                 break
 
-            # Apply periodic enhancements
             if self.pso_config.get('enable_local_search', False) and (iteration + 1) % self.pso_config.get('local_search_frequency', 25) == 0:
                 self._apply_periodic_local_search()
             
@@ -454,15 +509,13 @@ class ParticleSwarmOptimizer:
 
     def _full_initialization(self):
         """Initializes the entire swarm state from scratch."""
-        # Enforce correct initialization order. Swarm is created first.
         if self.multi_swarm_handler:
             self.multi_swarm_handler._initialize_sub_swarms()
             self.multi_swarm_handler._synchronize_main_swarm_from_subs()
         else:
             self._initialize_swarm()
+            self._initialize_neighborhoods()
         
-        # Neighborhoods are initialized only after the swarm and p-bests exist.
-        self._initialize_neighborhoods()
         self._evaluate_and_update_bests()
 
     def _evaluate_and_update_bests(self):
@@ -478,7 +531,6 @@ class ParticleSwarmOptimizer:
         self._update_personal_bests(fitnesses)
         self._update_global_best(fitnesses, self.swarm_positions)
         
-        # After main evaluation, propagate updated fitnesses back to sub-swarms.
         if self.multi_swarm_handler:
             self.multi_swarm_handler.update_sub_swarm_bests_from_main()
 
@@ -501,7 +553,6 @@ class ParticleSwarmOptimizer:
                 self.personal_best_positions[worst_idx] = seed_individual[:]
                 self.personal_best_fitnesses[worst_idx] = seed_fitness
 
-                # Also update the sub-swarm if applicable
                 if self.multi_swarm_handler:
                     for swarm in self.multi_swarm_handler.sub_swarms:
                         if worst_idx in swarm['particle_indices']:
@@ -537,29 +588,22 @@ class ParticleSwarmOptimizer:
     def _implement_local_search(self, position: List[float], current_fitness: float) -> Tuple[List[float], float]:
         """
         Implements a simple hill-climbing local search.
-        It creates a few neighbors by mutating the given position and returns the best one found.
         """
         best_neighbor_pos = position[:]
         best_neighbor_fitness = current_fitness
-        num_neighbors = 5  # Number of neighbors to explore
+        num_neighbors = 5
         
         for _ in range(num_neighbors):
             neighbor_pos = position[:]
-            
-            # Mutate one or two random genes
             for _ in range(self._rng.randint(1, 3)):
                 idx_to_mutate = self._rng.randint(0, len(neighbor_pos) - 1)
-                
                 is_central = idx_to_mutate < self.sim_config['num_central_assemblies']
                 valid_values = self.central_vals if is_central else self.outer_vals
-                
-                # Select a new value that is different from the current one
                 current_val = neighbor_pos[idx_to_mutate]
                 possible_new_vals = [v for v in valid_values if v != current_val]
                 if possible_new_vals:
                     neighbor_pos[idx_to_mutate] = self._rng.choice(possible_new_vals)
 
-            # Evaluate the new neighbor
             neighbor_keff = self.keff_interpolator.predict(neighbor_pos)
             neighbor_ppf = self.ppf_interpolator.predict(neighbor_pos)
             neighbor_fitness = fitness_function(neighbor_keff, neighbor_ppf, self.sim_config, self.tuning_config)
@@ -575,7 +619,6 @@ class ParticleSwarmOptimizer:
         if len(self.swarm_positions) < 2: return 0.0
 
         sample_size = min(len(self.swarm_positions), 100)
-        # Use instance-specific RNG
         sample_indices = self._rng.sample(range(len(self.swarm_positions)), sample_size)
         sample_positions = [self.swarm_positions[i] for i in sample_indices]
         
@@ -604,7 +647,6 @@ class ParticleSwarmOptimizer:
                 self.personal_best_positions[idx] = new_particle[:]
                 self.personal_best_fitnesses[idx] = -float('inf')
 
-            # Also update the sub-swarm if applicable
             if self.multi_swarm_handler:
                 self._update_subswarms_after_reinitialization(worst_indices)
 
@@ -623,8 +665,6 @@ class ParticleSwarmOptimizer:
                     swarm['personal_best_fitnesses'][local_idx] = self.personal_best_fitnesses[idx]
                     break
     
-    # Removed potential for infinite recursion.
-    # The method now ensures that the fallback does not re-trigger validation.
     def _validate_and_fix_particle(self, position: List[float], recursion_depth=0) -> List[float]:
         """Enhanced particle validation with recursion guard."""
         if recursion_depth > 1:
@@ -644,7 +684,6 @@ class ParticleSwarmOptimizer:
                 valid_values = self.central_vals if is_central else self.outer_vals
 
                 if not valid_values:
-                    logging.error(f"No valid values for position index {i}. Using fallback.")
                     fallback_value = self.central_vals[0] if is_central and self.central_vals else (self.outer_vals[0] if self.outer_vals else 0.0)
                     fixed_position.append(fallback_value)
                     continue
@@ -667,7 +706,7 @@ class ParticleSwarmOptimizer:
         if self._current_iteration > 0 and self._current_iteration % 50 == 0:
             self._apply_diversity_maintenance()
 
-        max_v = self.pso_config.get('max_change_probability', 0.5) # Max velocity is used as clamp
+        max_v = self.pso_config.get('max_change_probability', 0.5)
         c1, c2 = self.pso_config['cognitive_coeff'], self.pso_config.get('social_coeff', 1.5)
 
         for i in range(self.pso_config['swarm_size']):
@@ -676,15 +715,18 @@ class ParticleSwarmOptimizer:
             self.swarm_positions[i] = new_pos
             self.swarm_velocities[i] = new_vel
 
-    # Complete overhaul of the discrete update logic.
-    # This now uses a standard and mathematically sound approach for discrete PSO.
-    # Velocity now represents the probability of change towards pbest/gbest.
     def _update_single_particle(
-        self, particle_idx: int, inertia_weight: float, c1: float, c2: float,
-        max_v: float, nbest_position: List[float], current_keff: Optional[float]
+        self,
+        particle_idx: int,
+        inertia_weight: float,
+        c1: float,
+        c2: float,
+        max_v: float,
+        nbest_position: List[float],
+        current_keff: Optional[float],
     ) -> Tuple[List[float], np.ndarray]:
         """
-        Updates a single particle's velocity and position using a standard discrete PSO model.
+        Updates a single particle's velocity and position with enhanced exploration.
         """
         try:
             position = self.swarm_positions[particle_idx]
@@ -692,69 +734,38 @@ class ParticleSwarmOptimizer:
             pbest_position = self.personal_best_positions[particle_idx]
 
             r1, r2 = self._rng.random(), self._rng.random()
-
-            # Cognitive component: attraction to personal best
             cognitive_attraction = c1 * r1 * (np.array(pbest_position) != np.array(position))
-            
-            # Social component: attraction to neighborhood best
             social_attraction = c2 * r2 * (np.array(nbest_position) != np.array(position))
-            
-            # Update velocity: v(t+1) = w*v(t) + c1*r1*(pbest - x) + c2*r2*(gbest - x)
+
             new_vel = inertia_weight * velocity + cognitive_attraction + social_attraction
-            new_vel = np.clip(new_vel, 0, max_v) # Clamp velocity
+            new_vel = np.clip(new_vel, 0, max_v)
 
             new_pos = position[:]
-            
-            # Update position based on velocity (probability of change)
+
+            # --- Enhanced position update with random exploration ---
             for j in range(len(position)):
-                # Use sigmoid function to map velocity to a probability [0, 1]
                 prob_change = 1 / (1 + np.exp(-new_vel[j]))
-                
+
                 if self._rng.random() < prob_change:
-                    # If we decide to change, choose between pbest and nbest
-                    # This is a simplified but effective way to handle the discrete choice.
-                    if self._rng.random() < 0.5: # 50% chance to move towards pbest
+                    rand_val = self._rng.random()
+
+                    if rand_val < 0.4:  # Move toward pbest
                         if pbest_position[j] != position[j]:
-                           new_pos[j] = pbest_position[j]
-                    else: # 50% chance to move towards nbest
+                            new_pos[j] = pbest_position[j]
+                    elif rand_val < 0.8:  # Move toward nbest
                         if nbest_position[j] != position[j]:
-                           new_pos[j] = nbest_position[j]
-
-            # GA-Style Smart Mutation 
-            if self.pso_config.get('enable_smart_mutation', False) and current_keff is not None:
-                mut_rate = self.pso_config.get('mutation_probability', 0.08)
-                prob_bias = self.pso_config.get('smart_mutation_bias', 0.75)
-                keff_diff = current_keff - self.sim_config['target_keff']
-
-                for j in range(len(new_pos)):
-                    if self._rng.random() < mut_rate:
+                            new_pos[j] = nbest_position[j]
+                    else:  # Random exploration (20% chance)
                         is_central = j < self.sim_config['num_central_assemblies']
                         values = self.central_vals if is_central else self.outer_vals
-                        current_val = new_pos[j]
-                        
-                        available = []
-                        if abs(keff_diff) > 0.0005: # Apply bias
-                            if keff_diff < 0: # Need to increase reactivity
-                                preferred_vals = [v for v in values if v > current_val]
-                                if self._rng.random() < prob_bias and preferred_vals:
-                                    available = preferred_vals
-                                else: # Fallback to any other value
-                                    available = [v for v in values if v != current_val]
-                            else: # Need to decrease reactivity
-                                preferred_vals = [v for v in values if v < current_val]
-                                if self._rng.random() < prob_bias and preferred_vals:
-                                    available = preferred_vals
-                                else: # Fallback
-                                    available = [v for v in values if v != current_val]
-                        else: # Near target, purely random mutation
-                            available = [v for v in values if v != current_val]
-                        
+                        available = [v for v in values if v != position[j]]
                         if available:
                             new_pos[j] = self._rng.choice(available)
 
-            # Final validation to ensure the particle is valid
-            new_pos = self._validate_and_fix_particle(new_pos)
+            # --- Enhanced mutation ---
+            self._apply_enhanced_mutation(new_pos, current_keff)
 
+            new_pos = self._validate_and_fix_particle(new_pos)
             return new_pos, new_vel
 
         except (IndexError, ValueError) as e:
@@ -763,6 +774,76 @@ class ParticleSwarmOptimizer:
             fallback_vel = np.zeros(len(fallback_pos), dtype=np.float32)
             return fallback_pos, fallback_vel
 
+    def _apply_enhanced_mutation(self, position: List[float], current_keff: Optional[float]):
+        """
+        Apply enhanced mutation with stagnation-adaptive rates.
+        """
+        base_rate = self.pso_config.get("mutation_probability", 0.08)
+
+        # --- Adaptive mutation scaling based on stagnation ---
+        if self.stagnation_counter > 500:
+            mut_rate = min(0.5, base_rate * 4)  # Severe stagnation
+        elif self.stagnation_counter > 300:
+            mut_rate = min(0.35, base_rate * 3)  # Moderate stagnation
+        elif self.stagnation_counter > 150:
+            mut_rate = min(0.25, base_rate * 2)  # Mild stagnation
+        else:
+            mut_rate = base_rate
+
+        # --- Diversity boost (post-switch or low diversity) ---
+        if self._diversity_boost_counter > 0:
+            mut_rate = min(0.6, mut_rate * 1.5)
+            self._diversity_boost_counter -= 1
+
+        # --- Apply mutation ---
+        for j in range(len(position)):
+            if self._rng.random() < mut_rate:
+                is_central = j < self.sim_config["num_central_assemblies"]
+                values = self.central_vals if is_central else self.outer_vals
+                current_val = position[j]
+
+                # Smart mutation: bias toward fixing keff deviation
+                if self.pso_config.get("enable_smart_mutation", False) and current_keff is not None:
+                    prob_bias = self.pso_config.get("smart_mutation_bias", 0.75)
+                    keff_diff = current_keff - self.sim_config["target_keff"]
+
+                    if abs(keff_diff) > 0.0005:
+                        if keff_diff < 0:  # Need higher keff
+                            preferred_vals = [v for v in values if v > current_val]
+                            if self._rng.random() < prob_bias and preferred_vals:
+                                position[j] = self._rng.choice(preferred_vals)
+                                continue
+                        else:  # Need lower keff
+                            preferred_vals = [v for v in values if v < current_val]
+                            if self._rng.random() < prob_bias and preferred_vals:
+                                position[j] = self._rng.choice(preferred_vals)
+                                continue
+
+                # Otherwise, pick any different value
+                available = [v for v in values if v != current_val]
+                if available:
+                    position[j] = self._rng.choice(available)
+
+    def _apply_stagnation_recovery(self):
+        """
+        Apply aggressive recovery when swarm is severely stagnated.
+        """
+        if self.stagnation_counter > 400:
+            num_to_reinit = self.pso_config["swarm_size"] // 3
+            worst_indices = np.argsort(self.personal_best_fitnesses)[:num_to_reinit]
+
+            max_v = self.pso_config.get("max_change_probability", 0.5)
+            for idx in worst_indices:
+                new_particle = self._create_random_particle()
+                self.swarm_positions[idx] = new_particle
+                self.swarm_velocities[idx] = self._np_rng.uniform(0, max_v, len(new_particle))
+                self.personal_best_positions[idx] = new_particle[:]
+                self.personal_best_fitnesses[idx] = -float("inf")
+
+            # Reset stagnation counter partially
+            self.stagnation_counter = max(0, self.stagnation_counter - 200)
+
+            logging.info(f"Stagnation recovery: Reinitialized {num_to_reinit} particles")
 
     def _validate_pso_config(self):
         """Enhanced configuration validation."""
@@ -799,7 +880,6 @@ class ParticleSwarmOptimizer:
         diversity = self._calculate_swarm_diversity()
         self.performance_metrics['diversity_history'].append(diversity)
         if self.swarm_velocities:
-            # Call history limiting immediately to prevent memory leaks.
             self._limit_history_size()
 
     def _limit_history_size(self, max_entries: int = 1000):
@@ -830,19 +910,18 @@ class ParticleSwarmOptimizer:
         """Thread-safe random particle creation."""
         num_central = self.sim_config['num_central_assemblies']
         num_total = self.sim_config['num_assemblies']
-        # Instance-specific RNG
         central = [self._rng.choice(self.central_vals) for _ in range(num_central)]
         outer = [self._rng.choice(self.outer_vals) for _ in range(num_total - num_central)]
         return central + outer
 
     def _initialize_neighborhoods(self):
-        """Initializes particle neighborhoods based on the chosen topology."""
+        """Initializes particle neighborhoods for a single swarm based on the chosen topology."""
         topology = self.pso_config.get('topology', 'global')
-        logging.info(f"Initializing PSO with '{topology}' neighborhood topology.")
+        logging.info(f"Initializing single PSO with '{topology}' neighborhood topology.")
         if topology == 'random': self._build_random_neighborhoods()
         elif topology == 'ring': self._build_ring_neighborhoods()
         elif topology == 'fitness_based': self._update_fitness_based_neighborhoods()
-        else: self.neighborhoods = {} # Global topology uses an empty dict
+        else: self.neighborhoods = {}
 
     def _build_ring_neighborhoods(self):
         """Constructs a ring topology for particle neighborhoods."""
@@ -854,7 +933,7 @@ class ParticleSwarmOptimizer:
             self.neighborhoods[i] = [n for n in neighbors if n != i]
     
     def _update_dynamic_neighborhoods(self):
-        """Periodically rebuilds neighborhoods for dynamic topologies."""
+        """Periodically rebuilds neighborhoods for dynamic topologies in a single swarm."""
         topology = self.pso_config.get('topology', 'global')
         if topology == 'random':
             self._build_random_neighborhoods()
@@ -869,25 +948,20 @@ class ParticleSwarmOptimizer:
         self.neighborhoods = {}
         for i in range(swarm_size):
             others = [p for p in range(swarm_size) if p != i]
-            # Use instance-specific RNG
             self.neighborhoods[i] = self._rng.sample(others, min(k, len(others)))
             
     def _get_neighborhood_best(self, particle_idx: int) -> List[float]:
-        """Safe neighborhood best with bounds checking and fallback."""
+        """Safe neighborhood best for a single swarm configuration."""
         topology = self.pso_config.get('topology', 'global')
 
-        # For global topology, the best is always the global best
         if topology == 'global':
             if self.global_best_position:
                 return self.global_best_position
-            # Fallback if gbest is not yet set
             return self.personal_best_positions[particle_idx] if self.personal_best_positions else self._create_random_particle()
 
         best_fitness = -float('inf')
-        # Start with the particle's own pbest as the initial best in its neighborhood
         best_pos = self.personal_best_positions[particle_idx]
 
-        # Add robust checks to prevent index errors
         neighbor_indices = self.neighborhoods.get(particle_idx, [])
         for neighbor_idx in neighbor_indices:
             if 0 <= neighbor_idx < len(self.personal_best_fitnesses):
@@ -905,7 +979,6 @@ class ParticleSwarmOptimizer:
             return []
 
         try:
-            # Batch prediction is more efficient
             keff_preds = self.keff_interpolator.predict_batch(positions)
             ppf_preds = self.ppf_interpolator.predict_batch(positions)
 
@@ -914,7 +987,6 @@ class ParticleSwarmOptimizer:
                 for k, p in zip(keff_preds, ppf_preds)
             ]
             
-            # Ensure fitness values are valid numbers
             return [f if isinstance(f, (int, float)) and np.isfinite(f) else -float('inf') for f in fitnesses]
 
         except Exception as e:
@@ -926,6 +998,7 @@ class ParticleSwarmOptimizer:
         for i, fitness in enumerate(fitnesses):
             if fitness > self.personal_best_fitnesses[i]:
                 self.personal_best_fitnesses[i] = fitness
+                self.swarm_positions[i] = self._validate_and_fix_particle(self.swarm_positions[i])
                 self.personal_best_positions[i] = self.swarm_positions[i][:]
 
     def _update_global_best(self, fitnesses: List[float], positions: List[List[float]]):
