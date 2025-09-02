@@ -307,6 +307,7 @@ class MainOptimizer:
             
             logging.info(f"Estimated time remaining: {self.state['estimated_remaining_time']}")
             
+            self.state['cycle_number'] = i + 1
             # Get the optimizer's internal state before saving the checkpoint
             if hasattr(self.optimizer_engine, 'get_state'):
                 self.state['optimizer_state'] = self.optimizer_engine.get_state()
