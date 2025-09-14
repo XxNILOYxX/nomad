@@ -53,13 +53,27 @@ else:
 
 class DNNRegressor(nn.Module):
     """A simple Deep Neural Network for regression."""
-    def __init__(self, input_size=5, output_size=1, dropout_rate=0.2):
+    def __init__(self, input_size=5, output_size=1, hidden_layers=None, dropout_rate=0.2):
         super(DNNRegressor, self).__init__()
-        self.fc1 = nn.Linear(input_size, 128)
-        self.fc2 = nn.Linear(128, 64)
-        self.fc3 = nn.Linear(64, output_size)
-        self.relu = nn.ReLU()
-        self.dropout = nn.Dropout(dropout_rate)
+        
+        if hidden_layers is None:
+            hidden_layers = [64, 64] # Default architecture
+            
+        layers = []
+        in_features = input_size
+        for neurons in hidden_layers:
+            layers.append(nn.Linear(in_features, neurons))
+            layers.append(nn.ReLU())
+            layers.append(nn.Dropout(dropout_rate))
+            in_features = neurons # The output of this layer is the input for the next
+        
+        # Add the final output layer
+        layers.append(nn.Linear(in_features, output_size))
+        
+        # Create the sequential model
+        self.network = nn.Sequential(*layers)
+        
+        # Apply weight initialization
         self.apply(self._init_weights)
 
     def _init_weights(self, module):
@@ -69,11 +83,7 @@ class DNNRegressor(nn.Module):
                 module.bias.data.fill_(0.01)
 
     def forward(self, x):
-        x = self.relu(self.fc1(x))
-        x = self.dropout(x)
-        x = self.relu(self.fc2(x))
-        x = self.fc3(x)
-        return x
+        return self.network(x)
 
 class BaseInterpolator:
     """Base class for shared interpolator functionality."""
@@ -285,7 +295,11 @@ class PPFInterpolator(BaseInterpolator):
     def _setup_model(self):
         if self.regressor_type == 'dnn':
             torch.manual_seed(self.interp_config['nn_random_seed'])
-            self.model = DNNRegressor(input_size=5, dropout_rate=self.interp_config['nn_dropout_rate'])
+            self.model = DNNRegressor(
+                input_size=5,
+                hidden_layers=self.interp_config['nn_hidden_layers'],
+                dropout_rate=self.interp_config['nn_dropout_rate']
+            )
             self.device = torch.device("cuda" if self.use_gpu and torch.cuda.is_available() else "cpu")
             self.model.to(self.device)
             self.criterion = nn.MSELoss()
@@ -455,7 +469,11 @@ class PPFInterpolator(BaseInterpolator):
     def _create_new_model_instance(self):
         """Helper to create a fresh model instance."""
         if self.regressor_type == 'dnn':
-            return DNNRegressor(input_size=5, dropout_rate=self.interp_config['nn_dropout_rate']).to(self.device)
+            return DNNRegressor(
+                input_size=5,
+                hidden_layers=self.interp_config['nn_hidden_layers'],
+                dropout_rate=self.interp_config['nn_dropout_rate']
+            ).to(self.device)
         else:
             n_neighbors = self.interp_config['n_neighbors']
             model_class = GPU_MODELS.get(self.regressor_type) if self.use_gpu else CPU_MODELS.get(self.regressor_type)
