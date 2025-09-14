@@ -173,12 +173,21 @@ class ConfigLoader:
         }
 
         # Load [interpolator] section
+        hidden_layers_str = self.config.get('interpolator', 'nn_hidden_layers', fallback='128, 64')
+        try:
+            nn_hidden_layers = [int(x.strip()) for x in hidden_layers_str.split(',') if x.strip()]
+            if not nn_hidden_layers:
+                 raise ValueError("nn_hidden_layers cannot be empty.")
+        except ValueError:
+            logging.error("Invalid format for 'nn_hidden_layers' in config.ini. Must be a comma-separated list of positive integers. Using default [64, 64].")
+            nn_hidden_layers = [64, 64]
         self.params['interpolator'] = {
             'max_keff_points': self.config.getint('interpolator', 'max_keff_points'),
             'max_ppf_points': self.config.getint('interpolator', 'max_ppf_points'),
             'min_interp_points': self.config.getint('interpolator', 'min_interp_points'),
             'min_validation_score': self.config.getfloat('interpolator', 'min_validation_score'),
             'regressor_type': self.config.get('interpolator', 'regressor_type'),
+            'nn_hidden_layers': nn_hidden_layers,
             'nn_epochs': self.config.getint('interpolator', 'nn_epochs', fallback=100),
             'nn_batch_size': self.config.getint('interpolator', 'nn_batch_size', fallback=32),
             'nn_learning_rate': self.config.getfloat('interpolator', 'nn_learning_rate', fallback=0.001),
@@ -300,6 +309,12 @@ class ConfigLoader:
         hw_p = self.params['hardware']
         if hw_p['cpu'] == 0 and hw_p['gpu'] == 0:
             raise ValueError("Configuration error: At least one of CPU or GPU must be enabled in [hardware].")
+        
+        # --- Interpolator Validation --- 
+        interp_p = self.params['interpolator']
+        if interp_p['regressor_type'] == 'dnn':
+            if not all(isinstance(n, int) and n > 0 for n in interp_p['nn_hidden_layers']):
+                raise ValueError("All values in 'nn_hidden_layers' must be positive integers.")       
 
         logging.info("Configuration validated successfully.")
 
