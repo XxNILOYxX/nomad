@@ -234,7 +234,7 @@ class MainOptimizer:
         start_cycle = self.state['cycle_number']
         
         for i in range(start_cycle, num_cycles):
-            self.state['cycle_number'] = i
+            self.state['cycle_number'] = i + 1
             logging.info(f"--- Starting {self.optimizer_technique.upper()} Cycle {i+1}/{num_cycles} ---")
             cycle_start_time = time.time()
 
@@ -307,7 +307,6 @@ class MainOptimizer:
             
             logging.info(f"Estimated time remaining: {self.state['estimated_remaining_time']}")
             
-            self.state['cycle_number'] = i + 1
             # Get the optimizer's internal state before saving the checkpoint
             if hasattr(self.optimizer_engine, 'get_state'):
                 self.state['optimizer_state'] = self.optimizer_engine.get_state()
@@ -323,4 +322,3 @@ class MainOptimizer:
         logging.info(f"Best true Keff: {self.state['best_true_keff']:.5f}")
         logging.info(f"Best true PPF: {self.state['best_true_ppf']:.4f}")
         logging.info(f"Best true Fitness: {self.state['best_true_fitness']:.6f}")
-
