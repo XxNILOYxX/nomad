@@ -1,11 +1,11 @@
 import random
 import numpy as np
 import logging
-from typing import List, Tuple, Dict
+import functools
+from typing import List, Tuple, Dict, Callable
 
 from .interpolators import KeffInterpolator, PPFInterpolator
-# Import the shared fitness_function from utils
-from .utils import calculate_diversity, fitness_function
+from .utils import calculate_diversity, fitness_function, find_nearest
 
 class GeneticAlgorithm:
     """
@@ -25,6 +25,28 @@ class GeneticAlgorithm:
         self.fitnesses = []
         self.best_fitness_history = []
         self.stagnation_counter = 0
+
+        # Dynamically select crossover function based on config
+        crossover_methods = {
+            'single_point': self._single_point_crossover,
+            'zone_based': self._zone_based_crossover,
+            'blend': self._blend_crossover
+        }
+        method_name = self.ga_config.get('crossover_method', 'single_point')
+        base_crossover_func = crossover_methods.get(method_name)
+
+        if not base_crossover_func:
+            raise ValueError(f"Invalid crossover method '{method_name}' specified in config.ini")
+
+        # If the chosen method is 'blend', create a new function with the alpha value already included.
+        if method_name == 'blend':
+            alpha = self.ga_config.get('blend_crossover_alpha', 0.5)
+            self.crossover_method_func: Callable = functools.partial(base_crossover_func, alpha=alpha)
+            logging.info(f"GA initialized with '{method_name}' crossover (alpha={alpha}).")
+        else:
+            self.crossover_method_func: Callable = base_crossover_func
+            logging.info(f"GA initialized with '{method_name}' crossover method.")
+
         self._initialize_population()
 
 
@@ -207,7 +229,7 @@ class GeneticAlgorithm:
             parent1, p1_idx = self._selection()
             parent2, p2_idx = self._selection()
 
-            child1, child2 = self._crossover(parent1, parent2, cross_rate)
+            child1, child2 = self.crossover_method_func(parent1, parent2, cross_rate)
             
             keff1 = parent_keff_preds[p1_idx]
             keff2 = parent_keff_preds[p2_idx]
@@ -261,84 +283,99 @@ class GeneticAlgorithm:
             
             return self.population[best_winner_idx], best_winner_idx
 
-    def _crossover(self, parent1: List[float], parent2: List[float], cross_rate: float) -> Tuple[List[float], List[float]]:
+    def _single_point_crossover(self, parent1: List[float], parent2: List[float], cross_rate: float) -> Tuple[List[float], List[float]]:
         """Single-point crossover."""
         if random.random() < cross_rate:
             point = random.randint(1, len(parent1) - 2)
             return parent1[:point] + parent2[point:], parent2[:point] + parent1[point:]
         return parent1[:], parent2[:]
 
-    def _smart_mutate(self, individual: List[float], mut_rate: float, current_keff: float) -> List[float]:
-        """Enhanced mutation with better edge case handling and adaptive bias."""
-        mutated = list(individual)
-        keff_diff = current_keff - self.sim_config['target_keff']
-        
-        # Dynamic bias based on distance from target
-        if abs(keff_diff) > self.fitness_config['high_keff_diff_threshold']:
-            prob_bias = 0.85  # High bias when far from target
-            rate_multiplier = self.ga_config['smart_mutate_increase_factor']
-        elif abs(keff_diff) > self.fitness_config['med_keff_diff_threshold']:
-            prob_bias = 0.75  # Medium bias when moderately off
-            rate_multiplier = 1.0
-        else:
-            prob_bias = 0.65  # Lower bias when close to target
-            rate_multiplier = self.ga_config['smart_mutate_decrease_factor']
-        
-        # Calculate the effective mutation rate for this individual, but cap it
-        # to prevent excessively disruptive mutations.
-        effective_mut_rate = min(mut_rate * rate_multiplier, self.ga_config['max_mutation_rate'])
+    def _zone_based_crossover(self, parent1: List[float], parent2: List[float], cross_rate: float) -> Tuple[List[float], List[float]]:
+        """Performs crossover by swapping the entire central and outer enrichment zones."""
+        if random.random() < cross_rate:
+            num_central = self.sim_config['num_central_assemblies']
+            child1 = parent1[:num_central] + parent2[num_central:]
+            child2 = parent2[:num_central] + parent1[num_central:]
+            return child1, child2
+        return parent1[:], parent2[:]
 
-        for i in range(len(mutated)):
-            if random.random() < effective_mut_rate:
-                is_central = i < self.sim_config['num_central_assemblies']
-                values = self.enrich_config['central_values'] if is_central else self.enrich_config['outer_values']
-                current_val = mutated[i]
+    def _blend_crossover(self, parent1: List[float], parent2: List[float], cross_rate: float, alpha: float) -> Tuple[List[float], List[float]]:
+        """Performs blend crossover (BLX-alpha) and snaps to the nearest valid enrichment."""
+        if random.random() < cross_rate:
+            child1, child2 = [], []
+            num_central = self.sim_config['num_central_assemblies']
+            central_vals = self.enrich_config['central_values']
+            outer_vals = self.enrich_config['outer_values']
+
+            for i in range(len(parent1)):
+                gene1, gene2 = parent1[i], parent2[i]
                 
-                # Determine mutation direction based on keff_diff
-                if abs(keff_diff) > 0.0005:  # Only apply bias if significantly off target
-                    if keff_diff < 0:  # Need to increase reactivity
-                        higher_vals = [v for v in values if v > current_val]
-                        
-                        if random.random() < prob_bias and higher_vals:
-                            # Use higher values (desired direction)
-                            available = higher_vals
-                        elif higher_vals:
-                            # Still prefer higher values even if bias roll failed
-                            available = higher_vals
-                        else:
-                            # No higher values available - skip mutation for this gene
-                            continue
-                            
-                    else:  # keff_diff > 0, need to decrease reactivity
-                        lower_vals = [v for v in values if v < current_val]
-                        
-                        if random.random() < prob_bias and lower_vals:
-                            # Use lower values (desired direction)
-                            available = lower_vals
-                        elif lower_vals:
-                            # Still prefer lower values even if bias roll failed
-                            available = lower_vals
-                        else:
-                            # No lower values available - skip mutation for this gene
-                            continue
-                else:
-                    # Near target, use uniform random mutation
-                    available = [v for v in values if v != current_val]
-                    if not available:
-                        continue  # Skip if only one possible value
+                diff = abs(gene1 - gene2)
+                min_gene = min(gene1, gene2) - alpha * diff
+                max_gene = max(gene1, gene2) + alpha * diff
                 
-                # Weighted selection favoring smaller changes when close to target
-                if len(available) > 1 and abs(keff_diff) < self.fitness_config['med_keff_diff_threshold']:
-                    # Calculate distances from current value
-                    distances = [abs(v - current_val) for v in available]
-                    max_dist = max(distances) if distances else 1
-                    # Invert weights so smaller distances have higher probability
-                    weights = [(max_dist - d + 0.1) for d in distances]
-                    mutated[i] = random.choices(available, weights=weights, k=1)[0]
-                elif available:
-                    mutated[i] = random.choice(available)
-        
-        return mutated
+                new_gene1 = random.uniform(min_gene, max_gene)
+                new_gene2 = random.uniform(min_gene, max_gene)
+                
+                valid_values = central_vals if i < num_central else outer_vals
+                child1.append(find_nearest(valid_values, new_gene1))
+                child2.append(find_nearest(valid_values, new_gene2))
+                
+            return child1, child2
+        return parent1[:], parent2[:]
+
+    def _smart_mutate(self, individual: List[float], mut_rate: float, current_keff: float) -> List[float]:
+            """Enhanced mutation with better edge case handling and adaptive bias."""
+            mutated = list(individual)
+            keff_diff = current_keff - self.sim_config['target_keff']
+            
+            # Dynamic bias based on distance from target
+            if abs(keff_diff) > self.fitness_config['high_keff_diff_threshold']:
+                rate_multiplier = self.ga_config['smart_mutate_increase_factor']
+            elif abs(keff_diff) > self.fitness_config['med_keff_diff_threshold']:
+                rate_multiplier = 1.0
+            else:
+                rate_multiplier = self.ga_config['smart_mutate_decrease_factor']
+            
+            # Calculate the effective mutation rate for this individual, but cap it
+            # to prevent excessively disruptive mutations.
+            effective_mut_rate = min(mut_rate * rate_multiplier, self.ga_config['max_mutation_rate'])
+
+            for i in range(len(mutated)):
+                if random.random() < effective_mut_rate:
+                    is_central = i < self.sim_config['num_central_assemblies']
+                    values = self.enrich_config['central_values'] if is_central else self.enrich_config['outer_values']
+                    current_val = mutated[i]
+                    
+                    # Determine mutation direction based on keff_diff
+                    if abs(keff_diff) > 0.0005:  # Only apply bias if significantly off target
+                        if keff_diff < 0:  # Need to increase reactivity
+                            available = [v for v in values if v > current_val]
+                            if not available:
+                                continue # No higher values available, skip mutation
+                                
+                        else:  # keff_diff > 0, need to decrease reactivity
+                            available = [v for v in values if v < current_val]
+                            if not available:
+                                continue # No lower values available, skip mutation
+                    else:
+                        # Near target, use uniform random mutation
+                        available = [v for v in values if v != current_val]
+                        if not available:
+                            continue  # Skip if only one possible value
+                    
+                    # Weighted selection favoring smaller changes when close to target
+                    if len(available) > 1 and abs(keff_diff) < self.fitness_config['med_keff_diff_threshold']:
+                        # Calculate distances from current value
+                        distances = [abs(v - current_val) for v in available]
+                        max_dist = max(distances) if distances else 1
+                        # Invert weights so smaller distances have higher probability
+                        weights = [(max_dist - d + 0.1) for d in distances]
+                        mutated[i] = random.choices(available, weights=weights, k=1)[0]
+                    elif available:
+                        mutated[i] = random.choice(available)
+            
+            return mutated
 
     def _get_adaptive_parameters(self, diversity: float, current_mut_rate: float, current_cross_rate: float) -> Tuple[float, float]:
         """Adjusts mutation and crossover rates based on stagnation and diversity."""
