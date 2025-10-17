@@ -8,7 +8,6 @@ from .utils import fitness_function
 class MultiSwarmPSO:
     """
     Manages multiple sub-swarms for enhanced global optimization.
-
     This class orchestrates several PSO sub-swarms, which can operate with
     different parameters (e.g., exploration vs. exploitation focus). It handles
     the initialization of these swarms and the periodic migration of the best
@@ -105,7 +104,7 @@ class MultiSwarmPSO:
             for _ in range(num_particles_in_swarm):
                 position = self.main_pso._create_random_particle()
                 max_v = sub_swarm_config.get('max_change_probability', 0.5)
-                velocity = self.main_pso._np_rng.uniform(0, max_v, len(position)).astype(np.float32)
+                velocity = self.main_pso._np_rng.uniform(-max_v, max_v, len(position)).astype(np.float32)
                 sub_swarm['positions'].append(position)
                 sub_swarm['velocities'].append(velocity)
                 sub_swarm['personal_bests'].append(position[:])
@@ -421,7 +420,7 @@ class ParticleSwarmOptimizer:
         initial_max_v = self.pso_config.get('max_change_probability', 0.5)
         num_dims = self.sim_config['num_assemblies']
         for _ in range(len(self.swarm_positions)):
-            velocity = self._np_rng.uniform(0, initial_max_v, num_dims).astype(np.float32)
+            velocity = self._np_rng.uniform(-initial_max_v, initial_max_v, num_dims).astype(np.float32)
             self.swarm_velocities.append(velocity)
 
         self.personal_best_positions = []
@@ -549,7 +548,7 @@ class ParticleSwarmOptimizer:
                 max_v = self.pso_config.get('max_change_probability', 0.5)
 
                 self.swarm_positions[worst_idx] = seed_individual[:]
-                self.swarm_velocities[worst_idx] = self._np_rng.uniform(0, max_v, len(seed_individual))
+                self.swarm_velocities[worst_idx] = self._np_rng.uniform(-max_v, max_v, len(seed_individual))
                 self.personal_best_positions[worst_idx] = seed_individual[:]
                 self.personal_best_fitnesses[worst_idx] = seed_fitness
 
@@ -643,7 +642,7 @@ class ParticleSwarmOptimizer:
             for idx in worst_indices:
                 new_particle = self._create_random_particle()
                 self.swarm_positions[idx] = new_particle
-                self.swarm_velocities[idx] = self._np_rng.uniform(0, max_v, len(new_particle))
+                self.swarm_velocities[idx] = self._np_rng.uniform(-max_v, max_v, len(new_particle))
                 self.personal_best_positions[idx] = new_particle[:]
                 self.personal_best_fitnesses[idx] = -float('inf')
 
@@ -726,47 +725,95 @@ class ParticleSwarmOptimizer:
         current_keff: Optional[float],
     ) -> Tuple[List[float], np.ndarray]:
         """
-        Updates a single particle's velocity and position with enhanced exploration.
+        Updates a single particle's velocity and position using STANDARD discrete PSO.
+        
+        This implements the proper PSO dynamics:
+        1. Velocity update using actual position differences (not boolean)
+        2. Position update using sigmoid probability with directional movement
+        3. Discrete value selection from configured enrichment ranges
         """
         try:
-            position = self.swarm_positions[particle_idx]
+            # Convert to numpy arrays for vectorized operations
+            position = np.array(self.swarm_positions[particle_idx], dtype=np.float32)
             velocity = self.swarm_velocities[particle_idx]
-            pbest_position = self.personal_best_positions[particle_idx]
+            pbest_position = np.array(self.personal_best_positions[particle_idx], dtype=np.float32)
+            nbest_position = np.array(nbest_position, dtype=np.float32)
 
-            r1, r2 = self._rng.random(), self._rng.random()
-            cognitive_attraction = c1 * r1 * (np.array(pbest_position) != np.array(position))
-            social_attraction = c2 * r2 * (np.array(nbest_position) != np.array(position))
+            # Generate random coefficients for each dimension
+            r1 = self._np_rng.uniform(0, 1, len(position))
+            r2 = self._np_rng.uniform(0, 1, len(position))
 
-            new_vel = inertia_weight * velocity + cognitive_attraction + social_attraction
-            new_vel = np.clip(new_vel, 0, max_v)
+            # ============================================================
+            # STANDARD PSO VELOCITY UPDATE (Continuous Space)
+            # ============================================================
+            # Calculate actual position differences (magnitude and direction)
+            pbest_diff = pbest_position - position
+            nbest_diff = nbest_position - position
 
-            new_pos = position[:]
+            # Standard PSO velocity formula: v = w*v + c1*r1*(pbest-x) + c2*r2*(nbest-x)
+            cognitive_component = c1 * r1 * pbest_diff
+            social_component = c2 * r2 * nbest_diff
+            new_vel = inertia_weight * velocity + cognitive_component + social_component
 
-            # --- Enhanced position update with random exploration ---
+            # Clamp velocity to prevent extreme movements
+            new_vel = np.clip(new_vel, -max_v, max_v)
+
+            # ============================================================
+            # DISCRETE PSO POSITION UPDATE
+            # ============================================================
+            new_pos = position.copy()
+            
             for j in range(len(position)):
-                prob_change = 1 / (1 + np.exp(-new_vel[j]))
-
+                # Sigmoid transformation: convert velocity to change probability
+                prob_change = 1.0 / (1.0 + np.exp(-new_vel[j]))
+                
+                # Decide whether to change this dimension
                 if self._rng.random() < prob_change:
-                    rand_val = self._rng.random()
+                    # Get valid discrete values for this assembly
+                    is_central = j < self.sim_config['num_central_assemblies']
+                    valid_values = self.central_vals if is_central else self.outer_vals
+                    
+                    # Determine movement direction based on velocity
+                    if new_vel[j] > 0:  # Positive velocity: move toward attractors
+                        # Choose the stronger attractor (pbest or nbest)
+                        if abs(pbest_diff[j]) > abs(nbest_diff[j]):
+                            target_val = pbest_position[j]
+                        else:
+                            target_val = nbest_position[j]
+                        
+                        # Move toward target if it's valid and different
+                        if target_val != position[j] and target_val in valid_values:
+                            new_pos[j] = target_val
+                        else:
+                            # Target not directly available, find closest in that direction
+                            candidates = [v for v in valid_values if v > position[j]]
+                            if candidates:
+                                # Pick the candidate closest to target
+                                new_pos[j] = min(candidates, key=lambda x: abs(x - target_val))
+                    
+                    elif new_vel[j] < 0:  # Negative velocity: explore different values
+                        # Try to move to lower values (exploration)
+                        candidates = [v for v in valid_values if v < position[j]]
+                        if candidates:
+                            new_pos[j] = self._rng.choice(candidates)
+                        else:
+                            # No lower values available, try any different value
+                            candidates = [v for v in valid_values if v != position[j]]
+                            if candidates:
+                                new_pos[j] = self._rng.choice(candidates)
 
-                    if rand_val < 0.4:  # Move toward pbest
-                        if pbest_position[j] != position[j]:
-                            new_pos[j] = pbest_position[j]
-                    elif rand_val < 0.8:  # Move toward nbest
-                        if nbest_position[j] != position[j]:
-                            new_pos[j] = nbest_position[j]
-                    else:  # Random exploration (20% chance)
-                        is_central = j < self.sim_config['num_central_assemblies']
-                        values = self.central_vals if is_central else self.outer_vals
-                        available = [v for v in values if v != position[j]]
-                        if available:
-                            new_pos[j] = self._rng.choice(available)
-
-            # --- Enhanced mutation ---
+            # ============================================================
+            # APPLY MUTATION (Separate from core PSO logic)
+            # ============================================================
             self._apply_enhanced_mutation(new_pos, current_keff)
 
-            new_pos = self._validate_and_fix_particle(new_pos)
-            return new_pos, new_vel
+            # ============================================================
+            # VALIDATE AND RETURN
+            # ============================================================
+            new_pos_list = new_pos.tolist()
+            new_pos_list = self._validate_and_fix_particle(new_pos_list)
+            
+            return new_pos_list, new_vel
 
         except (IndexError, ValueError) as e:
             logging.error(f"Error updating particle {particle_idx}: {e}. Returning random particle.")
@@ -836,7 +883,7 @@ class ParticleSwarmOptimizer:
             for idx in worst_indices:
                 new_particle = self._create_random_particle()
                 self.swarm_positions[idx] = new_particle
-                self.swarm_velocities[idx] = self._np_rng.uniform(0, max_v, len(new_particle))
+                self.swarm_velocities[idx] = self._np_rng.uniform(-max_v, max_v, len(new_particle))
                 self.personal_best_positions[idx] = new_particle[:]
                 self.personal_best_fitnesses[idx] = -float("inf")
 
@@ -902,7 +949,7 @@ class ParticleSwarmOptimizer:
         num_dims = self.sim_config['num_assemblies']
         for _ in range(self.pso_config['swarm_size']):
             position = self._create_random_particle()
-            velocity = self._np_rng.uniform(0, initial_max_v, num_dims).astype(np.float32)
+            velocity = self._np_rng.uniform(-initial_max_v, initial_max_v, num_dims).astype(np.float32)
             self.swarm_positions.append(position)
             self.swarm_velocities.append(velocity)
 
@@ -949,6 +996,40 @@ class ParticleSwarmOptimizer:
         for i in range(swarm_size):
             others = [p for p in range(swarm_size) if p != i]
             self.neighborhoods[i] = self._rng.sample(others, min(k, len(others)))
+    
+    def _update_fitness_based_neighborhoods(self):
+        """
+        Constructs fitness-based neighborhoods where particles are connected 
+        to other particles with similar fitness values.
+        """
+        swarm_size = self.pso_config['swarm_size']
+        k = self.pso_config.get('neighborhood_size', 4)
+        self.neighborhoods = {}
+        
+        if not self.personal_best_fitnesses:
+            # Fallback to random if no fitness data available
+            self._build_random_neighborhoods()
+            return
+        
+        # Sort particles by fitness
+        sorted_indices = np.argsort(self.personal_best_fitnesses)
+        
+        for i in range(swarm_size):
+            # Find particle's position in sorted order
+            rank = np.where(sorted_indices == i)[0][0]
+            
+            # Select k neighbors with closest fitness ranks
+            neighbor_ranks = []
+            for offset in range(1, k + 1):
+                # Add neighbors above and below in fitness ranking
+                if rank + offset < swarm_size:
+                    neighbor_ranks.append(rank + offset)
+                if rank - offset >= 0:
+                    neighbor_ranks.append(rank - offset)
+            
+            # Convert ranks back to particle indices
+            neighbor_ranks = neighbor_ranks[:k]  # Limit to k neighbors
+            self.neighborhoods[i] = [int(sorted_indices[r]) for r in neighbor_ranks]
             
     def _get_neighborhood_best(self, particle_idx: int) -> List[float]:
         """Safe neighborhood best for a single swarm configuration."""
