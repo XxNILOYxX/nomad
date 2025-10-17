@@ -60,6 +60,7 @@ class ConfigLoader:
         self.params['ga'] = {
             'population_size': self.config.getint('ga', 'population_size'),
             'generations_per_openmc_cycle': self.config.getint('ga', 'generations_per_openmc_cycle'),
+            'crossover_method': self.config.get('ga', 'crossover_method', fallback='single_point').lower(),
             'mutation_rate': self.config.getfloat('ga', 'mutation_rate'),
             'max_mutation_rate': self.config.getfloat('ga', 'max_mutation_rate'),
             'crossover_rate': self.config.getfloat('ga', 'crossover_rate'),
@@ -88,6 +89,7 @@ class ConfigLoader:
             'convergence_threshold': self.config.getint('ga_tuning', 'convergence_threshold', fallback=200),
             'smart_mutation_bias': self.config.getfloat('ga_tuning', 'smart_mutation_bias', fallback=0.75),
             'diversity_check_multiplier': self.config.getint('ga_tuning', 'diversity_check_multiplier', fallback=5),
+            'blend_crossover_alpha': self.config.getfloat('ga_tuning', 'blend_crossover_alpha', fallback=0.5),
         }
         self.params['ga'].update(ga_tuning_params)
 
@@ -157,9 +159,10 @@ class ConfigLoader:
             'start_id': self.config.getint('simulation', 'start_id'),
             'materials_xml_path': self.config.get('simulation', 'materials_xml_path'),
             'fission_tally_name': self.config.get('simulation', 'fission_tally_name'),
-            'ppf_interp_file': self.config.get('simulation', 'ppf_interp_file'),
+            'ppf_interp_file_live': self.config.get('simulation', 'ppf_interp_file_live'),
             'ppf_interp_file_best': self.config.get('simulation', 'ppf_interp_file_best'),
-            'keff_interp_file': self.config.get('simulation', 'keff_interp_file'),
+            'keff_interp_file_live': self.config.get('simulation', 'keff_interp_file_live'),
+            'keff_interp_file_best': self.config.get('simulation', 'keff_interp_file_best'),
             'checkpoint_file': self.config.get('simulation', 'checkpoint_file'),
             'statepoint_filename_pattern': self.config.get('simulation', 'statepoint_filename_pattern'),
             'openmc_retries': self.config.getint('simulation', 'openmc_retries'),
@@ -181,20 +184,66 @@ class ConfigLoader:
         except ValueError:
             logging.error("Invalid format for 'nn_hidden_layers' in config.ini. Must be a comma-separated list of positive integers. Using default [64, 64].")
             nn_hidden_layers = [64, 64]
+        
+        # Parse Keff DNN hidden layers
+        keff_hidden_layers_str = self.config.get('interpolator', 'keff_nn_hidden_layers', fallback='128, 64')
+        try:
+            keff_nn_hidden_layers = [int(x.strip()) for x in keff_hidden_layers_str.split(',') if x.strip()]
+            if not keff_nn_hidden_layers:
+                raise ValueError("keff_nn_hidden_layers cannot be empty.")
+        except ValueError:
+            logging.error("Invalid format for 'keff_nn_hidden_layers'. Using default [128, 64].")
+            keff_nn_hidden_layers = [128, 64]
+
+        # Parse PPF DNN hidden layers
+        ppf_hidden_layers_str = self.config.get('interpolator', 'ppf_nn_hidden_layers', fallback='160')
+        try:
+            ppf_nn_hidden_layers = [int(x.strip()) for x in ppf_hidden_layers_str.split(',') if x.strip()]
+            if not ppf_nn_hidden_layers:
+                raise ValueError("ppf_nn_hidden_layers cannot be empty.")
+        except ValueError:
+            logging.error("Invalid format for 'ppf_nn_hidden_layers'. Using default [160].")
+            ppf_nn_hidden_layers = [160]
+            
         self.params['interpolator'] = {
             'max_keff_points': self.config.getint('interpolator', 'max_keff_points'),
             'max_ppf_points': self.config.getint('interpolator', 'max_ppf_points'),
             'min_interp_points': self.config.getint('interpolator', 'min_interp_points'),
             'min_validation_score': self.config.getfloat('interpolator', 'min_validation_score'),
-            'regressor_type': self.config.get('interpolator', 'regressor_type'),
+            'ppf_regressor_type': self.config.get('interpolator', 'ppf_regressor_type', fallback='knn'),
+            'keff_regressor_type': self.config.get('interpolator', 'keff_regressor_type', fallback='knn'),
+            'n_neighbors': self.config.getint('interpolator', 'n_neighbors'),
+            'rf_n_estimators': self.config.getint('interpolator', 'rf_n_estimators', fallback=100),
+            'rf_max_depth': self.config.getint('interpolator', 'rf_max_depth', fallback=0),
+            'gbm_n_estimators': self.config.getint('interpolator', 'gbm_n_estimators', fallback=100),
+            'gbm_learning_rate': self.config.getfloat('interpolator', 'gbm_learning_rate', fallback=0.1),
+            
+            # Legacy shared DNN params (kept for backward compatibility)
             'nn_hidden_layers': nn_hidden_layers,
             'nn_epochs': self.config.getint('interpolator', 'nn_epochs', fallback=100),
             'nn_batch_size': self.config.getint('interpolator', 'nn_batch_size', fallback=32),
             'nn_learning_rate': self.config.getfloat('interpolator', 'nn_learning_rate', fallback=0.001),
-            'n_neighbors': self.config.getint('interpolator', 'n_neighbors'),
             'nn_dropout_rate': self.config.getfloat('interpolator', 'nn_dropout_rate', fallback=0.2),
             'nn_patience': self.config.getint('interpolator', 'nn_patience', fallback=10),
             'nn_random_seed': self.config.getint('interpolator', 'nn_random_seed', fallback=42),
+            
+            # Keff-specific DNN params
+            'keff_nn_hidden_layers': keff_nn_hidden_layers,
+            'keff_nn_epochs': self.config.getint('interpolator', 'keff_nn_epochs', fallback=200),
+            'keff_nn_batch_size': self.config.getint('interpolator', 'keff_nn_batch_size', fallback=32),
+            'keff_nn_learning_rate': self.config.getfloat('interpolator', 'keff_nn_learning_rate', fallback=0.001),
+            'keff_nn_dropout_rate': self.config.getfloat('interpolator', 'keff_nn_dropout_rate', fallback=0.2),
+            'keff_nn_patience': self.config.getint('interpolator', 'keff_nn_patience', fallback=15),
+            'keff_nn_random_seed': self.config.getint('interpolator', 'keff_nn_random_seed', fallback=42),
+            
+            # PPF-specific DNN params
+            'ppf_nn_hidden_layers': ppf_nn_hidden_layers,
+            'ppf_nn_epochs': self.config.getint('interpolator', 'ppf_nn_epochs', fallback=250),
+            'ppf_nn_batch_size': self.config.getint('interpolator', 'ppf_nn_batch_size', fallback=32),
+            'ppf_nn_learning_rate': self.config.getfloat('interpolator', 'ppf_nn_learning_rate', fallback=0.001),
+            'ppf_nn_dropout_rate': self.config.getfloat('interpolator', 'ppf_nn_dropout_rate', fallback=0.2),
+            'ppf_nn_patience': self.config.getint('interpolator', 'ppf_nn_patience', fallback=15),
+            'ppf_nn_random_seed': self.config.getint('interpolator', 'ppf_nn_random_seed', fallback=42),
         }
 
         # Load fuel setup
@@ -269,6 +318,14 @@ class ConfigLoader:
                 raise ValueError("GA 'tournament_size' must be at least 2 for selection to occur.")
             if ga_p['generations_per_openmc_cycle'] < 10:
                 logging.warning(f"GA 'generations_per_openmc_cycle' is set to {ga_p['generations_per_openmc_cycle']}, which is very low for meaningful evolution within a cycle.")
+            valid_crossovers = ['single_point', 'zone_based', 'blend']
+            if ga_p['crossover_method'] not in valid_crossovers:
+                raise ValueError(f"GA 'crossover_method' must be one of {valid_crossovers}")
+            
+            if ga_p['crossover_method'] == 'blend':
+                if not (0 < ga_p['blend_crossover_alpha'] <= 1.0):
+                    raise ValueError("GA 'blend_crossover_alpha' must be between 0.0 and 1.0.")
+            
 
         # --- PSO Validation ---
         if self.params['optimizer']['technique'] in ['pso', 'hybrid']:
@@ -312,9 +369,34 @@ class ConfigLoader:
         
         # --- Interpolator Validation --- 
         interp_p = self.params['interpolator']
-        if interp_p['regressor_type'] == 'dnn':
+        valid_regressors = ['knn', 'random_forest', 'ridge', 'dnn', 'gbm']
+        if interp_p['ppf_regressor_type'] not in valid_regressors:
+            raise ValueError(f"ppf_regressor_type must be one of {valid_regressors}")
+        if interp_p['keff_regressor_type'] not in valid_regressors:
+            raise ValueError(f"keff_regressor_type must be one of {valid_regressors}")
+
+        if interp_p['ppf_regressor_type'] == 'dnn' or interp_p['keff_regressor_type'] == 'dnn':
             if not all(isinstance(n, int) and n > 0 for n in interp_p['nn_hidden_layers']):
-                raise ValueError("All values in 'nn_hidden_layers' must be positive integers.")       
+                raise ValueError("All values in 'nn_hidden_layers' must be positive integers.")
+            
+            # Validate Keff DNN params if using DNN
+            if interp_p['keff_regressor_type'] == 'dnn':
+                if not all(isinstance(n, int) and n > 0 for n in interp_p['keff_nn_hidden_layers']):
+                    raise ValueError("All values in 'keff_nn_hidden_layers' must be positive integers.")
+            
+            # Validate PPF DNN params if using DNN
+            if interp_p['ppf_regressor_type'] == 'dnn':
+                if not all(isinstance(n, int) and n > 0 for n in interp_p['ppf_nn_hidden_layers']):
+                    raise ValueError("All values in 'ppf_nn_hidden_layers' must be positive integers.")
+
+        if interp_p['rf_n_estimators'] <= 0:
+            raise ValueError("rf_n_estimators must be a positive integer.")
+        if interp_p['rf_max_depth'] < 0:
+            raise ValueError("rf_max_depth must be a non-negative integer (0 means no limit).")
+        if interp_p['gbm_n_estimators'] <= 0:
+            raise ValueError("gbm_n_estimators must be a positive integer.")
+        if interp_p['gbm_learning_rate'] <= 0:
+            raise ValueError("gbm_learning_rate must be a positive float.")
 
         logging.info("Configuration validated successfully.")
 
