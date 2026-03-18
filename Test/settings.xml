@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<settings>
+  <run_mode>eigenvalue</run_mode>
+  <particles>50000</particles>
+  <batches>120</batches>
+  <inactive>20</inactive>
+  <source particle="neutron" strength="1.0" type="independent">
+    <space type="point">
+      <parameters>75.04214047 0.0 42.91</parameters>
+    </space>
+    <angle type="isotropic"/>
+  </source>
+  <source particle="neutron" strength="1.0" type="independent">
+    <space type="point">
+      <parameters>4.595005856387578e-15 75.04214047 42.91</parameters>
+    </space>
+    <angle type="isotropic"/>
+  </source>
+  <source particle="neutron" strength="1.0" type="independent">
+    <space type="point">
+      <parameters>-75.04214047 9.190011712775157e-15 42.91</parameters>
+    </space>
+    <angle type="isotropic"/>
+  </source>
+  <source particle="neutron" strength="1.0" type="independent">
+    <space type="point">
+      <parameters>-1.3785017569162734e-14 -75.04214047 42.91</parameters>
+    </space>
+    <angle type="isotropic"/>
+  </source>
+  <temperature_method>interpolation</temperature_method>
+</settings>

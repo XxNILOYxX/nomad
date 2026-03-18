@@ -1,0 +1,2341 @@
+<?xml version='1.0' encoding='utf-8'?>
+<materials>
+  <material id="1" name="BeO Reflector" temperature="705.65">
+    <density units="g/cm3" value="3.01" />
+    <nuclide ao="0.9976206" name="O16" />
+    <nuclide ao="1.0" name="Be9" />
+    <nuclide ao="0.000379" name="O17" />
+    <nuclide ao="0.0020004" name="O18" />
+  </material>
+  <material depletable="true" id="3" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 1" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7418000000" />
+    <nuclide name="Pu238" wo="0.0053583490" />
+    <nuclide name="Pu239" wo="0.0738208255" />
+    <nuclide name="Pu240" wo="0.0369104128" />
+    <nuclide name="Pu241" wo="0.0199478893" />
+    <nuclide name="Pu242" wo="0.0169625235" />
+  </material>
+  <material depletable="true" id="4" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 2" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7448000000" />
+    <nuclide name="Pu238" wo="0.0052532833" />
+    <nuclide name="Pu239" wo="0.0723733584" />
+    <nuclide name="Pu240" wo="0.0361866792" />
+    <nuclide name="Pu241" wo="0.0195567542" />
+    <nuclide name="Pu242" wo="0.0166299250" />
+  </material>
+  <material depletable="true" id="5" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 3" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7548000000" />
+    <nuclide name="Pu238" wo="0.0049030644" />
+    <nuclide name="Pu239" wo="0.0675484678" />
+    <nuclide name="Pu240" wo="0.0337742339" />
+    <nuclide name="Pu241" wo="0.0182529706" />
+    <nuclide name="Pu242" wo="0.0155212633" />
+  </material>
+  <material depletable="true" id="6" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 4" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7398000000" />
+    <nuclide name="Pu238" wo="0.0054283927" />
+    <nuclide name="Pu239" wo="0.0747858036" />
+    <nuclide name="Pu240" wo="0.0373929018" />
+    <nuclide name="Pu241" wo="0.0202086460" />
+    <nuclide name="Pu242" wo="0.0171842558" />
+  </material>
+  <material depletable="true" id="7" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 5" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7408000000" />
+    <nuclide name="Pu238" wo="0.0053933709" />
+    <nuclide name="Pu239" wo="0.0743033146" />
+    <nuclide name="Pu240" wo="0.0371516573" />
+    <nuclide name="Pu241" wo="0.0200782677" />
+    <nuclide name="Pu242" wo="0.0170733896" />
+  </material>
+  <material depletable="true" id="8" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 6" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7518000000" />
+    <nuclide name="Pu238" wo="0.0050081301" />
+    <nuclide name="Pu239" wo="0.0689959350" />
+    <nuclide name="Pu240" wo="0.0344979675" />
+    <nuclide name="Pu241" wo="0.0186441057" />
+    <nuclide name="Pu242" wo="0.0158538618" />
+  </material>
+  <material depletable="true" id="9" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 7" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7528000000" />
+    <nuclide name="Pu238" wo="0.0049731082" />
+    <nuclide name="Pu239" wo="0.0685134459" />
+    <nuclide name="Pu240" wo="0.0342567229" />
+    <nuclide name="Pu241" wo="0.0185137273" />
+    <nuclide name="Pu242" wo="0.0157429956" />
+  </material>
+  <material depletable="true" id="10" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 8" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7538000000" />
+    <nuclide name="Pu238" wo="0.0049380863" />
+    <nuclide name="Pu239" wo="0.0680309569" />
+    <nuclide name="Pu240" wo="0.0340154784" />
+    <nuclide name="Pu241" wo="0.0183833490" />
+    <nuclide name="Pu242" wo="0.0156321295" />
+  </material>
+  <material depletable="true" id="11" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 9" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7398000000" />
+    <nuclide name="Pu238" wo="0.0054283927" />
+    <nuclide name="Pu239" wo="0.0747858036" />
+    <nuclide name="Pu240" wo="0.0373929018" />
+    <nuclide name="Pu241" wo="0.0202086460" />
+    <nuclide name="Pu242" wo="0.0171842558" />
+  </material>
+  <material depletable="true" id="12" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 10" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7438000000" />
+    <nuclide name="Pu238" wo="0.0052883052" />
+    <nuclide name="Pu239" wo="0.0728558474" />
+    <nuclide name="Pu240" wo="0.0364279237" />
+    <nuclide name="Pu241" wo="0.0196871326" />
+    <nuclide name="Pu242" wo="0.0167407911" />
+  </material>
+  <material depletable="true" id="13" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 11" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7548000000" />
+    <nuclide name="Pu238" wo="0.0049030644" />
+    <nuclide name="Pu239" wo="0.0675484678" />
+    <nuclide name="Pu240" wo="0.0337742339" />
+    <nuclide name="Pu241" wo="0.0182529706" />
+    <nuclide name="Pu242" wo="0.0155212633" />
+  </material>
+  <material depletable="true" id="14" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 12" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7458000000" />
+    <nuclide name="Pu238" wo="0.0052182614" />
+    <nuclide name="Pu239" wo="0.0718908693" />
+    <nuclide name="Pu240" wo="0.0359454346" />
+    <nuclide name="Pu241" wo="0.0194263759" />
+    <nuclide name="Pu242" wo="0.0165190588" />
+  </material>
+  <material depletable="true" id="15" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 13" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7548000000" />
+    <nuclide name="Pu238" wo="0.0049030644" />
+    <nuclide name="Pu239" wo="0.0675484678" />
+    <nuclide name="Pu240" wo="0.0337742339" />
+    <nuclide name="Pu241" wo="0.0182529706" />
+    <nuclide name="Pu242" wo="0.0155212633" />
+  </material>
+  <material depletable="true" id="16" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 14" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7488000000" />
+    <nuclide name="Pu238" wo="0.0051131957" />
+    <nuclide name="Pu239" wo="0.0704434021" />
+    <nuclide name="Pu240" wo="0.0352217011" />
+    <nuclide name="Pu241" wo="0.0190352408" />
+    <nuclide name="Pu242" wo="0.0161864603" />
+  </material>
+  <material depletable="true" id="17" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 15" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7448000000" />
+    <nuclide name="Pu238" wo="0.0052532833" />
+    <nuclide name="Pu239" wo="0.0723733584" />
+    <nuclide name="Pu240" wo="0.0361866792" />
+    <nuclide name="Pu241" wo="0.0195567542" />
+    <nuclide name="Pu242" wo="0.0166299250" />
+  </material>
+  <material depletable="true" id="18" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 16" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7508000000" />
+    <nuclide name="Pu238" wo="0.0050431520" />
+    <nuclide name="Pu239" wo="0.0694784240" />
+    <nuclide name="Pu240" wo="0.0347392120" />
+    <nuclide name="Pu241" wo="0.0187744841" />
+    <nuclide name="Pu242" wo="0.0159647280" />
+  </material>
+  <material depletable="true" id="19" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 17" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7488000000" />
+    <nuclide name="Pu238" wo="0.0051131957" />
+    <nuclide name="Pu239" wo="0.0704434021" />
+    <nuclide name="Pu240" wo="0.0352217011" />
+    <nuclide name="Pu241" wo="0.0190352408" />
+    <nuclide name="Pu242" wo="0.0161864603" />
+  </material>
+  <material depletable="true" id="20" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 18" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7408000000" />
+    <nuclide name="Pu238" wo="0.0053933709" />
+    <nuclide name="Pu239" wo="0.0743033146" />
+    <nuclide name="Pu240" wo="0.0371516573" />
+    <nuclide name="Pu241" wo="0.0200782677" />
+    <nuclide name="Pu242" wo="0.0170733896" />
+  </material>
+  <material depletable="true" id="21" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 19" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7498000000" />
+    <nuclide name="Pu238" wo="0.0050781739" />
+    <nuclide name="Pu239" wo="0.0699609131" />
+    <nuclide name="Pu240" wo="0.0349804565" />
+    <nuclide name="Pu241" wo="0.0189048624" />
+    <nuclide name="Pu242" wo="0.0160755941" />
+  </material>
+  <material depletable="true" id="22" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 20" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7398000000" />
+    <nuclide name="Pu238" wo="0.0054283927" />
+    <nuclide name="Pu239" wo="0.0747858036" />
+    <nuclide name="Pu240" wo="0.0373929018" />
+    <nuclide name="Pu241" wo="0.0202086460" />
+    <nuclide name="Pu242" wo="0.0171842558" />
+  </material>
+  <material depletable="true" id="23" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 21" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7488000000" />
+    <nuclide name="Pu238" wo="0.0051131957" />
+    <nuclide name="Pu239" wo="0.0704434021" />
+    <nuclide name="Pu240" wo="0.0352217011" />
+    <nuclide name="Pu241" wo="0.0190352408" />
+    <nuclide name="Pu242" wo="0.0161864603" />
+  </material>
+  <material depletable="true" id="24" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 22" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7448000000" />
+    <nuclide name="Pu238" wo="0.0052532833" />
+    <nuclide name="Pu239" wo="0.0723733584" />
+    <nuclide name="Pu240" wo="0.0361866792" />
+    <nuclide name="Pu241" wo="0.0195567542" />
+    <nuclide name="Pu242" wo="0.0166299250" />
+  </material>
+  <material depletable="true" id="25" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 23" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7488000000" />
+    <nuclide name="Pu238" wo="0.0051131957" />
+    <nuclide name="Pu239" wo="0.0704434021" />
+    <nuclide name="Pu240" wo="0.0352217011" />
+    <nuclide name="Pu241" wo="0.0190352408" />
+    <nuclide name="Pu242" wo="0.0161864603" />
+  </material>
+  <material depletable="true" id="26" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 24" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7398000000" />
+    <nuclide name="Pu238" wo="0.0054283927" />
+    <nuclide name="Pu239" wo="0.0747858036" />
+    <nuclide name="Pu240" wo="0.0373929018" />
+    <nuclide name="Pu241" wo="0.0202086460" />
+    <nuclide name="Pu242" wo="0.0171842558" />
+  </material>
+  <material depletable="true" id="27" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 25" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7398000000" />
+    <nuclide name="Pu238" wo="0.0054283927" />
+    <nuclide name="Pu239" wo="0.0747858036" />
+    <nuclide name="Pu240" wo="0.0373929018" />
+    <nuclide name="Pu241" wo="0.0202086460" />
+    <nuclide name="Pu242" wo="0.0171842558" />
+  </material>
+  <material depletable="true" id="28" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 26" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7528000000" />
+    <nuclide name="Pu238" wo="0.0049731082" />
+    <nuclide name="Pu239" wo="0.0685134459" />
+    <nuclide name="Pu240" wo="0.0342567229" />
+    <nuclide name="Pu241" wo="0.0185137273" />
+    <nuclide name="Pu242" wo="0.0157429956" />
+  </material>
+  <material depletable="true" id="29" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 27" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7478000000" />
+    <nuclide name="Pu238" wo="0.0051482176" />
+    <nuclide name="Pu239" wo="0.0709258912" />
+    <nuclide name="Pu240" wo="0.0354629456" />
+    <nuclide name="Pu241" wo="0.0191656191" />
+    <nuclide name="Pu242" wo="0.0162973265" />
+  </material>
+  <material depletable="true" id="30" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 28" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7488000000" />
+    <nuclide name="Pu238" wo="0.0051131957" />
+    <nuclide name="Pu239" wo="0.0704434021" />
+    <nuclide name="Pu240" wo="0.0352217011" />
+    <nuclide name="Pu241" wo="0.0190352408" />
+    <nuclide name="Pu242" wo="0.0161864603" />
+  </material>
+  <material depletable="true" id="31" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 29" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7538000000" />
+    <nuclide name="Pu238" wo="0.0049380863" />
+    <nuclide name="Pu239" wo="0.0680309569" />
+    <nuclide name="Pu240" wo="0.0340154784" />
+    <nuclide name="Pu241" wo="0.0183833490" />
+    <nuclide name="Pu242" wo="0.0156321295" />
+  </material>
+  <material depletable="true" id="32" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 30" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7428000000" />
+    <nuclide name="Pu238" wo="0.0053233271" />
+    <nuclide name="Pu239" wo="0.0733383365" />
+    <nuclide name="Pu240" wo="0.0366691682" />
+    <nuclide name="Pu241" wo="0.0198175109" />
+    <nuclide name="Pu242" wo="0.0168516573" />
+  </material>
+  <material depletable="true" id="33" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 31" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7428000000" />
+    <nuclide name="Pu238" wo="0.0053233271" />
+    <nuclide name="Pu239" wo="0.0733383365" />
+    <nuclide name="Pu240" wo="0.0366691682" />
+    <nuclide name="Pu241" wo="0.0198175109" />
+    <nuclide name="Pu242" wo="0.0168516573" />
+  </material>
+  <material depletable="true" id="34" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 32" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7438000000" />
+    <nuclide name="Pu238" wo="0.0052883052" />
+    <nuclide name="Pu239" wo="0.0728558474" />
+    <nuclide name="Pu240" wo="0.0364279237" />
+    <nuclide name="Pu241" wo="0.0196871326" />
+    <nuclide name="Pu242" wo="0.0167407911" />
+  </material>
+  <material depletable="true" id="35" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 33" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7408000000" />
+    <nuclide name="Pu238" wo="0.0053933709" />
+    <nuclide name="Pu239" wo="0.0743033146" />
+    <nuclide name="Pu240" wo="0.0371516573" />
+    <nuclide name="Pu241" wo="0.0200782677" />
+    <nuclide name="Pu242" wo="0.0170733896" />
+  </material>
+  <material depletable="true" id="36" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 34" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7408000000" />
+    <nuclide name="Pu238" wo="0.0053933709" />
+    <nuclide name="Pu239" wo="0.0743033146" />
+    <nuclide name="Pu240" wo="0.0371516573" />
+    <nuclide name="Pu241" wo="0.0200782677" />
+    <nuclide name="Pu242" wo="0.0170733896" />
+  </material>
+  <material depletable="true" id="37" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 35" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7428000000" />
+    <nuclide name="Pu238" wo="0.0053233271" />
+    <nuclide name="Pu239" wo="0.0733383365" />
+    <nuclide name="Pu240" wo="0.0366691682" />
+    <nuclide name="Pu241" wo="0.0198175109" />
+    <nuclide name="Pu242" wo="0.0168516573" />
+  </material>
+  <material depletable="true" id="38" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 36" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7548000000" />
+    <nuclide name="Pu238" wo="0.0049030644" />
+    <nuclide name="Pu239" wo="0.0675484678" />
+    <nuclide name="Pu240" wo="0.0337742339" />
+    <nuclide name="Pu241" wo="0.0182529706" />
+    <nuclide name="Pu242" wo="0.0155212633" />
+  </material>
+  <material depletable="true" id="39" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 37" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7468000000" />
+    <nuclide name="Pu238" wo="0.0051832395" />
+    <nuclide name="Pu239" wo="0.0714083802" />
+    <nuclide name="Pu240" wo="0.0357041901" />
+    <nuclide name="Pu241" wo="0.0192959975" />
+    <nuclide name="Pu242" wo="0.0164081926" />
+  </material>
+  <material depletable="true" id="40" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 38" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7498000000" />
+    <nuclide name="Pu238" wo="0.0050781739" />
+    <nuclide name="Pu239" wo="0.0699609131" />
+    <nuclide name="Pu240" wo="0.0349804565" />
+    <nuclide name="Pu241" wo="0.0189048624" />
+    <nuclide name="Pu242" wo="0.0160755941" />
+  </material>
+  <material depletable="true" id="41" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 39" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7538000000" />
+    <nuclide name="Pu238" wo="0.0049380863" />
+    <nuclide name="Pu239" wo="0.0680309569" />
+    <nuclide name="Pu240" wo="0.0340154784" />
+    <nuclide name="Pu241" wo="0.0183833490" />
+    <nuclide name="Pu242" wo="0.0156321295" />
+  </material>
+  <material depletable="true" id="42" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 40" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7498000000" />
+    <nuclide name="Pu238" wo="0.0050781739" />
+    <nuclide name="Pu239" wo="0.0699609131" />
+    <nuclide name="Pu240" wo="0.0349804565" />
+    <nuclide name="Pu241" wo="0.0189048624" />
+    <nuclide name="Pu242" wo="0.0160755941" />
+  </material>
+  <material depletable="true" id="43" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 41" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7518000000" />
+    <nuclide name="Pu238" wo="0.0050081301" />
+    <nuclide name="Pu239" wo="0.0689959350" />
+    <nuclide name="Pu240" wo="0.0344979675" />
+    <nuclide name="Pu241" wo="0.0186441057" />
+    <nuclide name="Pu242" wo="0.0158538618" />
+  </material>
+  <material depletable="true" id="44" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 42" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7408000000" />
+    <nuclide name="Pu238" wo="0.0053933709" />
+    <nuclide name="Pu239" wo="0.0743033146" />
+    <nuclide name="Pu240" wo="0.0371516573" />
+    <nuclide name="Pu241" wo="0.0200782677" />
+    <nuclide name="Pu242" wo="0.0170733896" />
+  </material>
+  <material depletable="true" id="45" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 43" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7398000000" />
+    <nuclide name="Pu238" wo="0.0054283927" />
+    <nuclide name="Pu239" wo="0.0747858036" />
+    <nuclide name="Pu240" wo="0.0373929018" />
+    <nuclide name="Pu241" wo="0.0202086460" />
+    <nuclide name="Pu242" wo="0.0171842558" />
+  </material>
+  <material depletable="true" id="46" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 44" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7538000000" />
+    <nuclide name="Pu238" wo="0.0049380863" />
+    <nuclide name="Pu239" wo="0.0680309569" />
+    <nuclide name="Pu240" wo="0.0340154784" />
+    <nuclide name="Pu241" wo="0.0183833490" />
+    <nuclide name="Pu242" wo="0.0156321295" />
+  </material>
+  <material depletable="true" id="47" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 45" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7428000000" />
+    <nuclide name="Pu238" wo="0.0053233271" />
+    <nuclide name="Pu239" wo="0.0733383365" />
+    <nuclide name="Pu240" wo="0.0366691682" />
+    <nuclide name="Pu241" wo="0.0198175109" />
+    <nuclide name="Pu242" wo="0.0168516573" />
+  </material>
+  <material depletable="true" id="48" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 46" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7478000000" />
+    <nuclide name="Pu238" wo="0.0051482176" />
+    <nuclide name="Pu239" wo="0.0709258912" />
+    <nuclide name="Pu240" wo="0.0354629456" />
+    <nuclide name="Pu241" wo="0.0191656191" />
+    <nuclide name="Pu242" wo="0.0162973265" />
+  </material>
+  <material depletable="true" id="49" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 47" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7408000000" />
+    <nuclide name="Pu238" wo="0.0053933709" />
+    <nuclide name="Pu239" wo="0.0743033146" />
+    <nuclide name="Pu240" wo="0.0371516573" />
+    <nuclide name="Pu241" wo="0.0200782677" />
+    <nuclide name="Pu242" wo="0.0170733896" />
+  </material>
+  <material depletable="true" id="50" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 48" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7528000000" />
+    <nuclide name="Pu238" wo="0.0049731082" />
+    <nuclide name="Pu239" wo="0.0685134459" />
+    <nuclide name="Pu240" wo="0.0342567229" />
+    <nuclide name="Pu241" wo="0.0185137273" />
+    <nuclide name="Pu242" wo="0.0157429956" />
+  </material>
+  <material depletable="true" id="51" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 49" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7528000000" />
+    <nuclide name="Pu238" wo="0.0049731082" />
+    <nuclide name="Pu239" wo="0.0685134459" />
+    <nuclide name="Pu240" wo="0.0342567229" />
+    <nuclide name="Pu241" wo="0.0185137273" />
+    <nuclide name="Pu242" wo="0.0157429956" />
+  </material>
+  <material depletable="true" id="52" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 50" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7488000000" />
+    <nuclide name="Pu238" wo="0.0051131957" />
+    <nuclide name="Pu239" wo="0.0704434021" />
+    <nuclide name="Pu240" wo="0.0352217011" />
+    <nuclide name="Pu241" wo="0.0190352408" />
+    <nuclide name="Pu242" wo="0.0161864603" />
+  </material>
+  <material depletable="true" id="53" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 51" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7528000000" />
+    <nuclide name="Pu238" wo="0.0049731082" />
+    <nuclide name="Pu239" wo="0.0685134459" />
+    <nuclide name="Pu240" wo="0.0342567229" />
+    <nuclide name="Pu241" wo="0.0185137273" />
+    <nuclide name="Pu242" wo="0.0157429956" />
+  </material>
+  <material depletable="true" id="54" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 52" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7438000000" />
+    <nuclide name="Pu238" wo="0.0052883052" />
+    <nuclide name="Pu239" wo="0.0728558474" />
+    <nuclide name="Pu240" wo="0.0364279237" />
+    <nuclide name="Pu241" wo="0.0196871326" />
+    <nuclide name="Pu242" wo="0.0167407911" />
+  </material>
+  <material depletable="true" id="55" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 53" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7448000000" />
+    <nuclide name="Pu238" wo="0.0052532833" />
+    <nuclide name="Pu239" wo="0.0723733584" />
+    <nuclide name="Pu240" wo="0.0361866792" />
+    <nuclide name="Pu241" wo="0.0195567542" />
+    <nuclide name="Pu242" wo="0.0166299250" />
+  </material>
+  <material depletable="true" id="56" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 54" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7518000000" />
+    <nuclide name="Pu238" wo="0.0050081301" />
+    <nuclide name="Pu239" wo="0.0689959350" />
+    <nuclide name="Pu240" wo="0.0344979675" />
+    <nuclide name="Pu241" wo="0.0186441057" />
+    <nuclide name="Pu242" wo="0.0158538618" />
+  </material>
+  <material depletable="true" id="57" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 55" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7258000000" />
+    <nuclide name="Pu238" wo="0.0059186992" />
+    <nuclide name="Pu239" wo="0.0815406504" />
+    <nuclide name="Pu240" wo="0.0407703252" />
+    <nuclide name="Pu241" wo="0.0220339431" />
+    <nuclide name="Pu242" wo="0.0187363821" />
+  </material>
+  <material depletable="true" id="58" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 56" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="59" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 57" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="60" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 58" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="61" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 59" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="62" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 60" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="63" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 61" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="64" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 62" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7158000000" />
+    <nuclide name="Pu238" wo="0.0062689181" />
+    <nuclide name="Pu239" wo="0.0863655410" />
+    <nuclide name="Pu240" wo="0.0431827705" />
+    <nuclide name="Pu241" wo="0.0233377267" />
+    <nuclide name="Pu242" wo="0.0198450438" />
+  </material>
+  <material depletable="true" id="65" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 63" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="66" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 64" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="67" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 65" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="68" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 66" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="69" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 67" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="70" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 68" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="71" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 69" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="72" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 70" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="73" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 71" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7168000000" />
+    <nuclide name="Pu238" wo="0.0062338962" />
+    <nuclide name="Pu239" wo="0.0858830519" />
+    <nuclide name="Pu240" wo="0.0429415259" />
+    <nuclide name="Pu241" wo="0.0232073483" />
+    <nuclide name="Pu242" wo="0.0197341776" />
+  </material>
+  <material depletable="true" id="74" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 72" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="75" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 73" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="76" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 74" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="77" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 75" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="78" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 76" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="79" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 77" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="80" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 78" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="81" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 79" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="82" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 80" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="83" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 81" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7298000000" />
+    <nuclide name="Pu238" wo="0.0057786116" />
+    <nuclide name="Pu239" wo="0.0796106942" />
+    <nuclide name="Pu240" wo="0.0398053471" />
+    <nuclide name="Pu241" wo="0.0215124296" />
+    <nuclide name="Pu242" wo="0.0182929175" />
+  </material>
+  <material depletable="true" id="84" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 82" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="85" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 83" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="86" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 84" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="87" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 85" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7158000000" />
+    <nuclide name="Pu238" wo="0.0062689181" />
+    <nuclide name="Pu239" wo="0.0863655410" />
+    <nuclide name="Pu240" wo="0.0431827705" />
+    <nuclide name="Pu241" wo="0.0233377267" />
+    <nuclide name="Pu242" wo="0.0198450438" />
+  </material>
+  <material depletable="true" id="88" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 86" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="89" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 87" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="90" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 88" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="91" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 89" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="92" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 90" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="93" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 91" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="94" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 92" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7208000000" />
+    <nuclide name="Pu238" wo="0.0060938086" />
+    <nuclide name="Pu239" wo="0.0839530957" />
+    <nuclide name="Pu240" wo="0.0419765478" />
+    <nuclide name="Pu241" wo="0.0226858349" />
+    <nuclide name="Pu242" wo="0.0192907130" />
+  </material>
+  <material depletable="true" id="95" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 93" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7158000000" />
+    <nuclide name="Pu238" wo="0.0062689181" />
+    <nuclide name="Pu239" wo="0.0863655410" />
+    <nuclide name="Pu240" wo="0.0431827705" />
+    <nuclide name="Pu241" wo="0.0233377267" />
+    <nuclide name="Pu242" wo="0.0198450438" />
+  </material>
+  <material depletable="true" id="96" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 94" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="97" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 95" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="98" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 96" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="99" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 97" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="100" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 98" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="101" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 99" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="102" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 100" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="103" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 101" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7218000000" />
+    <nuclide name="Pu238" wo="0.0060587867" />
+    <nuclide name="Pu239" wo="0.0834706066" />
+    <nuclide name="Pu240" wo="0.0417353033" />
+    <nuclide name="Pu241" wo="0.0225554565" />
+    <nuclide name="Pu242" wo="0.0191798468" />
+  </material>
+  <material depletable="true" id="104" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 102" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="105" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 103" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7228000000" />
+    <nuclide name="Pu238" wo="0.0060237649" />
+    <nuclide name="Pu239" wo="0.0829881176" />
+    <nuclide name="Pu240" wo="0.0414940588" />
+    <nuclide name="Pu241" wo="0.0224250782" />
+    <nuclide name="Pu242" wo="0.0190689806" />
+  </material>
+  <material depletable="true" id="106" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 104" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="107" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 105" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="108" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 106" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="109" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 107" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="110" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 108" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7218000000" />
+    <nuclide name="Pu238" wo="0.0060587867" />
+    <nuclide name="Pu239" wo="0.0834706066" />
+    <nuclide name="Pu240" wo="0.0417353033" />
+    <nuclide name="Pu241" wo="0.0225554565" />
+    <nuclide name="Pu242" wo="0.0191798468" />
+  </material>
+  <material depletable="true" id="111" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 109" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="112" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 110" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="113" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 111" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="114" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 112" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="115" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 113" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7198000000" />
+    <nuclide name="Pu238" wo="0.0061288305" />
+    <nuclide name="Pu239" wo="0.0844355847" />
+    <nuclide name="Pu240" wo="0.0422177924" />
+    <nuclide name="Pu241" wo="0.0228162133" />
+    <nuclide name="Pu242" wo="0.0194015791" />
+  </material>
+  <material depletable="true" id="116" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 114" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="117" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 115" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="118" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 116" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="119" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 117" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7158000000" />
+    <nuclide name="Pu238" wo="0.0062689181" />
+    <nuclide name="Pu239" wo="0.0863655410" />
+    <nuclide name="Pu240" wo="0.0431827705" />
+    <nuclide name="Pu241" wo="0.0233377267" />
+    <nuclide name="Pu242" wo="0.0198450438" />
+  </material>
+  <material depletable="true" id="120" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 118" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7288000000" />
+    <nuclide name="Pu238" wo="0.0058136335" />
+    <nuclide name="Pu239" wo="0.0800931832" />
+    <nuclide name="Pu240" wo="0.0400465916" />
+    <nuclide name="Pu241" wo="0.0216428080" />
+    <nuclide name="Pu242" wo="0.0184037836" />
+  </material>
+  <material depletable="true" id="121" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 119" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7208000000" />
+    <nuclide name="Pu238" wo="0.0060938086" />
+    <nuclide name="Pu239" wo="0.0839530957" />
+    <nuclide name="Pu240" wo="0.0419765478" />
+    <nuclide name="Pu241" wo="0.0226858349" />
+    <nuclide name="Pu242" wo="0.0192907130" />
+  </material>
+  <material depletable="true" id="122" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 120" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="123" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 121" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="124" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 122" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="125" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 123" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="126" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 124" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="127" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 125" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7188000000" />
+    <nuclide name="Pu238" wo="0.0061638524" />
+    <nuclide name="Pu239" wo="0.0849180738" />
+    <nuclide name="Pu240" wo="0.0424590369" />
+    <nuclide name="Pu241" wo="0.0229465916" />
+    <nuclide name="Pu242" wo="0.0195124453" />
+  </material>
+  <material depletable="true" id="128" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 126" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="129" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 127" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="130" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 128" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="131" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 129" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="132" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 130" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="133" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 131" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="134" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 132" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="135" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 133" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="136" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 134" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="137" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 135" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7178000000" />
+    <nuclide name="Pu238" wo="0.0061988743" />
+    <nuclide name="Pu239" wo="0.0854005629" />
+    <nuclide name="Pu240" wo="0.0427002814" />
+    <nuclide name="Pu241" wo="0.0230769700" />
+    <nuclide name="Pu242" wo="0.0196233115" />
+  </material>
+  <material depletable="true" id="138" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 136" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="139" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 137" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="140" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 138" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="141" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 139" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="142" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 140" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="143" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 141" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7218000000" />
+    <nuclide name="Pu238" wo="0.0060587867" />
+    <nuclide name="Pu239" wo="0.0834706066" />
+    <nuclide name="Pu240" wo="0.0417353033" />
+    <nuclide name="Pu241" wo="0.0225554565" />
+    <nuclide name="Pu242" wo="0.0191798468" />
+  </material>
+  <material depletable="true" id="144" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 142" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="145" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 143" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="146" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 144" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="147" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 145" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="148" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 146" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="149" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 147" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="150" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 148" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7208000000" />
+    <nuclide name="Pu238" wo="0.0060938086" />
+    <nuclide name="Pu239" wo="0.0839530957" />
+    <nuclide name="Pu240" wo="0.0419765478" />
+    <nuclide name="Pu241" wo="0.0226858349" />
+    <nuclide name="Pu242" wo="0.0192907130" />
+  </material>
+  <material depletable="true" id="151" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 149" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="152" name="Fissile fuel of PuU (Metallic) in Fissile Assembly 150" temperature="807.15" volume="4591.381906989049">
+    <density units="g/cm3" value="17.797504" />
+    <nuclide name="Zr90" wo="0.0507061175" />
+    <nuclide name="Zr91" wo="0.0111808875" />
+    <nuclide name="Zr92" wo="0.0172781015" />
+    <nuclide name="Zr94" wo="0.0178911043" />
+    <nuclide name="Zr96" wo="0.0029437892" />
+    <nuclide name="U235" wo="0.0052000000" />
+    <nuclide name="U238" wo="0.7148000000" />
+    <nuclide name="Pu238" wo="0.0063039400" />
+    <nuclide name="Pu239" wo="0.0868480300" />
+    <nuclide name="Pu240" wo="0.0434240150" />
+    <nuclide name="Pu241" wo="0.0234681051" />
+    <nuclide name="Pu242" wo="0.0199559100" />
+  </material>
+  <material depletable="true" id="153" name="Fertile fuel of ThU (Metallic) in Blanket Assembly" temperature="807.15" volume="688493.318736187">
+    <density units="g/cm3" value="11.1982268" />
+    <nuclide name="Zr90" wo="0.050706117509233165" />
+    <nuclide name="Zr91" wo="0.011180887453100785" />
+    <nuclide name="Zr92" wo="0.01727810146362816" />
+    <nuclide name="Zr94" wo="0.017891104342343415" />
+    <nuclide name="Zr96" wo="0.0029437892316944896" />
+    <nuclide name="Th232" wo="0.89774" />
+    <nuclide name="U233" wo="0.00226" />
+  </material>
+  <material id="154" name="Shield Material" temperature="705.65">
+    <density units="sum" />
+    <nuclide ao="0.015018" name="B10" />
+    <nuclide ao="0.063609" name="B11" />
+    <nuclide ao="0.019439239754000002" name="C12" />
+    <nuclide ao="0.000217760246" name="C13" />
+  </material>
+  <material id="155" name="Control Rod Material" temperature="705.65">
+    <density units="g/cc" value="2.52" />
+    <nuclide ao="3.6" name="B10" />
+    <nuclide ao="0.39999999999999986" name="B11" />
+    <nuclide ao="0.988922" name="C12" />
+    <nuclide ao="0.011078" name="C13" />
+  </material>
+  <material id="156" name="Sodium Coolant" temperature="705.65">
+    <density units="sum" />
+    <nuclide ao="0.022272" name="Na23" />
+  </material>
+  <material id="157" name="Lower and Upper Structure of the core" temperature="705.65">
+    <density units="sum" />
+    <nuclide ao="6.458961e-05" name="Mo92" />
+    <nuclide ao="6.458961e-05" name="Mo94" />
+    <nuclide ao="6.929021e-05" name="Mo95" />
+    <nuclide ao="6.929021e-05" name="Mo96" />
+    <nuclide ao="4.156542e-05" name="Mo97" />
+    <nuclide ao="0.0001050234" name="Mo98" />
+    <nuclide ao="4.191361e-05" name="Mo100" />
+    <nuclide ao="0.0004504027" name="Cr50" />
+    <nuclide ao="0.008685568" name="Cr52" />
+    <nuclide ao="0.0009848736" name="Cr53" />
+    <nuclide ao="0.0002451559" name="Cr54" />
+    <nuclide ao="0.0009280691" name="Fe54" />
+    <nuclide ao="0.0145687" name="Fe56" />
+    <nuclide ao="0.0003364548" name="Fe57" />
+    <nuclide ao="4.477596e-05" name="Fe58" />
+    <nuclide ao="0.00050846" name="Mn55" />
+    <nuclide ao="0.0155910002" name="Na23" />
+    <nuclide ao="0.002219582" name="Ni58" />
+    <nuclide ao="0.0008549747" name="Ni60" />
+    <nuclide ao="3.716856e-05" name="Ni61" />
+    <nuclide ao="0.0001184829" name="Ni62" />
+    <nuclide ao="3.01913e-05" name="Ni64" />
+  </material>
+  <material id="158" name="Cladding Material" temperature="705.65">
+    <density units="sum" />
+    <nuclide ao="7.272638e-05" name="Mo92" />
+    <nuclide ao="4.533147e-05" name="Mo94" />
+    <nuclide ao="7.801914e-05" name="Mo95" />
+    <nuclide ao="8.174367e-05" name="Mo96" />
+    <nuclide ao="4.680168e-05" name="Mo97" />
+    <nuclide ao="0.0001182539" name="Mo98" />
+    <nuclide ao="4.719374e-05" name="Mo100" />
+    <nuclide ao="0.0004504027" name="Cr50" />
+    <nuclide ao="0.008685568" name="Cr52" />
+    <nuclide ao="0.0009848736" name="Cr53" />
+    <nuclide ao="0.0002451559" name="Cr54" />
+    <nuclide ao="0.004074842" name="Fe54" />
+    <nuclide ao="0.0639663" name="Fe56" />
+    <nuclide ao="0.001477261" name="Fe57" />
+    <nuclide ao="0.0001965963" name="Fe58" />
+    <nuclide ao="0.00045921" name="Mn55" />
+    <nuclide ao="0.0002926222" name="Ni58" />
+    <nuclide ao="0.0001127169" name="Ni60" />
+    <nuclide ao="4.900176e-06" name="Ni61" />
+    <nuclide ao="1.562038e-05" name="Ni62" />
+    <nuclide ao="3.980319e-06" name="Ni64" />
+  </material>
+  <material id="159" name="Helium gas" temperature="705.65">
+    <density units="sum" />
+    <nuclide ao="1e-05" name="He4" />
+  </material>
+</materials>
