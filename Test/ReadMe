@@ -1,0 +1,16 @@
+OpenMC Surrogate Prediction Data & XML Configurations
+
+This repository contains the data files used for surrogate model predictions alongside their corresponding OpenMC XML configuration files. 
+
+
+The data in this repository was generated using specific OpenMC transport simulation parameters. To ensure accurate surrogate predictions and compatibility, the following configuration was used:
+
+OpenMC Version: 0.14.0
+Batches: 120
+Particles per Batch: 50,000
+
+Important Usage Instructions
+
+To successfully use these files and replicate or build upon these results, you must use the exact same setup. Running the XML files or processing the surrogate data with a different version of OpenMC or different history parameters (batches/particles) may lead to prediction errors. 
+
+Please ensure your local environment is running OpenMC v0.14.0 and that your run settings strictly maintain 120 batches and 50,000 particles.
