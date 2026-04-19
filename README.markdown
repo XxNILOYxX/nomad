@@ -19,7 +19,7 @@ By integrating ML models as high-speed surrogates for computationally expensive 
 
 If you use NOMAD in your research or projects, please cite the following paper:
 
-**Hasan Niloy, M. H. (2026). Hybrid genetic algorithm-particle swarm optimization with machine learning surrogate modeling for fuel loading pattern optimization in the ABR-1000 sodium-cooled fast reactor. *Annals of Nuclear Energy*. https://doi.org/10.1016/j.anucene.2026.112372**
+**Hasan Niloy, M. H. (2026). Hybrid genetic algorithm-particle swarm optimization with machine learning surrogate modeling for fuel loading pattern optimization in the ABR-1000 sodium-cooled fast reactor. *Annals of Nuclear Energy*. [![DOI](https://img.shields.io/badge/DOI-10.1016%2Fj.anucene.2026.112372-blue)](https://doi.org/10.1016/j.anucene.2026.112372)**
 
 ---
 
