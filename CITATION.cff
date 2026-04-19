@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Hasan Niloy"
+  given-names: "Md Hasebul"
+title: "NOMAD: Nuclear Optimization with Machine-learning-Accelerated Design"
+doi: 10.1016/j.anucene.2026.112372
+date-released: 2026-09-01
+url: "https://github.com/XxNILOYxX/nomad"
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Hasan Niloy"
+    given-names: "Md Hasebul"
+  doi: "10.1016/j.anucene.2026.112372"
+  journal: "Annals of Nuclear Energy"
+  title: "Hybrid genetic algorithm-particle swarm optimization with machine learning surrogate modeling for fuel loading pattern optimization in the ABR-1000 sodium-cooled fast reactor"
+  year: 2026
+  volume: 235
