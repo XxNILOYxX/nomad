@@ -15,6 +15,11 @@ NOMAD is a sophisticated tool for optimizing nuclear reactor core fuel loading p
 
 By integrating ML models as high-speed surrogates for computationally expensive neutron transport simulations (e.g., via OpenMC), NOMAD significantly accelerates the optimization process while maintaining accuracy.
 ![Image Alt](https://github.com/XxNILOYxX/nomad/blob/main/images/NOMAD.png?raw=true)
+## 📜 Citation
+
+If you use NOMAD in your research or projects, please cite the following paper:
+
+**Hasan Niloy, M. H. (2026). Hybrid genetic algorithm-particle swarm optimization with machine learning surrogate modeling for fuel loading pattern optimization in the ABR-1000 sodium-cooled fast reactor. *Annals of Nuclear Energy*. https://doi.org/10.1016/j.anucene.2026.112372**
 
 ---
 
